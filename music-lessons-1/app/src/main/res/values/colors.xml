@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+    <color name="actionbar_background_light">#ccffffff</color>
+    <color name="list_item_selected">#33B5E5</color>
+    <color name="heading">#DDDDDD</color>
+    <color name="action_label">#2B65EC</color>
+    <color name="add_lesson_label">#CC0000</color>
+
+</resources>

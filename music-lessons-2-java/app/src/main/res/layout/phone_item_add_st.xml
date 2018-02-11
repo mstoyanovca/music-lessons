@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context="com.mstoyanov.musiclessons.AddStudentActivity">
+
+    <EditText
+        android:id="@+id/phone_number"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/ic_phone_black_24dp"
+        android:drawablePadding="@dimen/drawable_padding"
+        android:drawableStart="@drawable/ic_phone_black_24dp"
+        android:hint="@string/phone_number"
+        android:inputType="phone"
+        android:maxLength="32"
+        android:singleLine="true"
+        android:textSize="@dimen/text_size"
+        app:layout_constraintBottom_toTopOf="@id/phone_number_type"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <Spinner
+        android:id="@+id/phone_number_type"
+        style="@style/Widget.AppCompat.Spinner.Underlined"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/margin_padding_left_right"
+        android:layout_marginRight="@dimen/margin_padding_left_right"
+        android:drawSelectorOnTop="true"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/delete"
+        app:layout_constraintTop_toBottomOf="@+id/phone_number" />
+
+    <ImageButton
+        android:id="@+id/delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/delete"
+        android:elevation="@dimen/fab_elevation"
+        android:src="@drawable/ic_clear_black_24dp"
+        app:layout_constraintLeft_toRightOf="@+id/phone_number_type"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/phone_number" />
+
+</android.support.constraint.ConstraintLayout>

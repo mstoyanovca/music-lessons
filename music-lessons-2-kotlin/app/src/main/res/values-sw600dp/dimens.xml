@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <dimen name="text_size">22sp</dimen>
+    <dimen name="app_bar_elevation">6dp</dimen>
+    <dimen name="fab_elevation">8dp</dimen>
+    <dimen name="padding_top_bottom">12dp</dimen>
+    <dimen name="margin_padding_left_right">24dp</dimen>
+    <dimen name="drawable_padding">24dp</dimen>
+    <dimen name="fab_margin">24dp</dimen>
+    <dimen name="spinner_min_height">88dp</dimen>
+</resources>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.mstoyanov.musiclessons"
+    android:largeScreens="true"
+    android:normalScreens="true"
+    android:smallScreens="true"
+    android:xlargeScreens="true">
+
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
+
+    <application
+        android:name=".MusicLessonsApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_label"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+        android:versionCode="12"
+        android:versionName="3.1">
+        <activity
+            android:name=".MainActivity"
+            android:label="Music Lessons"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".AddStudentActivity"
+            android:label="Add Student"
+            android:launchMode="singleTop"
+            android:parentActivityName=".MainActivity">
+            <!-- Parent activity meta-data to support API level 7+ -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+        <activity
+            android:name=".StudentDetailsActivity"
+            android:label="Student Details"
+            android:launchMode="singleTop"
+            android:parentActivityName=".MainActivity">
+            <!-- Parent activity meta-data to support API level 7+ -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+        <activity
+            android:name=".EditStudentActivity"
+            android:label="Edit Student"
+            android:launchMode="singleTop"
+            android:parentActivityName=".StudentDetailsActivity">
+            <!-- Parent activity meta-data to support API level 7+ -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".StudentDetailsActivity" />
+        </activity>
+        <activity
+            android:name=".AddLessonActivity"
+            android:label="Add Lesson"
+            android:launchMode="singleTop"
+            android:parentActivityName=".MainActivity">
+            <!-- Parent activity meta-data to support API level 7+ -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+        <activity
+            android:name=".LessonDetailsActivity"
+            android:label="Lesson Details"
+            android:launchMode="singleTop"
+            android:parentActivityName=".MainActivity">
+            <!-- Parent activity meta-data to support API level 7+ -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+        <activity
+            android:name=".EditLessonActivity"
+            android:label="Edit Lesson"
+            android:launchMode="singleTop"
+            android:parentActivityName=".LessonDetailsActivity">
+            <!-- Parent activity meta-data to support API level 7+ -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".LessonDetailsActivity" />
+        </activity>
+    </application>
+
+</manifest>

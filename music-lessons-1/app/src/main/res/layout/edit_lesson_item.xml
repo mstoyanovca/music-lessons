@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="48dp" >
+
+    <!-- Icon -->
+    <ImageView
+        android:id="@+id/lesson_list_item_imageView"
+        android:layout_width="48dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentBottom="true"
+        android:contentDescription="@string/desc"
+        android:src="@drawable/person" >
+    </ImageView>
+
+    <TextView
+        android:id="@+id/firstName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:textSize="16sp"
+        android:layout_centerVertical="true"
+        android:singleLine="true"
+        android:layout_toRightOf="@+id/lesson_list_item_imageView" />
+
+    <TextView
+        android:id="@+id/lastName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="4dp"
+        android:textSize="16sp"
+        android:singleLine="true"
+        android:layout_toRightOf="@id/firstName" />
+
+</RelativeLayout>
