@@ -3,7 +3,7 @@ apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 27
-    buildToolsVersion '27.0.2'
+    buildToolsVersion '27.0.3'
     defaultConfig {
         applicationId "com.mstoyanov.music_lessons"
         minSdkVersion 15
@@ -44,7 +44,7 @@ android {
         implementation 'android.arch.persistence.room:runtime:1.0.0'
         kapt "android.arch.persistence.room:compiler:1.0.0"
         androidTestImplementation "android.arch.persistence.room:testing:1.0.0"
-        debugImplementation 'com.amitshekhar.android:debug-db:1.0.1'
+        // debugImplementation 'com.amitshekhar.android:debug-db:1.0.1'
 
         // unit tests:
         testCompile 'junit:junit:4.12'
