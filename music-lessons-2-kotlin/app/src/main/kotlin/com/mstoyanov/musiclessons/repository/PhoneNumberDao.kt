@@ -9,7 +9,7 @@ interface PhoneNumberDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(phoneNumbers: List<PhoneNumber>)
 
-    @Query("select * from phone_number where student_id = :arg0")
+    @Query("select * from phone_number where student_id == :studentId")
     fun findAllByStudentId(studentId: Long): MutableList<PhoneNumber>
 
     @Delete
