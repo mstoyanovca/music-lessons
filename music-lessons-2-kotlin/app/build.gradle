@@ -27,9 +27,9 @@ android {
     }
     sourceSets {
         androidTest.assets.srcDirs += files("$projectDir/schemas".toString())
-        // main.java.srcDirs += 'src/main/kotlin'
-        // test.java.srcDirs += 'src/test/kotlin'
-        // androidTest.java.srcDirs += 'src/androidTest/kotlin'
+        main.java.srcDirs += 'src/main/kotlin'
+        test.java.srcDirs += 'src/test/kotlin'
+        androidTest.java.srcDirs += 'src/androidTest/kotlin'
     }
     dependencies {
         implementation fileTree(dir: 'libs', include: ['*.jar'])
