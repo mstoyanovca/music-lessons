@@ -13,7 +13,7 @@ import android.widget.TextView
 
 import com.mstoyanov.musiclessons.model.PhoneNumber
 
-class LessonDetailsAdapter(private val phoneNumbers: MutableList<PhoneNumber>, private val context: Context) : RecyclerView.Adapter<LessonDetailsAdapter.ViewHolder>() {
+class LessonDetailsAdapter(private val phoneNumbers: List<PhoneNumber>, private val context: Context) : RecyclerView.Adapter<LessonDetailsAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LessonDetailsAdapter.ViewHolder {
         val phoneNumberItem = LayoutInflater.from(parent.context).inflate(

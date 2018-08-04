@@ -12,7 +12,7 @@ import android.widget.*
 import com.mstoyanov.musiclessons.model.PhoneNumber
 import com.mstoyanov.musiclessons.model.PhoneNumberType
 
-class AddStudentAdapter(var phoneNumbers: MutableList<PhoneNumber>) : RecyclerView.Adapter<AddStudentAdapter.ViewHolder>() {
+class AddStudentAdapter(var phoneNumbers: List<PhoneNumber>) : RecyclerView.Adapter<AddStudentAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AddStudentAdapter.ViewHolder {
         val phoneNumberItem = LayoutInflater.from(parent.context).inflate(
@@ -26,7 +26,7 @@ class AddStudentAdapter(var phoneNumbers: MutableList<PhoneNumber>) : RecyclerVi
         holder.number.setText(phoneNumbers[position].number!!.trim { it <= ' ' })
         holder.type.setSelection(phoneNumbers[position].type!!.ordinal)
         holder.delete.setOnClickListener {
-            phoneNumbers.removeAt(position)
+            phoneNumbers -= phoneNumbers[position]
             if (phoneNumbers.size == 0)
                 (holder.context as AddStudentActivity).invalidateOptionsMenu()
             notifyDataSetChanged()
