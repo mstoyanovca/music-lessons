@@ -7,19 +7,21 @@ import android.arch.persistence.room.PrimaryKey
 import java.io.Serializable
 
 @Entity(tableName = "student")
-data class Student @Ignore constructor(@PrimaryKey(autoGenerate = true) @ColumnInfo(name = "_id") var studentId: Long = 0,
-                                       @ColumnInfo(name = "first_name") var firstName: String? = null,
-                                       @ColumnInfo(name = "last_name") var lastName: String? = null,
-                                       var email: String? = null,
-                                       var notes: String? = null,
-                                       @Ignore var phoneNumbers: MutableList<PhoneNumber>? = null) : Comparable<Student>, Serializable {
+data class Student(@PrimaryKey(autoGenerate = true) @ColumnInfo(name = "_id") var studentId: Long,
+                   @ColumnInfo(name = "first_name") var firstName: String,
+                   @ColumnInfo(name = "last_name") var lastName: String,
+                   var email: String,
+                   var notes: String,
+                   @Ignore var phoneNumbers: MutableList<PhoneNumber>) : Comparable<Student>, Serializable {
 
-    constructor() : this(0, null, null, null, null, null)
+    // TODO change to List
+
+    constructor() : this(0L, "", "", "", "", mutableListOf<PhoneNumber>())
 
     override fun compareTo(other: Student): Int {
-        return if (firstName!!.compareTo(other.firstName!!, ignoreCase = true) != 0)
-            firstName!!.compareTo(other.firstName!!, ignoreCase = true)
+        return if (firstName.compareTo(other.firstName, ignoreCase = true) != 0)
+            firstName.compareTo(other.firstName, ignoreCase = true)
         else
-            lastName!!.compareTo(other.lastName!!, ignoreCase = true)
+            lastName.compareTo(other.lastName, ignoreCase = true)
     }
 }

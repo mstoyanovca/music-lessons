@@ -232,11 +232,9 @@ class AddLessonActivity : AppCompatActivity(), AdapterView.OnItemSelectedListene
         val timeToString = hourTo.value.toString() + ":" + minutes[minuteTo.value]
         val format = SimpleDateFormat("HH:mm", Locale.US)
         format.timeZone = TimeZone.getTimeZone("UTC")
-        var dateFrom: Date? = null
-        var dateTo: Date? = null
 
-        dateFrom = format.parse(timeFromString)
-        dateTo = format.parse(timeToString)
+        val dateFrom = format.parse(timeFromString)
+        val dateTo = format.parse(timeToString)
 
         lesson.timeFrom = dateFrom
         lesson.timeTo = dateTo
