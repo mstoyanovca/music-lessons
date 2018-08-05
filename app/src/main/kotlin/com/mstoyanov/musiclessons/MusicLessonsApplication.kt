@@ -1,15 +1,16 @@
 package com.mstoyanov.musiclessons
 
 import android.app.Application
+import android.arch.persistence.db.SupportSQLiteDatabase
 import android.arch.persistence.room.Room
+import android.arch.persistence.room.migration.Migration
 import com.mstoyanov.musiclessons.repository.AppDatabase
 
 class MusicLessonsApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        // db = Room.databaseBuilder(applicationContext, AppDatabase::class.java, DB_NAME).addMigrations(MIGRATION_1_2).build()
-        db = Room.databaseBuilder(applicationContext, AppDatabase::class.java, DB_NAME).build()
+        db = Room.databaseBuilder(applicationContext, AppDatabase::class.java, DB_NAME).addMigrations(MIGRATION_1_2).build()
     }
 
     companion object {
@@ -17,7 +18,7 @@ class MusicLessonsApplication : Application() {
             private set
         private const val DB_NAME = "school"
 
-        /*private val MIGRATION_1_2 = object : Migration(1, 2) {
+        private val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("create table if not exists student (_id integer primary key autoincrement not null, first_name text, last_name text, email text, notes text);")
                 database.execSQL("create table if not exists phone_number (phone_number_id integer primary key autoincrement not null, number text, type text, student_id integer not null, foreign key(student_id) references student(_id) on update no action on delete cascade);")
@@ -45,6 +46,6 @@ class MusicLessonsApplication : Application() {
                 database.execSQL("drop table if exists students;")
                 database.execSQL("drop table if exists schedule;")
             }
-        }*/
+        }
     }
 }

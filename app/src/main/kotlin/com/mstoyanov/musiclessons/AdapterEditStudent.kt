@@ -14,9 +14,9 @@ import com.mstoyanov.musiclessons.model.PhoneNumber
 import com.mstoyanov.musiclessons.model.PhoneNumberType
 import java.lang.ref.WeakReference
 
-class EditStudentAdapter(var phoneNumbers: List<PhoneNumber>) : RecyclerView.Adapter<EditStudentAdapter.ViewHolder>() {
+class AdapterEditStudent(var phoneNumbers: List<PhoneNumber>) : RecyclerView.Adapter<AdapterEditStudent.ViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EditStudentAdapter.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdapterEditStudent.ViewHolder {
         val phoneNumberItem = LayoutInflater.from(parent.context).inflate(
                 R.layout.phone_item_add_st,
                 parent,
@@ -24,17 +24,17 @@ class EditStudentAdapter(var phoneNumbers: List<PhoneNumber>) : RecyclerView.Ada
         return ViewHolder(phoneNumberItem)
     }
 
-    override fun onBindViewHolder(holder: EditStudentAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: AdapterEditStudent.ViewHolder, position: Int) {
         holder.number.setText(phoneNumbers[position].number!!.trim { it <= ' ' })
         holder.type.setSelection(phoneNumbers[position].type!!.ordinal)
         holder.delete.setOnClickListener {
             if (phoneNumbers[position].phoneNumberId > 0) {
-                (holder.context as EditStudentActivity).stopProgressBar()
+                (holder.context as ActivityEditStudent).stopProgressBar()
                 DeletePhoneNumber(phoneNumbers[position], holder.context).execute()
             }
             phoneNumbers -= phoneNumbers[position]
             if (phoneNumbers.size == 0)
-                (holder.context as EditStudentActivity).invalidateOptionsMenu()
+                (holder.context as ActivityEditStudent).invalidateOptionsMenu()
             notifyDataSetChanged()
         }
     }
@@ -90,7 +90,7 @@ class EditStudentAdapter(var phoneNumbers: List<PhoneNumber>) : RecyclerView.Ada
                     phoneNumbers[adapterPosition].isValid = false
                     number.error = context.resources.getString(R.string.phone_number_error)
                 }
-                (context as EditStudentActivity).invalidateOptionsMenu()
+                (context as ActivityEditStudent).invalidateOptionsMenu()
             }
         }
     }
@@ -112,7 +112,7 @@ class EditStudentAdapter(var phoneNumbers: List<PhoneNumber>) : RecyclerView.Ada
 
             override fun onPostExecute(phoneNumber: PhoneNumber) {
                 val context = contextWeakReference.get()
-                (context as EditStudentActivity).stopProgressBar()
+                (context as ActivityEditStudent).stopProgressBar()
             }
         }
     }

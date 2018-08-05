@@ -22,12 +22,12 @@ import com.mstoyanov.musiclessons.model.PhoneNumberType
 import com.mstoyanov.musiclessons.model.Student
 import java.lang.ref.WeakReference
 
-class AddStudentActivity : AppCompatActivity() {
+class ActivityAddStudent : AppCompatActivity() {
     private lateinit var firstName: EditText
     private lateinit var firstNameTextWatcher: TextWatcher
     private lateinit var lastName: EditText
     private lateinit var progressBar: ProgressBar
-    private lateinit var adapter: AddStudentAdapter
+    private lateinit var adapter: AdapterAddStudent
     private var student = Student()
     var pristine = true
 
@@ -59,7 +59,7 @@ class AddStudentActivity : AppCompatActivity() {
         lastName.addTextChangedListener(NameTextWatcher(this))
 
         val recyclerView = findViewById<RecyclerView>(R.id.phone_numbers_list)
-        adapter = AddStudentAdapter(student.phoneNumbers!!)
+        adapter = AdapterAddStudent(student.phoneNumbers!!)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
 
@@ -172,8 +172,8 @@ class AddStudentActivity : AppCompatActivity() {
 
     companion object {
 
-        private class AddStudent(context: AddStudentActivity) : AsyncTask<Student, Int, Student>() {
-            private val addStudentActivityWeakReference: WeakReference<AddStudentActivity> = WeakReference(context)
+        private class AddStudent(context: ActivityAddStudent) : AsyncTask<Student, Int, Student>() {
+            private val addStudentActivityWeakReference: WeakReference<ActivityAddStudent> = WeakReference(context)
 
             override fun doInBackground(vararg params: Student): Student {
                 // Thread.sleep(1000)
@@ -192,7 +192,7 @@ class AddStudentActivity : AppCompatActivity() {
                 val addStudentActivity = addStudentActivityWeakReference.get()!!
                 addStudentActivity.progressBar.visibility = View.GONE
 
-                val intent = Intent(addStudentActivity, MainActivity::class.java)
+                val intent = Intent(addStudentActivity, ActivityMain::class.java)
                 intent.putExtra("ADDED_STUDENT_ID", result.studentId)
                 addStudentActivity.startActivity(intent)
             }

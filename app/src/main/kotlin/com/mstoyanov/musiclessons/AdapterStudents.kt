@@ -10,9 +10,9 @@ import android.widget.TextView
 import com.mstoyanov.musiclessons.model.PhoneNumber
 import com.mstoyanov.musiclessons.model.Student
 
-class StudentsAdapter(private val students: List<Student>, private val fragment: StudentsFragment) : RecyclerView.Adapter<StudentsAdapter.ViewHolder>() {
+class AdapterStudents(private val students: List<Student>, private val fragment: FragmentStudents) : RecyclerView.Adapter<AdapterStudents.ViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StudentsAdapter.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdapterStudents.ViewHolder {
         val name = LayoutInflater.from(parent.context).inflate(
                 R.layout.student_item,
                 parent,
@@ -28,7 +28,7 @@ class StudentsAdapter(private val students: List<Student>, private val fragment:
         return students.size
     }
 
-    inner class ViewHolder(val name: TextView, private val fragment: StudentsFragment) : RecyclerView.ViewHolder(name), View.OnClickListener {
+    inner class ViewHolder(val name: TextView, private val fragment: FragmentStudents) : RecyclerView.ViewHolder(name), View.OnClickListener {
 
         init {
             name.setOnClickListener(this)
@@ -42,7 +42,7 @@ class StudentsAdapter(private val students: List<Student>, private val fragment:
 
     companion object {
 
-        private class FindAllPhoneNumbersByStudentId(private val student: Student, private val fragment: StudentsFragment) : AsyncTask<Long, Int, MutableList<PhoneNumber>>() {
+        private class FindAllPhoneNumbersByStudentId(private val student: Student, private val fragment: FragmentStudents) : AsyncTask<Long, Int, MutableList<PhoneNumber>>() {
 
             override fun doInBackground(vararg p0: Long?): MutableList<PhoneNumber> {
                 /*try {
@@ -56,7 +56,7 @@ class StudentsAdapter(private val students: List<Student>, private val fragment:
             override fun onPostExecute(result: MutableList<PhoneNumber>) {
                 fragment.stopProgressBar()
                 student.phoneNumbers = result
-                val intent = Intent(fragment.context, StudentDetailsActivity::class.java)
+                val intent = Intent(fragment.context, ActivityStudentDetails::class.java)
                 intent.putExtra("STUDENT", student)
                 fragment.startActivity(intent)
             }

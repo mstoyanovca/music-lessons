@@ -11,7 +11,7 @@ import android.support.v7.widget.Toolbar
 import com.mstoyanov.musiclessons.model.Weekday
 import java.util.*
 
-class MainActivity : AppCompatActivity() {
+class ActivityMain : AppCompatActivity() {
     private lateinit var viewPager: ViewPager
     private lateinit var tabLayout: TabLayout
 
@@ -75,9 +75,9 @@ class MainActivity : AppCompatActivity() {
 
         override fun getItem(position: Int): Fragment {
             return if (position == sectionTitles.size - 1) {
-                StudentsFragment.create(position)
+                FragmentStudents.create(position)
             } else {
-                ScheduleFragment.create(position)
+                FragmentSchedule.create(position)
             }
         }
 

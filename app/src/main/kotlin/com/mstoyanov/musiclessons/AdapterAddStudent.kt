@@ -12,9 +12,9 @@ import android.widget.*
 import com.mstoyanov.musiclessons.model.PhoneNumber
 import com.mstoyanov.musiclessons.model.PhoneNumberType
 
-class AddStudentAdapter(var phoneNumbers: List<PhoneNumber>) : RecyclerView.Adapter<AddStudentAdapter.ViewHolder>() {
+class AdapterAddStudent(var phoneNumbers: List<PhoneNumber>) : RecyclerView.Adapter<AdapterAddStudent.ViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AddStudentAdapter.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdapterAddStudent.ViewHolder {
         val phoneNumberItem = LayoutInflater.from(parent.context).inflate(
                 R.layout.phone_item_add_st,
                 parent,
@@ -28,7 +28,7 @@ class AddStudentAdapter(var phoneNumbers: List<PhoneNumber>) : RecyclerView.Adap
         holder.delete.setOnClickListener {
             phoneNumbers -= phoneNumbers[position]
             if (phoneNumbers.size == 0)
-                (holder.context as AddStudentActivity).invalidateOptionsMenu()
+                (holder.context as ActivityAddStudent).invalidateOptionsMenu()
             notifyDataSetChanged()
         }
     }
@@ -75,7 +75,7 @@ class AddStudentAdapter(var phoneNumbers: List<PhoneNumber>) : RecyclerView.Adap
             }
 
             override fun afterTextChanged(s: Editable) {
-                if ((context as AddStudentActivity).pristine && s.isNotEmpty()) {
+                if ((context as ActivityAddStudent).pristine && s.isNotEmpty()) {
                     context.pristine = false
                     context.invokeTextChanged()
                 }

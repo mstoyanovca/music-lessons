@@ -12,10 +12,10 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class AddStudentActivityTest {
+class ActivityAddStudentTest {
     @Rule
     @JvmField
-    val testRule = ActivityTestRule(AddStudentActivity::class.java)
+    val testRule = ActivityTestRule(ActivityAddStudent::class.java)
 
     @Test
     fun changeText_sameActivity() {

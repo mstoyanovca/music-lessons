@@ -11,17 +11,17 @@ import com.mstoyanov.musiclessons.model.Lesson
 import java.text.SimpleDateFormat
 import java.util.*
 
-class LessonsAdapter(private val lessons: List<Lesson>) : RecyclerView.Adapter<LessonsAdapter.ViewHolder>() {
+class AdapterLessons(private val lessons: List<Lesson>) : RecyclerView.Adapter<AdapterLessons.ViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LessonsAdapter.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdapterLessons.ViewHolder {
         val lessonItem = LayoutInflater.from(parent.context).inflate(
                 R.layout.lesson_item,
                 parent,
                 false)
-        return LessonsAdapter.ViewHolder(lessonItem, lessons)
+        return AdapterLessons.ViewHolder(lessonItem, lessons)
     }
 
-    override fun onBindViewHolder(holder: LessonsAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: AdapterLessons.ViewHolder, position: Int) {
         val format = SimpleDateFormat("HH:mm", Locale.US)
         format.timeZone = TimeZone.getTimeZone("UTC")
         val timeFrom = format.format(lessons[position].timeFrom)
@@ -50,7 +50,7 @@ class LessonsAdapter(private val lessons: List<Lesson>) : RecyclerView.Adapter<L
         }
 
         override fun onClick(v: View) {
-            val intent = Intent(v.context, LessonDetailsActivity::class.java)
+            val intent = Intent(v.context, ActivityLessonDetails::class.java)
             val lesson = lessons[adapterPosition]
             intent.putExtra("LESSON", lesson)
             v.context.startActivity(intent)

@@ -21,7 +21,7 @@
         android:versionCode="12"
         android:versionName="3.1">
         <activity
-            android:name=".MainActivity"
+            android:name=".ActivityMain"
             android:label="@string/app_label"
             android:launchMode="singleTop">
             <intent-filter>
@@ -30,64 +30,64 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".AddStudentActivity"
+            android:name=".ActivityAddStudent"
             android:label="@string/add_student"
             android:launchMode="singleTop"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".ActivityMain">
             <!-- Parent activity meta-data to support API level 7+ -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".ActivityMain" />
         </activity>
         <activity
-            android:name=".StudentDetailsActivity"
+            android:name=".ActivityStudentDetails"
             android:label="@string/student_details"
             android:launchMode="singleTop"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".ActivityMain">
             <!-- Parent activity meta-data to support API level 7+ -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".ActivityMain" />
         </activity>
         <activity
-            android:name=".EditStudentActivity"
+            android:name=".ActivityEditStudent"
             android:label="@string/edit_student"
             android:launchMode="singleTop"
-            android:parentActivityName=".StudentDetailsActivity">
+            android:parentActivityName=".ActivityStudentDetails">
             <!-- Parent activity meta-data to support API level 7+ -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".StudentDetailsActivity" />
+                android:value=".ActivityStudentDetails" />
         </activity>
         <activity
-            android:name=".AddLessonActivity"
+            android:name=".ActivityAddLesson"
             android:label="@string/add_lesson"
             android:launchMode="singleTop"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".ActivityMain">
             <!-- Parent activity meta-data to support API level 7+ -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".ActivityMain" />
         </activity>
         <activity
-            android:name=".LessonDetailsActivity"
+            android:name=".ActivityLessonDetails"
             android:label="@string/lesson_details"
             android:launchMode="singleTop"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".ActivityMain">
             <!-- Parent activity meta-data to support API level 7+ -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".ActivityMain" />
         </activity>
         <activity
-            android:name=".EditLessonActivity"
+            android:name=".ActivityEditLesson"
             android:label="@string/edit_lesson"
             android:launchMode="singleTop"
-            android:parentActivityName=".LessonDetailsActivity">
+            android:parentActivityName=".ActivityLessonDetails">
             <!-- Parent activity meta-data to support API level 7+ -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".LessonDetailsActivity" />
+                android:value=".ActivityLessonDetails" />
         </activity>
     </application>
 

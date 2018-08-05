@@ -16,9 +16,9 @@ import com.mstoyanov.musiclessons.model.Student
 import java.io.Serializable
 import java.lang.ref.WeakReference
 
-class StudentsFragment : Fragment() {
+class FragmentStudents : Fragment() {
     private lateinit var progressBar: ProgressBar
-    private lateinit var adapter: StudentsAdapter
+    private lateinit var adapter: AdapterStudents
     private var students: MutableList<Student> = mutableListOf()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -28,7 +28,7 @@ class StudentsFragment : Fragment() {
         title.setText(R.string.students_label)
 
         val recyclerView = rootView.findViewById<RecyclerView>(R.id.students_list)
-        adapter = StudentsAdapter(students, this)
+        adapter = AdapterStudents(students, this)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(activity)
 
@@ -44,7 +44,7 @@ class StudentsFragment : Fragment() {
         }
 
         val button: FloatingActionButton = rootView.findViewById(R.id.add_student)
-        button.setOnClickListener { startActivity(Intent(activity, AddStudentActivity::class.java)) }
+        button.setOnClickListener { startActivity(Intent(activity, ActivityAddStudent::class.java)) }
 
         return rootView
     }
@@ -64,16 +64,16 @@ class StudentsFragment : Fragment() {
 
     companion object {
 
-        fun create(position: Int): StudentsFragment {
-            val fragment = StudentsFragment()
+        fun create(position: Int): FragmentStudents {
+            val fragment = FragmentStudents()
             val args = Bundle()
             args.putInt("POSITION", position)
             fragment.arguments = args
             return fragment
         }
 
-        private class LoadStudents(context: StudentsFragment) : AsyncTask<Long, Int, MutableList<Student>>() {
-            private val studentsFragmentWeakReference = WeakReference<StudentsFragment>(context)
+        private class LoadStudents(context: FragmentStudents) : AsyncTask<Long, Int, MutableList<Student>>() {
+            private val studentsFragmentWeakReference = WeakReference<FragmentStudents>(context)
 
             override fun doInBackground(vararg p0: Long?): MutableList<Student> {
                 /*try {

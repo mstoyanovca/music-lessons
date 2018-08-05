@@ -22,7 +22,7 @@ import android.widget.TextView
 import android.widget.Toast
 import com.mstoyanov.musiclessons.model.Student
 
-class StudentDetailsActivity : AppCompatActivity() {
+class ActivityStudentDetails : AppCompatActivity() {
     private lateinit var student: Student
     private var number: String = ""
     private var updatedStudentId: Long = 0
@@ -53,7 +53,7 @@ class StudentDetailsActivity : AppCompatActivity() {
         val phoneNumbers = findViewById<RecyclerView>(R.id.phone_numbers_list)
         val layoutManager = LinearLayoutManager(this)
         phoneNumbers.layoutManager = LinearLayoutManager(this)
-        val adapter = StudentDetailsAdapter(student.phoneNumbers!!, this)
+        val adapter = AdapterStudentDetails(student.phoneNumbers!!, this)
         phoneNumbers.adapter = adapter
         val divider = DividerItemDecoration(phoneNumbers.context, layoutManager.orientation)
         phoneNumbers.addItemDecoration(divider)
@@ -82,7 +82,7 @@ class StudentDetailsActivity : AppCompatActivity() {
 
         val edit = findViewById<FloatingActionButton>(R.id.edit)
         edit.setOnClickListener {
-            val intent = Intent(this@StudentDetailsActivity, EditStudentActivity::class.java)
+            val intent = Intent(this@ActivityStudentDetails, ActivityEditStudent::class.java)
             intent.putExtra("STUDENT", student)
             startActivity(intent)
         }
@@ -94,7 +94,7 @@ class StudentDetailsActivity : AppCompatActivity() {
                 if (updatedStudentId == 0L) {
                     NavUtils.navigateUpFromSameTask(this)
                 } else {
-                    val intent = Intent(this@StudentDetailsActivity, MainActivity::class.java)
+                    val intent = Intent(this@ActivityStudentDetails, ActivityMain::class.java)
                     intent.putExtra("UPDATED_STUDENT_ID", updatedStudentId)
                     startActivity(intent)
                 }
@@ -109,7 +109,7 @@ class StudentDetailsActivity : AppCompatActivity() {
             PERMISSION_REQUEST_CALL_PHONE -> if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 dial(number)
             } else {
-                Toast.makeText(this@StudentDetailsActivity, "Permission CALL_PHONE denied", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@ActivityStudentDetails, "Permission CALL_PHONE denied", Toast.LENGTH_SHORT).show()
             }
             else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }
@@ -133,7 +133,7 @@ class StudentDetailsActivity : AppCompatActivity() {
     }
 
     private fun showMessageOKCancel(message: String, okListener: DialogInterface.OnClickListener) {
-        AlertDialog.Builder(this@StudentDetailsActivity)
+        AlertDialog.Builder(this@ActivityStudentDetails)
                 .setMessage(message)
                 .setPositiveButton("OK", okListener)
                 .setNegativeButton("Cancel", null)

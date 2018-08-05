@@ -23,13 +23,13 @@ import com.mstoyanov.musiclessons.model.PhoneNumberType
 import com.mstoyanov.musiclessons.model.Student
 import java.lang.ref.WeakReference
 
-class EditStudentActivity : AppCompatActivity() {
+class ActivityEditStudent : AppCompatActivity() {
     private lateinit var firstName: EditText
     private lateinit var lastName: EditText
     private lateinit var email: EditText
     private lateinit var notes: EditText
     private lateinit var progressBar: ProgressBar
-    private lateinit var adapter: EditStudentAdapter
+    private lateinit var adapter: AdapterEditStudent
     private lateinit var student: Student
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,7 +60,7 @@ class EditStudentActivity : AppCompatActivity() {
         progressBar.visibility = View.GONE
 
         val recyclerView = findViewById<RecyclerView>(R.id.phone_numbers_list)
-        adapter = EditStudentAdapter(student.phoneNumbers!!)
+        adapter = AdapterEditStudent(student.phoneNumbers!!)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
 
@@ -185,8 +185,8 @@ class EditStudentActivity : AppCompatActivity() {
 
     companion object {
 
-        private class UpdateStudent(context: EditStudentActivity) : AsyncTask<Student, Int, Student>() {
-            private val editStudentActivityWeakReference: WeakReference<EditStudentActivity> = WeakReference(context)
+        private class UpdateStudent(context: ActivityEditStudent) : AsyncTask<Student, Int, Student>() {
+            private val editStudentActivityWeakReference: WeakReference<ActivityEditStudent> = WeakReference(context)
 
             override fun doInBackground(vararg params: Student): Student {
                 /*try {
@@ -205,17 +205,17 @@ class EditStudentActivity : AppCompatActivity() {
             }
 
             override fun onPostExecute(result: Student) {
-                val editStudentActivity: EditStudentActivity = editStudentActivityWeakReference.get()!!
+                val editStudentActivity: ActivityEditStudent = editStudentActivityWeakReference.get()!!
                 editStudentActivity.progressBar.visibility = View.GONE
 
-                val intent = Intent(editStudentActivity, StudentDetailsActivity::class.java)
+                val intent = Intent(editStudentActivity, ActivityStudentDetails::class.java)
                 intent.putExtra("UPDATED_STUDENT", result)
                 editStudentActivity.startActivity(intent)
             }
         }
 
-        private class DeleteStudent(context: EditStudentActivity) : AsyncTask<Void, Int, Student>() {
-            private val editStudentActivityWeakReference: WeakReference<EditStudentActivity> = WeakReference(context)
+        private class DeleteStudent(context: ActivityEditStudent) : AsyncTask<Void, Int, Student>() {
+            private val editStudentActivityWeakReference: WeakReference<ActivityEditStudent> = WeakReference(context)
 
             override fun doInBackground(vararg params: Void): Student {
                 /*try {
@@ -231,10 +231,10 @@ class EditStudentActivity : AppCompatActivity() {
             }
 
             override fun onPostExecute(student: Student) {
-                val editStudentActivity: EditStudentActivity = editStudentActivityWeakReference.get()!!
+                val editStudentActivity: ActivityEditStudent = editStudentActivityWeakReference.get()!!
                 editStudentActivity.progressBar.visibility = View.GONE
 
-                val intent = Intent(editStudentActivity, MainActivity::class.java)
+                val intent = Intent(editStudentActivity, ActivityMain::class.java)
                 intent.putExtra("DELETED_STUDENT_ID", student.studentId)
                 editStudentActivity.startActivity(intent)
             }

@@ -25,7 +25,7 @@ class StudentDaoTest {
         val context = InstrumentationRegistry.getTargetContext()
         db = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java).build()
 
-        student = Student(1L, "John", "Smith", "jsmith@google.com", "Test student", null)
+        student = Student(1L, "John", "Smith", "jsmith@google.com", "Test student", listOf())
         db.studentDao.insert(student)
     }
 

@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v4.app.NavUtils
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.*
@@ -17,26 +18,23 @@ import java.lang.ref.WeakReference
 import java.text.SimpleDateFormat
 import java.util.*
 
-class AddLessonActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
+class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private lateinit var minuteFrom: NumberPicker
     private lateinit var hourFrom: NumberPicker
     private lateinit var minuteTo: NumberPicker
     private lateinit var hourTo: NumberPicker
     private lateinit var progressBar: ProgressBar
 
-    private lateinit var adapter: StudentsAdapter
+    private lateinit var adapter: ActivityEditLesson.StudentsAdapter
 
-    private lateinit var weekday: Weekday
-    private var lesson: Lesson = Lesson()
+    private lateinit var lesson: Lesson
     private var studentList: MutableList<Student> = mutableListOf()
-    private var studentListIsEmpty: Boolean = true
+    private var studentListIsEmpty: Boolean = false
     private val minutes = arrayOf("00", "15", "30", "45")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_add_lesson)
-
-        weekday = intent.getSerializableExtra("WEEKDAY") as Weekday
+        setContentView(R.layout.activity_edit_lesson)
 
         setSupportActionBar(findViewById<View>(R.id.toolbar) as Toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
@@ -44,8 +42,27 @@ class AddLessonActivity : AppCompatActivity(), AdapterView.OnItemSelectedListene
         progressBar = findViewById(R.id.progress_bar)
         progressBar.isIndeterminate = true
 
-        val weekdayTextView = findViewById<TextView>(R.id.weekday)
-        weekdayTextView.text = weekday.displayValue()
+        val weekday = findViewById<Spinner>(R.id.weekday)
+        val arrayAdapter = ArrayAdapter.createFromResource(
+                this,
+                R.array.weekdays,
+                R.layout.weekday_item)
+        arrayAdapter.setDropDownViewResource(R.layout.phone_type_dropdown_item)
+        weekday.adapter = arrayAdapter
+        weekday.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                lesson.weekday = Weekday.values()[position]
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {
+                // do nothing
+            }
+        }
+
+        val students: Spinner = findViewById(R.id.students)
+        adapter = ActivityEditLesson.StudentsAdapter(this, studentList)
+        students.adapter = adapter
+        students.onItemSelectedListener = this
 
         hourFrom = findViewById(R.id.hour_from)
         hourFrom.minValue = 8
@@ -71,25 +88,19 @@ class AddLessonActivity : AppCompatActivity(), AdapterView.OnItemSelectedListene
         minuteTo.wrapSelectorWheel = true
         minuteTo.setOnValueChangedListener(minuteToOnValueChangedListener)
 
-        val students: Spinner = findViewById(R.id.students)
-        adapter = StudentsAdapter(this, studentList)
-        students.adapter = adapter
-        students.onItemSelectedListener = this
-
         if (savedInstanceState == null) {
-            // coming from LessonsFragment:
-            lesson.weekday = weekday
+            // coming from LessonDetails:
+            lesson = intent.getSerializableExtra("LESSON") as Lesson
             initializeTime()
+            studentListIsEmpty = true
             LoadStudents(this).execute()
         } else {
             // after screen rotation:
             progressBar.visibility = View.GONE
-
             lesson = savedInstanceState.getSerializable("LESSON") as Lesson
-
             studentList = savedInstanceState.getSerializable("STUDENTS") as MutableList<Student>
-            studentListIsEmpty = studentList.isEmpty()
             adapter.addAll(studentList)
+            students.setSelection(studentList.indexOf(lesson.student))
 
             hourFrom.value = savedInstanceState.getInt("HOUR_FROM")
             minuteFrom.value = savedInstanceState.getInt("MINUTE_FROM")
@@ -98,13 +109,14 @@ class AddLessonActivity : AppCompatActivity(), AdapterView.OnItemSelectedListene
 
             invalidateOptionsMenu()
         }
+
+        weekday.setSelection(lesson.weekday!!.ordinal)
     }
 
     override fun onSaveInstanceState(state: Bundle) {
         super.onSaveInstanceState(state)
 
-        state.putSerializable("LESSON", lesson as Serializable)
-
+        state.putSerializable("LESSON", lesson)
         state.putSerializable("STUDENTS", studentList as Serializable)
 
         state.putInt("HOUR_FROM", hourFrom.value)
@@ -115,35 +127,51 @@ class AddLessonActivity : AppCompatActivity(), AdapterView.OnItemSelectedListene
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater = menuInflater
-        inflater.inflate(R.menu.menu_insert_lesson, menu)
+        inflater.inflate(R.menu.menu_edit_lesson, menu)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
+        when (item.itemId) {
             android.R.id.home -> {
                 NavUtils.navigateUpFromSameTask(this)
-                true
+                return true
             }
-            R.id.action_insert -> {
+            R.id.action_update -> {
                 setTime()
                 progressBar.visibility = View.VISIBLE
-                AddLesson(this).execute(lesson)
-                true
+                UpdateLesson(this).execute(lesson)
+                return true
             }
-            else -> super.onOptionsItemSelected(item)
+            R.id.action_delete -> {
+                createAlertDialog()
+                return true
+            }
+            else -> return super.onOptionsItemSelected(item)
         }
     }
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         if (studentListIsEmpty) {
-            menu.findItem(R.id.action_insert).isEnabled = false
-            menu.findItem(R.id.action_insert).icon.alpha = 127
+            menu.findItem(R.id.action_update).isEnabled = false
+            menu.findItem(R.id.action_update).icon.alpha = 127
+            menu.findItem(R.id.action_delete).isEnabled = false
+            menu.findItem(R.id.action_delete).icon.alpha = 127
         } else {
-            menu.findItem(R.id.action_insert).isEnabled = true
-            menu.findItem(R.id.action_insert).icon.alpha = 255
+            menu.findItem(R.id.action_update).isEnabled = true
+            menu.findItem(R.id.action_update).icon.alpha = 255
+            menu.findItem(R.id.action_delete).isEnabled = true
+            menu.findItem(R.id.action_delete).icon.alpha = 255
         }
         return true
+    }
+
+    override fun onItemSelected(adapterView: AdapterView<*>, view: View?, i: Int, l: Long) {
+        lesson.studentId = studentList[i].studentId
+    }
+
+    override fun onNothingSelected(adapterView: AdapterView<*>) {
+        // do nothing
     }
 
     private val minuteFromOnValueChangedListener = NumberPicker.OnValueChangeListener { numberPicker, oldValue, newValue ->
@@ -181,24 +209,21 @@ class AddLessonActivity : AppCompatActivity(), AdapterView.OnItemSelectedListene
         synchronizeTimeFromWithTimeTo()
     }
 
-    override fun onItemSelected(adapterView: AdapterView<*>, view: View?, i: Int, l: Long) {
-        lesson.studentId = studentList[i].studentId
-    }
-
-    override fun onNothingSelected(adapterView: AdapterView<*>) {
-        // do nothing
-    }
-
     private fun initializeTime() {
-        if (weekday == Weekday.SATURDAY || weekday == Weekday.SUNDAY) {
-            hourFrom.value = 8
-            hourTo.value = 8
-        } else {
-            hourFrom.value = 16
-            hourTo.value = 16
-        }
-        minuteFrom.value = 0
-        minuteTo.value = 2
+        var format = SimpleDateFormat("HH", Locale.US)
+        format.timeZone = TimeZone.getTimeZone("UTC")
+        val hrFrom = format.format(lesson.timeFrom)
+        val hrTo = format.format(lesson.timeTo)
+
+        format = SimpleDateFormat("mm", Locale.US)
+        format.timeZone = TimeZone.getTimeZone("UTC")
+        val mntFrom = format.format(lesson.timeFrom)
+        val mntTo = format.format(lesson.timeTo)
+
+        hourFrom.value = Integer.parseInt(hrFrom)
+        hourTo.value = Integer.parseInt(hrTo)
+        minuteFrom.value = Arrays.binarySearch(minutes, mntFrom)
+        minuteTo.value = Arrays.binarySearch(minutes, mntTo)
     }
 
     private fun synchronizeTimeToWithTimeFrom() {
@@ -230,14 +255,45 @@ class AddLessonActivity : AppCompatActivity(), AdapterView.OnItemSelectedListene
     private fun setTime() {
         val timeFromString = hourFrom.value.toString() + ":" + minutes[minuteFrom.value]
         val timeToString = hourTo.value.toString() + ":" + minutes[minuteTo.value]
+
         val format = SimpleDateFormat("HH:mm", Locale.US)
         format.timeZone = TimeZone.getTimeZone("UTC")
 
-        val dateFrom = format.parse(timeFromString)
-        val dateTo = format.parse(timeToString)
+        var dateFrom: Date? = null
+        var dateTo: Date? = null
+
+        dateFrom = format.parse(timeFromString)
+        dateTo = format.parse(timeToString)
 
         lesson.timeFrom = dateFrom
         lesson.timeTo = dateTo
+    }
+
+    private fun createAlertDialog() {
+        val builder = AlertDialog.Builder(this)
+        val message: String
+        if (lesson.student!!.firstName!!.replace("\\s+".toRegex(), "").isEmpty() && lesson.student!!.lastName!!.replace(" ", "").isNotEmpty()) {
+            message = "Delete lesson with " + lesson.student!!.lastName + "?"
+        } else if (lesson.student!!.firstName!!.replace(" ", "").isNotEmpty() && lesson.student!!.lastName!!.replace(" ", "").isEmpty()) {
+            message = "Delete lesson with " + lesson.student!!.firstName + "?"
+        } else {
+            message = "Delete lesson with " +
+                    lesson.student!!.firstName +
+                    " " +
+                    lesson.student!!.lastName + "?"
+        }
+        builder.setMessage(message)
+        builder.setPositiveButton("OK") { dialog, id -> delete() }
+        builder.setNegativeButton("Cancel") { dialog, id ->
+            // do nothing
+        }
+        val dialog = builder.create()
+        dialog.show()
+    }
+
+    private fun delete() {
+        progressBar.visibility = View.VISIBLE
+        DeleteLesson(this).execute()
     }
 
     private class StudentsAdapter(context: Context, studentList: List<Student>) : ArrayAdapter<Student>(context, 0, studentList) {
@@ -267,10 +323,10 @@ class AddLessonActivity : AppCompatActivity(), AdapterView.OnItemSelectedListene
 
     companion object {
 
-        private class LoadStudents(context: AddLessonActivity) : AsyncTask<Long, Int, MutableList<Student>>() {
-            private var addLessonActivityWeakReference: WeakReference<AddLessonActivity> = WeakReference(context)
+        private class LoadStudents(context: ActivityEditLesson) : AsyncTask<Long, Int, MutableList<Student>>() {
+            private var editLessonActivityWeakReference: WeakReference<ActivityEditLesson> = WeakReference(context)
 
-            override fun doInBackground(vararg p0: Long?): MutableList<Student> {
+            override fun doInBackground(vararg params: Long?): MutableList<Student> {
                 /*try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
@@ -280,20 +336,23 @@ class AddLessonActivity : AppCompatActivity(), AdapterView.OnItemSelectedListene
             }
 
             override fun onPostExecute(result: MutableList<Student>) {
-                val addLessonActivity: AddLessonActivity = addLessonActivityWeakReference.get()!!
-                addLessonActivity.progressBar.visibility = View.GONE
+                val editLessonActivity: ActivityEditLesson = editLessonActivityWeakReference.get()!!
+                editLessonActivity.progressBar.visibility = View.GONE
 
                 result.sort()
-                addLessonActivity.studentList = result
-                addLessonActivity.studentListIsEmpty = addLessonActivity.studentList.isEmpty()
-                addLessonActivity.adapter.addAll(addLessonActivity.studentList)
+                editLessonActivity.studentList = result
+                editLessonActivity.studentListIsEmpty = editLessonActivity.studentList.isEmpty()
+                editLessonActivity.adapter.addAll(editLessonActivity.studentList)
 
-                addLessonActivity.invalidateOptionsMenu()
+                val students: Spinner = editLessonActivity.findViewById(R.id.students)
+                students.setSelection(editLessonActivity.studentList.indexOf(editLessonActivity.lesson.student))
+
+                editLessonActivity.invalidateOptionsMenu()
             }
         }
 
-        private class AddLesson(context: AddLessonActivity) : AsyncTask<Lesson, Int, Lesson>() {
-            private var addLessonActivityWeakReference: WeakReference<AddLessonActivity> = WeakReference(context)
+        private class UpdateLesson(context: ActivityEditLesson) : AsyncTask<Lesson, Int, Lesson>() {
+            private var editLessonActivityWeakReference: WeakReference<ActivityEditLesson> = WeakReference(context)
 
             override fun doInBackground(vararg params: Lesson): Lesson {
                 /*try {
@@ -301,19 +360,43 @@ class AddLessonActivity : AppCompatActivity(), AdapterView.OnItemSelectedListene
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }*/
-                val addLessonActivity: AddLessonActivity = addLessonActivityWeakReference.get()!!
-
-                MusicLessonsApplication.db.lessonDao.insert(addLessonActivity.lesson)
-                return addLessonActivity.lesson
+                val editLessonActivity: ActivityEditLesson = editLessonActivityWeakReference.get()!!
+                MusicLessonsApplication.db.lessonDao.update(editLessonActivity.lesson)
+                return editLessonActivity.lesson
             }
 
             override fun onPostExecute(result: Lesson) {
-                val addLessonActivity: AddLessonActivity = addLessonActivityWeakReference.get()!!
-                addLessonActivity.progressBar.visibility = View.GONE
+                val editLessonActivity: ActivityEditLesson = editLessonActivityWeakReference.get()!!
+                editLessonActivity.progressBar.visibility = View.GONE
 
-                val intent = Intent(addLessonActivity, MainActivity::class.java)
-                intent.putExtra("WEEKDAY", addLessonActivity.lesson.weekday)
-                addLessonActivity.startActivity(intent)
+                val intent = Intent(editLessonActivity, ActivityMain::class.java)
+                intent.putExtra("WEEKDAY", editLessonActivity.lesson.weekday)
+                editLessonActivity.startActivity(intent)
+            }
+        }
+
+        private class DeleteLesson(context: ActivityEditLesson) : AsyncTask<Void, Int, Lesson>() {
+            private var editLessonActivityWeakReference: WeakReference<ActivityEditLesson> = WeakReference(context)
+
+            override fun doInBackground(vararg params: Void): Lesson {
+                /*try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }*/
+                val editLessonActivity: ActivityEditLesson = editLessonActivityWeakReference.get()!!
+
+                MusicLessonsApplication.db.lessonDao.delete(editLessonActivity.lesson)
+                return editLessonActivity.lesson
+            }
+
+            override fun onPostExecute(lesson: Lesson) {
+                val editLessonActivity: ActivityEditLesson = editLessonActivityWeakReference.get()!!
+                editLessonActivity.progressBar.visibility = View.GONE
+
+                val intent = Intent(editLessonActivity, ActivityMain::class.java)
+                intent.putExtra("WEEKDAY", lesson.weekday)
+                editLessonActivity.startActivity(intent)
             }
         }
     }

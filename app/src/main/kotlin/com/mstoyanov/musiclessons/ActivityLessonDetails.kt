@@ -22,14 +22,14 @@ import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
-import com.mstoyanov.musiclessons.StudentDetailsActivity.Companion.PERMISSION_REQUEST_CALL_PHONE
+import com.mstoyanov.musiclessons.ActivityStudentDetails.Companion.PERMISSION_REQUEST_CALL_PHONE
 import com.mstoyanov.musiclessons.model.Lesson
 import com.mstoyanov.musiclessons.model.PhoneNumber
 import java.lang.ref.WeakReference
 import java.text.SimpleDateFormat
 import java.util.*
 
-class LessonDetailsActivity : AppCompatActivity() {
+class ActivityLessonDetails : AppCompatActivity() {
     private lateinit var phoneNumbers: RecyclerView
     private lateinit var progressBar: ProgressBar
     private var number: String = ""
@@ -58,13 +58,13 @@ class LessonDetailsActivity : AppCompatActivity() {
             // coming from EditLessonActivity:
             progressBar.visibility = View.GONE
             lesson = intent.getSerializableExtra("UPDATED_LESSON") as Lesson
-            val adapter = LessonDetailsAdapter(lesson.student!!.phoneNumbers!!, this)
+            val adapter = AdapterLessonDetails(lesson.student!!.phoneNumbers!!, this)
             phoneNumbers.adapter = adapter
         } else if (savedInstanceState != null) {
             // after screen rotation:
             progressBar.visibility = View.GONE
             lesson = savedInstanceState.getSerializable("LESSON") as Lesson
-            val adapter = LessonDetailsAdapter(lesson.student!!.phoneNumbers!!, this)
+            val adapter = AdapterLessonDetails(lesson.student!!.phoneNumbers!!, this)
             phoneNumbers.adapter = adapter
         }
 
@@ -105,7 +105,7 @@ class LessonDetailsActivity : AppCompatActivity() {
 
         val edit = findViewById<FloatingActionButton>(R.id.edit)
         edit.setOnClickListener {
-            val intent = Intent(this@LessonDetailsActivity, EditLessonActivity::class.java)
+            val intent = Intent(this@ActivityLessonDetails, ActivityEditLesson::class.java)
             intent.putExtra("LESSON", lesson)
             startActivity(intent)
         }
@@ -131,7 +131,7 @@ class LessonDetailsActivity : AppCompatActivity() {
             PERMISSION_REQUEST_CALL_PHONE -> if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 dial(number)
             } else {
-                Toast.makeText(this@LessonDetailsActivity, "Permission CALL_PHONE denied", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@ActivityLessonDetails, "Permission CALL_PHONE denied", Toast.LENGTH_SHORT).show()
             }
             else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }
@@ -154,7 +154,7 @@ class LessonDetailsActivity : AppCompatActivity() {
     }
 
     private fun showMessageOKCancel(message: String, okListener: DialogInterface.OnClickListener) {
-        AlertDialog.Builder(this@LessonDetailsActivity)
+        AlertDialog.Builder(this@ActivityLessonDetails)
                 .setMessage(message)
                 .setPositiveButton("OK", okListener)
                 .setNegativeButton("Cancel", null)
@@ -165,8 +165,8 @@ class LessonDetailsActivity : AppCompatActivity() {
     companion object {
         private lateinit var lesson: Lesson
 
-        private class FindAllPhoneNumbersByStudentId(context: LessonDetailsActivity) : AsyncTask<Long, Int, MutableList<PhoneNumber>>() {
-            private val lessonDetailsActivityWeakReference: WeakReference<LessonDetailsActivity> = WeakReference(context)
+        private class FindAllPhoneNumbersByStudentId(context: ActivityLessonDetails) : AsyncTask<Long, Int, MutableList<PhoneNumber>>() {
+            private val lessonDetailsActivityWeakReference: WeakReference<ActivityLessonDetails> = WeakReference(context)
 
             override fun doInBackground(vararg p0: Long?): MutableList<PhoneNumber> {
                 /*try {
@@ -178,12 +178,12 @@ class LessonDetailsActivity : AppCompatActivity() {
             }
 
             override fun onPostExecute(result: MutableList<PhoneNumber>) {
-                val lessonDetailsActivity: LessonDetailsActivity = lessonDetailsActivityWeakReference.get()!!
+                val lessonDetailsActivity: ActivityLessonDetails = lessonDetailsActivityWeakReference.get()!!
 
                 lessonDetailsActivity.progressBar.visibility = View.GONE
 
                 lesson.student!!.phoneNumbers = result
-                val adapter = LessonDetailsAdapter(lesson.student!!.phoneNumbers!!, lessonDetailsActivity)
+                val adapter = AdapterLessonDetails(lesson.student!!.phoneNumbers!!, lessonDetailsActivity)
                 lessonDetailsActivity.phoneNumbers.adapter = adapter
             }
         }

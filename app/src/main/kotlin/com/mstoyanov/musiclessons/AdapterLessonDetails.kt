@@ -13,17 +13,17 @@ import android.widget.TextView
 
 import com.mstoyanov.musiclessons.model.PhoneNumber
 
-class StudentDetailsAdapter(private val phoneNumbers: List<PhoneNumber>, private val context: Context) : RecyclerView.Adapter<StudentDetailsAdapter.ViewHolder>() {
+class AdapterLessonDetails(private val phoneNumbers: List<PhoneNumber>, private val context: Context) : RecyclerView.Adapter<AdapterLessonDetails.ViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StudentDetailsAdapter.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdapterLessonDetails.ViewHolder {
         val phoneNumberItem = LayoutInflater.from(parent.context).inflate(
                 R.layout.phone_item_st_details,
                 parent,
                 false)
-        return ViewHolder(phoneNumberItem)
+        return AdapterLessonDetails.ViewHolder(phoneNumberItem)
     }
 
-    override fun onBindViewHolder(holder: StudentDetailsAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: AdapterLessonDetails.ViewHolder, position: Int) {
         holder.number.text = phoneNumbers[position].number
         holder.type.text = phoneNumbers[position].type!!.displayValue()
         if (phoneNumbers[position].type!!.displayValue().equals("cell", ignoreCase = true)) {
@@ -45,13 +45,12 @@ class StudentDetailsAdapter(private val phoneNumbers: List<PhoneNumber>, private
         val number: TextView = view.findViewById(R.id.phone_number)
         val type: TextView = view.findViewById(R.id.phone_number_type)
         val sms: ImageView = view.findViewById(R.id.sms)
-        val context: Context = view.context
 
         init {
-            number.setOnClickListener { (context as StudentDetailsActivity).dial(number.text.toString()) }
+            number.setOnClickListener { (view.context as ActivityLessonDetails).dial(number.text.toString()) }
             sms.setOnClickListener {
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse("sms:" + number.text.toString()))
-                context.startActivity(intent)
+                view.context.startActivity(intent)
             }
         }
     }

@@ -18,10 +18,10 @@ import com.mstoyanov.musiclessons.model.Weekday
 import java.io.Serializable
 import java.lang.ref.WeakReference
 
-class ScheduleFragment : Fragment() {
+class FragmentSchedule : Fragment() {
     // this field can not be static:
     private var lessons: MutableList<Lesson> = mutableListOf()
-    private var adapter: LessonsAdapter = LessonsAdapter(lessons)
+    private var adapter: AdapterLessons = AdapterLessons(lessons)
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -29,7 +29,7 @@ class ScheduleFragment : Fragment() {
 
         val title = rootView.findViewById<TextView>(R.id.weekday)
         val position = arguments!!.getInt("POSITION")
-        title.text = MainActivity.sectionTitles[position]
+        title.text = ActivityMain.sectionTitles[position]
 
         val recyclerView = rootView.findViewById<RecyclerView>(R.id.lessons)
         recyclerView.adapter = adapter
@@ -39,7 +39,7 @@ class ScheduleFragment : Fragment() {
         progressBar.isIndeterminate = true
 
         if (savedInstanceState == null) {
-            FindAllLessonsWithStudentByWeekday(this, MainActivity.sectionTitles[position]).execute()
+            FindAllLessonsWithStudentByWeekday(this, ActivityMain.sectionTitles[position]).execute()
         } else {
             progressBar.visibility = View.GONE
             lessons.addAll(savedInstanceState.getSerializable("LESSONS") as MutableList<Lesson>)
@@ -48,7 +48,7 @@ class ScheduleFragment : Fragment() {
 
         val button = rootView.findViewById<FloatingActionButton>(R.id.add_lesson)
         button.setOnClickListener {
-            val intent = Intent(activity, AddLessonActivity::class.java)
+            val intent = Intent(activity, ActivityAddLesson::class.java)
             intent.putExtra("WEEKDAY", Weekday.values()[position])
             startActivity(intent)
         }
@@ -63,16 +63,16 @@ class ScheduleFragment : Fragment() {
 
     companion object {
 
-        fun create(position: Int): ScheduleFragment {
-            val fragment = ScheduleFragment()
+        fun create(position: Int): FragmentSchedule {
+            val fragment = FragmentSchedule()
             val args = Bundle()
             args.putInt("POSITION", position)
             fragment.arguments = args
             return fragment
         }
 
-        private class FindAllLessonsWithStudentByWeekday(context: ScheduleFragment, private val weekday: String) : AsyncTask<Long, Int, List<LessonStudent>>() {
-            private val scheduleFragmentWeakReference: WeakReference<ScheduleFragment> = WeakReference(context)
+        private class FindAllLessonsWithStudentByWeekday(context: FragmentSchedule, private val weekday: String) : AsyncTask<Long, Int, List<LessonStudent>>() {
+            private val scheduleFragmentWeakReference: WeakReference<FragmentSchedule> = WeakReference(context)
 
             override fun doInBackground(vararg p0: Long?): List<LessonStudent> {
                 /*try {
