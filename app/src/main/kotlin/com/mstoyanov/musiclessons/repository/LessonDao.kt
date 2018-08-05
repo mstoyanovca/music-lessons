@@ -2,7 +2,7 @@ package com.mstoyanov.musiclessons.repository
 
 import android.arch.persistence.room.*
 import com.mstoyanov.musiclessons.model.Lesson
-import com.mstoyanov.musiclessons.model.LessonWithStudent
+import com.mstoyanov.musiclessons.model.LessonStudent
 
 @Dao
 interface LessonDao {
@@ -11,7 +11,7 @@ interface LessonDao {
             "from lesson " +
             "inner join student on lesson.student_id == student._id " +
             "where lesson.weekday == :weekday")
-    fun findAllWithStudentByWeekday(weekday: String): MutableList<LessonWithStudent>
+    fun findAllWithStudentByWeekday(weekday: String): MutableList<LessonStudent>
 
     @Insert
     fun insert(lesson: Lesson)
