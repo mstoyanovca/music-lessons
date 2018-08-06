@@ -2,18 +2,19 @@ package com.mstoyanov.musiclessons.model
 
 import android.arch.persistence.room.*
 import android.arch.persistence.room.ForeignKey.CASCADE
+import org.jetbrains.annotations.NotNull
 import java.io.Serializable
 import java.text.SimpleDateFormat
 import java.util.*
 
 @Entity(tableName = "lesson",
-        foreignKeys = [(ForeignKey(entity = Student::class, parentColumns = arrayOf("_id"), childColumns = arrayOf("student_id"), onDelete = CASCADE))],
+        foreignKeys = [(ForeignKey(entity = Student::class, parentColumns = arrayOf("s_id"), childColumns = arrayOf("student_id"), onDelete = CASCADE))],
         indices = [(Index(value = ["student_id"]))])
-data class Lesson(@PrimaryKey(autoGenerate = true) @ColumnInfo(name = "lesson_id") var lessonId: Long,
-                  @ColumnInfo(name = "weekday") @TypeConverters(WeekdayConverter::class) var weekday: Weekday,
-                  @ColumnInfo(name = "time_from") @TypeConverters(DateConverter::class) var timeFrom: Date,
-                  @ColumnInfo(name = "time_to") @TypeConverters(DateConverter::class) var timeTo: Date,
-                  @ColumnInfo(name = "student_id") var studentId: Long,
+data class Lesson(@PrimaryKey(autoGenerate = true) @ColumnInfo(name = "lesson_id") @NotNull var lessonId: Long,
+                  @ColumnInfo(name = "weekday") @NotNull @TypeConverters(WeekdayConverter::class) var weekday: Weekday,
+                  @ColumnInfo(name = "time_from") @NotNull @TypeConverters(DateConverter::class) var timeFrom: Date,
+                  @ColumnInfo(name = "time_to") @NotNull @TypeConverters(DateConverter::class) var timeTo: Date,
+                  @ColumnInfo(name = "student_id") @NotNull var studentId: Long,
                   @Ignore var student: Student) : Comparable<Lesson>, Serializable {
 
     constructor() : this(

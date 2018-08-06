@@ -20,28 +20,24 @@ class MusicLessonsApplication : Application() {
 
         private val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("create table if not exists student (_id integer primary key autoincrement not null, first_name text, last_name text, email text, notes text);")
-                database.execSQL("create table if not exists phone_number (phone_number_id integer primary key autoincrement not null, number text, type text, student_id integer not null, foreign key(student_id) references student(_id) on update no action on delete cascade);")
+                // TODO: create a 2_3 migration; the DB in production:
+                /*database.execSQL("create table if not exists student (_id integer primary key autoincrement not null, first_name text, last_name text, email text, notes text);");
+                database.execSQL("create table if not exists phone_number (phone_number_id integer primary key autoincrement not null, number text, type text, student_id integer not null, foreign key(student_id) references student(_id) on update no action on delete cascade);");
+                database.execSQL("create index index_phone_number_student_id on phone_number (student_id);");
+                database.execSQL("create table if not exists lesson (lesson_id integer primary key autoincrement not null, weekday text, time_from integer, time_to integer, student_id integer not null, foreign key(student_id) references student(_id) on update no action on delete cascade);");
+                database.execSQL("create index index_lesson_student_id on lesson (student_id);");*/
+
+                database.execSQL("create table if not exists student (s_id integer primary key autoincrement not null, first_name text not null, last_name text not null, email text not null, notes text not null);")
+                database.execSQL("create table if not exists phone_number (phone_number_id integer primary key autoincrement not null, number text not null, type text not null, student_id integer not null, foreign key(student_id) references student(s_id) on update no action on delete cascade);")
                 database.execSQL("create index index_phone_number_student_id on phone_number (student_id);")
-                database.execSQL("create table if not exists lesson (lesson_id integer primary key autoincrement not null, weekday text, time_from integer, time_to integer, student_id integer not null, foreign key(student_id) references student(_id) on update no action on delete cascade);")
-                database.execSQL("create index index_lesson_student_id on lesson (student_id);")
+                database.execSQL("create table if not exists lesson (lesson_id integer primary key autoincrement not null, weekday text not null, time_from integer not null, time_to integer not null, student_id integer not null, foreign key(student_id) references student(s_id) on update no action on delete cascade);")
+                database.execSQL("create index index_lesson_student_id ON lesson (student_id);")
 
-                database.execSQL("insert into student (first_name, last_name, email) select firstName, lastName, email from students;")
-                database.execSQL("update student set first_name = '' where first_name is null;")
-                database.execSQL("update student set last_name = '' where last_name is null;")
-                database.execSQL("update student set email = '' where email is null;")
-                database.execSQL("update student set notes = '';")
-
-                database.execSQL("insert into phone_number (number, student_id) select homePhone, studentID from students where length(homePhone) > 0;")
-                database.execSQL("update phone_number set type = 'Home' where length(number) > 0 and type is null;")
-                database.execSQL("insert into phone_number (number, student_id) select cellPhone, studentID from students where length(cellPhone) > 0;")
-                database.execSQL("update phone_number set type = 'Cell' where length(number) > 0 and type is null;")
-                database.execSQL("insert into phone_number (number, student_id) select workPhone, studentID from students where length(workPhone) > 0;")
-                database.execSQL("update phone_number set type = 'Work' where length(number) > 0 and type is null;")
-
-                database.execSQL("insert into lesson (lesson_id, weekday, student_id) select lessonID, weekday, studentID from schedule;")
-                database.execSQL("update lesson set time_from = (select strftime('%s', '1970-01-01 ' || (select timeFrom from schedule where schedule.lessonID = lesson.lesson_id)) * 1000);")
-                database.execSQL("update lesson set time_to = (select strftime('%s', '1970-01-01 ' || (select timeTo from schedule where schedule.lessonID = lesson.lesson_id)) * 1000);")
+                database.execSQL("insert into student (first_name, last_name, email, notes) select case when firstName = null then '' else firstName end, case when lastName = null then '' else lastName end, case when email = null then '' else email end, '' from students;")
+                database.execSQL("insert into phone_number (number, student_id,type) select homePhone, studentID, 'Home' from students where homePhone is not null and length(homePhone) > 0;")
+                database.execSQL("insert into phone_number (number, student_id, type) select cellPhone, studentID, 'Cell' from students where cellPhone is not null and length(cellPhone) > 0;")
+                database.execSQL("insert into phone_number (number, student_id, type) select workPhone, studentID, 'Work' from students where workPhone is not null and length(workPhone) > 0;")
+                database.execSQL("insert into lesson (weekday, student_id, time_from, time_to) select weekday, studentID,  strftime('%s', timeFrom * 1000), strftime('%s', timeTo * 1000) from schedule;")
 
                 database.execSQL("drop table if exists students;")
                 database.execSQL("drop table if exists schedule;")

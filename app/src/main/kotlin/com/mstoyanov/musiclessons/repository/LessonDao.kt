@@ -9,7 +9,7 @@ interface LessonDao {
 
     @Query("select lesson.*, student.* " +
             "from lesson " +
-            "inner join student on lesson.student_id == student._id " +
+            "inner join student on lesson.student_id == student.s_id " +
             "where lesson.weekday == :weekday")
     fun findAllWithStudentByWeekday(weekday: String): MutableList<LessonStudent>
 
