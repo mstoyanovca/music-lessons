@@ -5,7 +5,7 @@ import android.arch.persistence.room.RoomDatabase
 import android.arch.persistence.room.TypeConverters
 import com.mstoyanov.musiclessons.model.*
 
-@Database(entities = [(Student::class), (PhoneNumber::class), (Lesson::class)], version = 2)
+@Database(entities = [(Student::class), (PhoneNumber::class), (Lesson::class)], version = 3)
 @TypeConverters(DateConverter::class, PhoneNumberTypeConverter::class, WeekdayConverter::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract val studentDao: StudentDao

@@ -1,16 +1,16 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 2,
-    "identityHash": "a424b00976cdc3c85ba51a531ad09de8",
+    "version": 3,
+    "identityHash": "08a959c3c5861f2b39f4d02912e9c5e7",
     "entities": [
       {
         "tableName": "student",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `first_name` TEXT, `last_name` TEXT, `email` TEXT, `notes` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`s_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `first_name` TEXT NOT NULL, `last_name` TEXT NOT NULL, `email` TEXT NOT NULL, `notes` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "studentId",
-            "columnName": "_id",
+            "columnName": "s_id",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -18,30 +18,30 @@
             "fieldPath": "firstName",
             "columnName": "first_name",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "lastName",
             "columnName": "last_name",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "email",
             "columnName": "email",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "notes",
             "columnName": "notes",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           }
         ],
         "primaryKey": {
           "columnNames": [
-            "_id"
+            "s_id"
           ],
           "autoGenerate": true
         },
@@ -50,7 +50,7 @@
       },
       {
         "tableName": "phone_number",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`phone_number_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `number` TEXT, `type` TEXT, `student_id` INTEGER NOT NULL, FOREIGN KEY(`student_id`) REFERENCES `student`(`_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`phone_number_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `number` TEXT NOT NULL, `type` TEXT NOT NULL, `student_id` INTEGER NOT NULL, FOREIGN KEY(`student_id`) REFERENCES `student`(`s_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "phoneNumberId",
@@ -62,13 +62,13 @@
             "fieldPath": "number",
             "columnName": "number",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "type",
             "columnName": "type",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "studentId",
@@ -102,14 +102,14 @@
               "student_id"
             ],
             "referencedColumns": [
-              "_id"
+              "s_id"
             ]
           }
         ]
       },
       {
         "tableName": "lesson",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`lesson_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `weekday` TEXT, `time_from` INTEGER, `time_to` INTEGER, `student_id` INTEGER NOT NULL, FOREIGN KEY(`student_id`) REFERENCES `student`(`_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`lesson_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `weekday` TEXT NOT NULL, `time_from` INTEGER NOT NULL, `time_to` INTEGER NOT NULL, `student_id` INTEGER NOT NULL, FOREIGN KEY(`student_id`) REFERENCES `student`(`s_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "lessonId",
@@ -121,19 +121,19 @@
             "fieldPath": "weekday",
             "columnName": "weekday",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "timeFrom",
             "columnName": "time_from",
             "affinity": "INTEGER",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "timeTo",
             "columnName": "time_to",
             "affinity": "INTEGER",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "studentId",
@@ -167,7 +167,7 @@
               "student_id"
             ],
             "referencedColumns": [
-              "_id"
+              "s_id"
             ]
           }
         ]
@@ -175,7 +175,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"a424b00976cdc3c85ba51a531ad09de8\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"08a959c3c5861f2b39f4d02912e9c5e7\")"
     ]
   }
 }
