@@ -1,6 +1,7 @@
 package com.mstoyanov.musiclessons
 
 import android.app.Activity
+import android.arch.persistence.room.Transaction
 import android.content.Intent
 import android.os.AsyncTask
 import android.os.Bundle
@@ -18,7 +19,6 @@ import android.view.View
 import android.widget.EditText
 import android.widget.ProgressBar
 import com.mstoyanov.musiclessons.model.PhoneNumber
-import com.mstoyanov.musiclessons.model.PhoneNumberType
 import com.mstoyanov.musiclessons.model.Student
 import java.lang.ref.WeakReference
 
@@ -28,7 +28,7 @@ class ActivityAddStudent : AppCompatActivity() {
     private lateinit var lastName: EditText
     private lateinit var progressBar: ProgressBar
     private lateinit var adapter: AdapterAddStudent
-    private var student = Student()
+    private lateinit var student: Student
     var pristine = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,9 +36,8 @@ class ActivityAddStudent : AppCompatActivity() {
         setContentView(R.layout.activity_add_student)
 
         if (savedInstanceState == null) {
-            val phoneNumbers = mutableListOf<PhoneNumber>()
-            phoneNumbers.add(PhoneNumber("", PhoneNumberType.HOME))
-            student.phoneNumbers = phoneNumbers
+            student = Student()
+            student.phoneNumbers.add(PhoneNumber())
         } else {
             student = savedInstanceState.getSerializable("STUDENT") as Student
             pristine = savedInstanceState.get("PRISTINE") as Boolean
@@ -59,13 +58,13 @@ class ActivityAddStudent : AppCompatActivity() {
         lastName.addTextChangedListener(NameTextWatcher(this))
 
         val recyclerView = findViewById<RecyclerView>(R.id.phone_numbers_list)
-        adapter = AdapterAddStudent(student.phoneNumbers!!)
+        adapter = AdapterAddStudent(student.phoneNumbers)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         val button = findViewById<FloatingActionButton>(R.id.add_phone_number)
         button.setOnClickListener {
-            student.phoneNumbers += PhoneNumber("", PhoneNumberType.HOME)
+            student.phoneNumbers.add(PhoneNumber())
             adapter.notifyDataSetChanged()
         }
     }
@@ -109,40 +108,32 @@ class ActivityAddStudent : AppCompatActivity() {
 
     private fun studentIsValid(): Boolean {
         if (!nameIsValid()) return false
-        student.phoneNumbers!!.map { phoneNumber -> if (!phoneNumber.isValid) return false }
+        student.phoneNumbers.map { pn -> if (!pn.isValid) return false }
         return true
     }
 
     private fun nameIsValid(): Boolean {
-        return !firstName.text.toString().replace("\\s+".toRegex(), "").isEmpty() || !lastName.text.toString().replace("\\s+".toRegex(), "").isEmpty()
+        return firstName.text.toString().trim().isNotEmpty() || lastName.text.toString().trim().isNotEmpty()
     }
 
     private fun insertStudent() {
-        student.firstName = stripString(firstName.text.toString())
-        student.lastName = stripString(lastName.text.toString())
+        student.firstName = firstName.text.toString().trim()
+        student.lastName = lastName.text.toString().trim()
 
         student.phoneNumbers = adapter.phoneNumbers
 
         val email = findViewById<EditText>(R.id.email)
-        student.email = stripString(email.text.toString())
+        student.email = email.text.toString().trim()
 
         val notes = findViewById<EditText>(R.id.notes)
-        student.notes = stripString(notes.text.toString())
+        student.notes = notes.text.toString().trim()
 
         progressBar.visibility = View.VISIBLE
         AddStudent(this).execute(student)
     }
 
-    private fun stripString(string: String): String {
-        return if (string.replace("\\s+".toRegex(), "").isNotEmpty()) {
-            string.trim { it <= ' ' }
-        } else {
-            ""
-        }
-    }
-
-    fun invokeTextChanged() {
-        firstNameTextWatcher.afterTextChanged(firstName.text)
+    fun invokeFirstNameTextWatcher() {
+        firstNameTextWatcher.afterTextChanged(firstName.text)  // TODO ?
     }
 
     private inner class NameTextWatcher(private val activity: Activity) : TextWatcher {
@@ -156,15 +147,14 @@ class ActivityAddStudent : AppCompatActivity() {
         }
 
         override fun afterTextChanged(s: Editable) {
-            if (pristine && s.isNotEmpty()) {
+            if (pristine && s.toString().isNotEmpty()) {
                 pristine = false
-                adapter.notifyDataSetChanged()
+                if (student.phoneNumbers.size > 0) adapter.notifyDataSetChanged()
             }
             if (nameIsValid()) {
                 firstName.error = null
             } else {
-                if (!pristine)
-                    firstName.error = activity.resources.getString(R.string.name_error)
+                if (!pristine) firstName.error = activity.resources.getString(R.string.name_error)
             }
             activity.invalidateOptionsMenu()
         }
@@ -175,6 +165,7 @@ class ActivityAddStudent : AppCompatActivity() {
         private class AddStudent(context: ActivityAddStudent) : AsyncTask<Student, Int, Student>() {
             private val addStudentActivityWeakReference: WeakReference<ActivityAddStudent> = WeakReference(context)
 
+            @Transaction
             override fun doInBackground(vararg params: Student): Student {
                 // Thread.sleep(1000)
                 val addStudentActivity = addStudentActivityWeakReference.get()!!
@@ -183,8 +174,8 @@ class ActivityAddStudent : AppCompatActivity() {
                 val id = MusicLessonsApplication.db.studentDao.insert(student)
                 student.studentId = id
 
-                student.phoneNumbers!!.map { phoneNumber -> phoneNumber.studentId = id }
-                MusicLessonsApplication.db.phoneNumberDao.insertAll(student.phoneNumbers!!)
+                student.phoneNumbers.map { pn -> pn.studentId = id }
+                MusicLessonsApplication.db.phoneNumberDao.insertAll(student.phoneNumbers)
                 return student
             }
 

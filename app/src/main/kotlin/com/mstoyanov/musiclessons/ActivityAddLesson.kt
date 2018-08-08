@@ -27,8 +27,8 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
     private lateinit var adapter: StudentsAdapter
 
     private lateinit var weekday: Weekday
-    private var lesson: Lesson = Lesson()
-    private var studentList: MutableList<Student> = mutableListOf()
+    private var lesson: Lesson = Lesson()  // TODO: fix!
+    private var studentList: MutableList<Student> = mutableListOf()  // TODO: fix!
     private var studentListIsEmpty: Boolean = true
     private val minutes = arrayOf("00", "15", "30", "45")
 

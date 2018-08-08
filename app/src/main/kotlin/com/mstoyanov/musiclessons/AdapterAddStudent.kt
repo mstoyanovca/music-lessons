@@ -12,24 +12,20 @@ import android.widget.*
 import com.mstoyanov.musiclessons.model.PhoneNumber
 import com.mstoyanov.musiclessons.model.PhoneNumberType
 
-class AdapterAddStudent(var phoneNumbers: List<PhoneNumber>) : RecyclerView.Adapter<AdapterAddStudent.ViewHolder>() {
+class AdapterAddStudent(var phoneNumbers: MutableList<PhoneNumber>) : RecyclerView.Adapter<AdapterAddStudent.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdapterAddStudent.ViewHolder {
-        val phoneNumberItem = LayoutInflater.from(parent.context).inflate(
-                R.layout.phone_item_add_st,
-                parent,
-                false)
+        val phoneNumberItem = LayoutInflater.from(parent.context).inflate(R.layout.phone_item_add_st, parent, false)
         return ViewHolder(phoneNumberItem)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.number.setText(phoneNumbers[position].number!!.trim { it <= ' ' })
-        holder.type.setSelection(phoneNumbers[position].type!!.ordinal)
+        holder.number.setText(phoneNumbers[position].number.trim())
+        holder.type.setSelection(phoneNumbers[position].type.ordinal)
         holder.delete.setOnClickListener {
-            phoneNumbers -= phoneNumbers[position]
-            if (phoneNumbers.size == 0)
-                (holder.context as ActivityAddStudent).invalidateOptionsMenu()
+            phoneNumbers.remove(phoneNumbers[position])
             notifyDataSetChanged()
+            if (phoneNumbers.size == 0) (holder.context as ActivityAddStudent).invalidateOptionsMenu()
         }
     }
 
@@ -39,18 +35,15 @@ class AdapterAddStudent(var phoneNumbers: List<PhoneNumber>) : RecyclerView.Adap
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val number: EditText = view.findViewById(R.id.phone_number)
-        val type: Spinner= view.findViewById(R.id.phone_number_type)
-        val delete: ImageButton= view.findViewById(R.id.delete)
+        val type: Spinner = view.findViewById(R.id.phone_number_type)
+        val delete: ImageButton = view.findViewById(R.id.delete)
         val context: Context = view.context
 
         init {
             number.addTextChangedListener(PhoneNumberFormattingTextWatcher())
             number.addTextChangedListener(PhoneNumberTextWatcher())
 
-            val adapter = ArrayAdapter.createFromResource(
-                    view.context,
-                    R.array.phone_types,
-                    R.layout.phone_type_item)
+            val adapter = ArrayAdapter.createFromResource(view.context, R.array.phone_types, R.layout.phone_type_item)
             adapter.setDropDownViewResource(R.layout.phone_type_dropdown_item)
             type.adapter = adapter
             type.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -75,19 +68,18 @@ class AdapterAddStudent(var phoneNumbers: List<PhoneNumber>) : RecyclerView.Adap
             }
 
             override fun afterTextChanged(s: Editable) {
-                if ((context as ActivityAddStudent).pristine && s.isNotEmpty()) {
+                if ((context as ActivityAddStudent).pristine && s.toString().isNotEmpty()) {
                     context.pristine = false
-                    context.invokeTextChanged()
+                    context.invokeFirstNameTextWatcher()
                 }
-                if (s.toString().replace("\\s+".toRegex(), "").isNotEmpty()) {
-                    phoneNumbers[adapterPosition].number = s.toString().trim { it <= ' ' }
+                if (s.toString().trim().isNotEmpty()) {
+                    phoneNumbers[adapterPosition].number = s.toString().trim()
                     phoneNumbers[adapterPosition].isValid = true
                     number.error = null
                 } else {
                     phoneNumbers[adapterPosition].number = ""
                     phoneNumbers[adapterPosition].isValid = false
-                    if (!context.pristine)
-                        number.error = context.getResources().getString(R.string.phone_number_error)
+                    if (!context.pristine) number.error = context.getResources().getString(R.string.phone_number_error)
                 }
                 context.invalidateOptionsMenu()
             }

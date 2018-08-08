@@ -13,9 +13,9 @@ data class Student(@PrimaryKey(autoGenerate = true) @ColumnInfo(name = "s_id") @
                    @ColumnInfo(name = "last_name") @NotNull var lastName: String,
                    @NotNull var email: String,
                    @NotNull var notes: String,
-                   @Ignore var phoneNumbers: List<PhoneNumber>) : Comparable<Student>, Serializable {
+                   @Ignore var phoneNumbers: MutableList<PhoneNumber>) : Comparable<Student>, Serializable {
 
-    constructor() : this(0L, "", "", "", "", listOf<PhoneNumber>())
+    constructor() : this(0L, "", "", "", "", mutableListOf<PhoneNumber>())
 
     override fun compareTo(other: Student): Int {
         return if (firstName.compareTo(other.firstName, ignoreCase = true) != 0)

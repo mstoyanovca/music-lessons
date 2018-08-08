@@ -14,7 +14,7 @@ import com.mstoyanov.musiclessons.model.PhoneNumber
 import com.mstoyanov.musiclessons.model.PhoneNumberType
 import java.lang.ref.WeakReference
 
-class AdapterEditStudent(var phoneNumbers: List<PhoneNumber>) : RecyclerView.Adapter<AdapterEditStudent.ViewHolder>() {
+class AdapterEditStudent(var phoneNumbers: MutableList<PhoneNumber>) : RecyclerView.Adapter<AdapterEditStudent.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdapterEditStudent.ViewHolder {
         val phoneNumberItem = LayoutInflater.from(parent.context).inflate(
@@ -32,7 +32,7 @@ class AdapterEditStudent(var phoneNumbers: List<PhoneNumber>) : RecyclerView.Ada
                 (holder.context as ActivityEditStudent).stopProgressBar()
                 DeletePhoneNumber(phoneNumbers[position], holder.context).execute()
             }
-            phoneNumbers -= phoneNumbers[position]
+            phoneNumbers.add(phoneNumbers[position])
             if (phoneNumbers.size == 0)
                 (holder.context as ActivityEditStudent).invalidateOptionsMenu()
             notifyDataSetChanged()
