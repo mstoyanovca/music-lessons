@@ -5,3 +5,8 @@ The latest update includes:
 - unit and instrumentation tests were added;
 - the DB schema was upgraded;
 - fixed an intermittent bug in the DAO layer;
+
+TODO:
+- missing dash in LessonDetail;
+- add master-detail view for tablets;
+- add pdf export;

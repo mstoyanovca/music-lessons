@@ -1,6 +1,7 @@
 package com.mstoyanov.musiclessons
 
 import android.app.Activity
+import android.arch.persistence.room.Transaction
 import android.content.Intent
 import android.os.AsyncTask
 import android.os.Bundle
@@ -19,7 +20,6 @@ import android.view.View
 import android.widget.EditText
 import android.widget.ProgressBar
 import com.mstoyanov.musiclessons.model.PhoneNumber
-import com.mstoyanov.musiclessons.model.PhoneNumberType
 import com.mstoyanov.musiclessons.model.Student
 import java.lang.ref.WeakReference
 
@@ -60,13 +60,13 @@ class ActivityEditStudent : AppCompatActivity() {
         progressBar.visibility = View.GONE
 
         val recyclerView = findViewById<RecyclerView>(R.id.phone_numbers_list)
-        adapter = AdapterEditStudent(student.phoneNumbers!!)
+        adapter = AdapterEditStudent(student.phoneNumbers)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         val button = findViewById<FloatingActionButton>(R.id.add_phone_number)
         button.setOnClickListener {
-            student.phoneNumbers.add(PhoneNumber("", PhoneNumberType.HOME))
+            student.phoneNumbers.add(PhoneNumber())
             adapter.notifyDataSetChanged()
         }
     }
@@ -106,6 +106,10 @@ class ActivityEditStudent : AppCompatActivity() {
         return true
     }
 
+    fun startProgressBar() {
+        progressBar.visibility = View.VISIBLE
+    }
+
     fun stopProgressBar() {
         progressBar.visibility = View.GONE
     }
@@ -131,11 +135,11 @@ class ActivityEditStudent : AppCompatActivity() {
     }
 
     private fun updateStudent() {
-        student.firstName = stripString(firstName.text.toString())
-        student.lastName = stripString(lastName.text.toString())
+        student.firstName = firstName.text.toString().trim()
+        student.lastName = lastName.text.toString().trim()
         student.phoneNumbers = adapter.phoneNumbers
-        student.email = stripString(email.text.toString())
-        student.notes = stripString(notes.text.toString())
+        student.email = email.text.toString().trim()
+        student.notes = notes.text.toString().trim()
 
         progressBar.visibility = View.VISIBLE
         UpdateStudent(this).execute()
@@ -144,12 +148,12 @@ class ActivityEditStudent : AppCompatActivity() {
     private fun createAlertDialog() {
         val builder = AlertDialog.Builder(this)
         val message: String
-        if (!(student.firstName!!.replace("\\s+".toRegex(), "").isNotEmpty() || !student.lastName!!.replace(" ", "").isNotEmpty())) {
-            message = "Delete student " + student.lastName + "?"
-        } else if (!(!student.firstName!!.replace(" ", "").isNotEmpty() || student.lastName!!.replace(" ", "").isNotEmpty())) {
-            message = "Delete student " + student.firstName + "?"
+        if (student.firstName.trim().isNotEmpty() && student.lastName.trim().isEmpty()) {
+            message = "Delete student " + student.firstName.trim() + "?"
+        } else if (student.firstName.trim().isEmpty() && student.lastName.trim().isNotEmpty()) {
+            message = "Delete student " + student.lastName.trim() + "?"
         } else {
-            message = "Delete student " + student.firstName + " " + student.lastName + "?"
+            message = "Delete student " + student.firstName.trim() + " " + student.lastName.trim() + "?"
         }
         builder.setMessage(message)
         builder.setPositiveButton("OK") { dialogInterface, i -> deleteStudent() }
@@ -167,20 +171,12 @@ class ActivityEditStudent : AppCompatActivity() {
 
     private fun studentIsValid(): Boolean {
         if (!nameIsValid()) return false
-        student.phoneNumbers!!.map { phoneNumber -> if (!phoneNumber.isValid) return false }
+        student.phoneNumbers.map { pn -> if (!pn.isValid) return false }
         return true
     }
 
     private fun nameIsValid(): Boolean {
-        return !firstName.text.toString().replace("\\s+".toRegex(), "").isEmpty() || !lastName.text.toString().replace("\\s+".toRegex(), "").isEmpty()
-    }
-
-    private fun stripString(string: String): String {
-        return if (string.replace("\\s+".toRegex(), "").isNotEmpty()) {
-            string.trim { it <= ' ' }
-        } else {
-            ""
-        }
+        return firstName.text.toString().trim().isNotEmpty() || lastName.text.toString().trim().isNotEmpty()
     }
 
     companion object {
@@ -188,10 +184,11 @@ class ActivityEditStudent : AppCompatActivity() {
         private class UpdateStudent(context: ActivityEditStudent) : AsyncTask<Student, Int, Student>() {
             private val editStudentActivityWeakReference: WeakReference<ActivityEditStudent> = WeakReference(context)
 
+            @Transaction
             override fun doInBackground(vararg params: Student): Student {
                 /*try {
                     Thread.sleep(1000);
-                } catch (InterruptedException e) {
+                } catch (e: InterruptedException) {
                     e.printStackTrace();
                 }*/
                 val editStudentActivity = editStudentActivityWeakReference.get()!!
@@ -199,8 +196,8 @@ class ActivityEditStudent : AppCompatActivity() {
 
                 MusicLessonsApplication.db.studentDao.update(student)
 
-                student.phoneNumbers!!.map { phoneNumber -> phoneNumber.studentId = student.studentId }
-                MusicLessonsApplication.db.phoneNumberDao.insertAll(student.phoneNumbers!!)
+                student.phoneNumbers.map { pn -> pn.studentId = student.studentId }
+                MusicLessonsApplication.db.phoneNumberDao.insertAll(student.phoneNumbers)
                 return student
             }
 

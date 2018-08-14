@@ -17,25 +17,23 @@ import java.lang.ref.WeakReference
 class AdapterEditStudent(var phoneNumbers: MutableList<PhoneNumber>) : RecyclerView.Adapter<AdapterEditStudent.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdapterEditStudent.ViewHolder {
-        val phoneNumberItem = LayoutInflater.from(parent.context).inflate(
-                R.layout.phone_item_add_st,
-                parent,
-                false)
+        val phoneNumberItem = LayoutInflater.from(parent.context).inflate(R.layout.phone_item_add_st, parent, false)
         return ViewHolder(phoneNumberItem)
     }
 
     override fun onBindViewHolder(holder: AdapterEditStudent.ViewHolder, position: Int) {
-        holder.number.setText(phoneNumbers[position].number!!.trim { it <= ' ' })
-        holder.type.setSelection(phoneNumbers[position].type!!.ordinal)
+        holder.number.setText(phoneNumbers[position].number.trim())
+        holder.type.setSelection(phoneNumbers[position].type.ordinal)
         holder.delete.setOnClickListener {
             if (phoneNumbers[position].phoneNumberId > 0) {
-                (holder.context as ActivityEditStudent).stopProgressBar()
+                (holder.context as ActivityEditStudent).startProgressBar()
                 DeletePhoneNumber(phoneNumbers[position], holder.context).execute()
             }
-            phoneNumbers.add(phoneNumbers[position])
-            if (phoneNumbers.size == 0)
-                (holder.context as ActivityEditStudent).invalidateOptionsMenu()
+
+            phoneNumbers.remove(phoneNumbers[position])
             notifyDataSetChanged()
+
+            if (phoneNumbers.size == 0) (holder.context as ActivityEditStudent).invalidateOptionsMenu()
         }
     }
 
@@ -81,8 +79,8 @@ class AdapterEditStudent(var phoneNumbers: MutableList<PhoneNumber>) : RecyclerV
             }
 
             override fun afterTextChanged(s: Editable) {
-                if (s.toString().replace("\\s+".toRegex(), "").trim { it <= ' ' }.isNotEmpty()) {
-                    phoneNumbers[adapterPosition].number = s.toString().trim { it <= ' ' }
+                if (s.toString().trim().isNotEmpty()) {
+                    phoneNumbers[adapterPosition].number = s.toString().trim()
                     phoneNumbers[adapterPosition].isValid = true
                     number.error = null
                 } else {
@@ -103,7 +101,7 @@ class AdapterEditStudent(var phoneNumbers: MutableList<PhoneNumber>) : RecyclerV
             override fun doInBackground(vararg params: Void): PhoneNumber {
                 /*try {
                     Thread.sleep(1000);
-                } catch (InterruptedException e) {
+                } catch (e: InterruptedException) {
                     e.printStackTrace();
                 }*/
                 MusicLessonsApplication.db.phoneNumberDao.delete(phoneNumber)
