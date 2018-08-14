@@ -1,7 +1,6 @@
 package com.mstoyanov.musiclessons
 
 import android.content.Context
-import android.os.AsyncTask
 import android.support.v7.widget.RecyclerView
 import android.telephony.PhoneNumberFormattingTextWatcher
 import android.text.Editable
@@ -12,7 +11,6 @@ import android.view.ViewGroup
 import android.widget.*
 import com.mstoyanov.musiclessons.model.PhoneNumber
 import com.mstoyanov.musiclessons.model.PhoneNumberType
-import java.lang.ref.WeakReference
 
 class AdapterEditStudent(var phoneNumbers: MutableList<PhoneNumber>) : RecyclerView.Adapter<AdapterEditStudent.ViewHolder>() {
 
@@ -25,14 +23,8 @@ class AdapterEditStudent(var phoneNumbers: MutableList<PhoneNumber>) : RecyclerV
         holder.number.setText(phoneNumbers[position].number.trim())
         holder.type.setSelection(phoneNumbers[position].type.ordinal)
         holder.delete.setOnClickListener {
-            if (phoneNumbers[position].phoneNumberId > 0) {
-                (holder.context as ActivityEditStudent).startProgressBar()
-                DeletePhoneNumber(phoneNumbers[position], holder.context).execute()
-            }
-
             phoneNumbers.remove(phoneNumbers[position])
             notifyDataSetChanged()
-
             if (phoneNumbers.size == 0) (holder.context as ActivityEditStudent).invalidateOptionsMenu()
         }
     }
@@ -89,28 +81,6 @@ class AdapterEditStudent(var phoneNumbers: MutableList<PhoneNumber>) : RecyclerV
                     number.error = context.resources.getString(R.string.phone_number_error)
                 }
                 (context as ActivityEditStudent).invalidateOptionsMenu()
-            }
-        }
-    }
-
-    companion object {
-
-        private class DeletePhoneNumber(private val phoneNumber: PhoneNumber, context: Context) : AsyncTask<Void, Int, PhoneNumber>() {
-            private val contextWeakReference: WeakReference<Context> = WeakReference(context)
-
-            override fun doInBackground(vararg params: Void): PhoneNumber {
-                /*try {
-                    Thread.sleep(1000);
-                } catch (e: InterruptedException) {
-                    e.printStackTrace();
-                }*/
-                MusicLessonsApplication.db.phoneNumberDao.delete(phoneNumber)
-                return phoneNumber
-            }
-
-            override fun onPostExecute(phoneNumber: PhoneNumber) {
-                val context = contextWeakReference.get()
-                (context as ActivityEditStudent).stopProgressBar()
             }
         }
     }

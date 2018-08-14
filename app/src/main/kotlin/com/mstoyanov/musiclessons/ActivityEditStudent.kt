@@ -106,14 +106,6 @@ class ActivityEditStudent : AppCompatActivity() {
         return true
     }
 
-    fun startProgressBar() {
-        progressBar.visibility = View.VISIBLE
-    }
-
-    fun stopProgressBar() {
-        progressBar.visibility = View.GONE
-    }
-
     private inner class EditStudentTextWatcher(private val activity: Activity) : TextWatcher {
 
         override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
