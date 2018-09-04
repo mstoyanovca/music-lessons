@@ -1,7 +1,6 @@
 package com.mstoyanov.musiclessons
 
 import android.app.Activity
-import android.arch.persistence.room.Transaction
 import android.content.Intent
 import android.os.AsyncTask
 import android.os.Bundle
@@ -133,7 +132,7 @@ class ActivityAddStudent : AppCompatActivity() {
     }
 
     fun invokeFirstNameTextWatcher() {
-        firstNameTextWatcher.afterTextChanged(firstName.text)  // TODO ?
+        firstNameTextWatcher.afterTextChanged(firstName.text)
     }
 
     private inner class NameTextWatcher(private val activity: Activity) : TextWatcher {
@@ -165,7 +164,6 @@ class ActivityAddStudent : AppCompatActivity() {
         private class AddStudent(context: ActivityAddStudent) : AsyncTask<Student, Int, Student>() {
             private val addStudentActivityWeakReference: WeakReference<ActivityAddStudent> = WeakReference(context)
 
-            @Transaction
             override fun doInBackground(vararg params: Student): Student {
                 // Thread.sleep(1000)
                 val addStudentActivity = addStudentActivityWeakReference.get()!!
@@ -174,7 +172,7 @@ class ActivityAddStudent : AppCompatActivity() {
                 val id = MusicLessonsApplication.db.studentDao.insert(student)
                 student.studentId = id
 
-                student.phoneNumbers.map { pn -> pn.studentId = id }
+                student.phoneNumbers.map { it.studentId = id }
                 MusicLessonsApplication.db.phoneNumberDao.insertAll(student.phoneNumbers)
                 return student
             }

@@ -1,7 +1,6 @@
 package com.mstoyanov.musiclessons
 
 import android.app.Activity
-import android.arch.persistence.room.Transaction
 import android.content.Intent
 import android.os.AsyncTask
 import android.os.Bundle
@@ -31,12 +30,14 @@ class ActivityEditStudent : AppCompatActivity() {
     private lateinit var progressBar: ProgressBar
     private lateinit var adapter: AdapterEditStudent
     private lateinit var student: Student
+    private lateinit var phoneNumbersBeforeEditing: List<PhoneNumber>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_student)
 
         student = intent.getSerializableExtra("STUDENT") as Student
+        phoneNumbersBeforeEditing = student.phoneNumbers.toList()
 
         setSupportActionBar(findViewById<View>(R.id.toolbar) as Toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
@@ -66,7 +67,7 @@ class ActivityEditStudent : AppCompatActivity() {
 
         val button = findViewById<FloatingActionButton>(R.id.add_phone_number)
         button.setOnClickListener {
-            student.phoneNumbers.add(PhoneNumber())
+            student.phoneNumbers.add(PhoneNumber().copy(studentId = student.studentId))
             adapter.notifyDataSetChanged()
         }
     }
@@ -129,7 +130,6 @@ class ActivityEditStudent : AppCompatActivity() {
     private fun updateStudent() {
         student.firstName = firstName.text.toString().trim()
         student.lastName = lastName.text.toString().trim()
-        student.phoneNumbers = adapter.phoneNumbers
         student.email = email.text.toString().trim()
         student.notes = notes.text.toString().trim()
 
@@ -176,20 +176,16 @@ class ActivityEditStudent : AppCompatActivity() {
         private class UpdateStudent(context: ActivityEditStudent) : AsyncTask<Student, Int, Student>() {
             private val editStudentActivityWeakReference: WeakReference<ActivityEditStudent> = WeakReference(context)
 
-            @Transaction
             override fun doInBackground(vararg params: Student): Student {
-                /*try {
-                    Thread.sleep(1000);
-                } catch (e: InterruptedException) {
-                    e.printStackTrace();
-                }*/
+                // Thread.sleep(1000)
                 val editStudentActivity = editStudentActivityWeakReference.get()!!
-                val student = editStudentActivity.student
 
+                val student = editStudentActivity.student
                 MusicLessonsApplication.db.studentDao.update(student)
 
-                student.phoneNumbers.map { pn -> pn.studentId = student.studentId }
+                editStudentActivity.phoneNumbersBeforeEditing.filterNot { student.phoneNumbers.contains(it) }.map { MusicLessonsApplication.db.phoneNumberDao.delete(it) }
                 MusicLessonsApplication.db.phoneNumberDao.insertAll(student.phoneNumbers)
+
                 return student
             }
 
@@ -207,11 +203,7 @@ class ActivityEditStudent : AppCompatActivity() {
             private val editStudentActivityWeakReference: WeakReference<ActivityEditStudent> = WeakReference(context)
 
             override fun doInBackground(vararg params: Void): Student {
-                /*try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }*/
+                // Thread.sleep(1000)
                 val editStudentActivity = editStudentActivityWeakReference.get()!!
                 val student = editStudentActivity.student
 
