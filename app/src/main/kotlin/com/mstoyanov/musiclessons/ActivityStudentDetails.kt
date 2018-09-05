@@ -25,7 +25,7 @@ import com.mstoyanov.musiclessons.model.Student
 class ActivityStudentDetails : AppCompatActivity() {
     private lateinit var student: Student
     private var number: String = ""
-    private var updatedStudentId: Long = 0
+    private var updatedStudentId: Long = 0L
 
     companion object {
         const val PERMISSION_REQUEST_CALL_PHONE = 123
@@ -36,10 +36,11 @@ class ActivityStudentDetails : AppCompatActivity() {
         setContentView(R.layout.activity_student_details)
 
         if (intent.getSerializableExtra("STUDENT") != null) {
-            // coming from StudentsAdapter:
+            // coming from AdapterStudents:
             student = intent.getSerializableExtra("STUDENT") as Student
+            updatedStudentId = 0L
         } else if (intent.getSerializableExtra("UPDATED_STUDENT") != null) {
-            // coming from EditStudentActivity:
+            // coming from ActivityEditStudent:
             student = intent.getSerializableExtra("UPDATED_STUDENT") as Student
             updatedStudentId = student.studentId
         }
@@ -51,15 +52,14 @@ class ActivityStudentDetails : AppCompatActivity() {
         name.text = student.firstName + " " + student.lastName
 
         val phoneNumbers = findViewById<RecyclerView>(R.id.phone_numbers_list)
-        val layoutManager = LinearLayoutManager(this)
         phoneNumbers.layoutManager = LinearLayoutManager(this)
-        val adapter = AdapterStudentDetails(student.phoneNumbers!!, this)
+        val adapter = AdapterStudentDetails(student.phoneNumbers, this)
         phoneNumbers.adapter = adapter
-        val divider = DividerItemDecoration(phoneNumbers.context, layoutManager.orientation)
+        val divider = DividerItemDecoration(phoneNumbers.context, LinearLayoutManager(this).orientation)
         phoneNumbers.addItemDecoration(divider)
 
         val email = findViewById<TextView>(R.id.email)
-        if (student.email!!.isNotEmpty()) {
+        if (student.email.isNotEmpty()) {
             email.text = student.email
             email.setOnClickListener {
                 val intent = Intent(Intent.ACTION_SENDTO)
@@ -74,7 +74,7 @@ class ActivityStudentDetails : AppCompatActivity() {
         }
 
         val notes = findViewById<TextView>(R.id.notes)
-        if (student.notes!!.isNotEmpty()) {
+        if (student.notes.isNotEmpty()) {
             notes.text = student.notes
         } else {
             notes.visibility = View.GONE
@@ -117,12 +117,11 @@ class ActivityStudentDetails : AppCompatActivity() {
 
     fun dial(number: String) {
         this.number = number
-        val activity = this
         val hasPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE)
         if (hasPermission != PackageManager.PERMISSION_GRANTED) {
-            if (!ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.WRITE_CONTACTS)) {
+            if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CALL_PHONE)) {
                 showMessageOKCancel("You need to provide CALL_PHONE permission",
-                        DialogInterface.OnClickListener { dialog, which -> ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.CALL_PHONE), PERMISSION_REQUEST_CALL_PHONE) })
+                        DialogInterface.OnClickListener { dialog, which -> ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CALL_PHONE), PERMISSION_REQUEST_CALL_PHONE) })
                 return
             }
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CALL_PHONE), PERMISSION_REQUEST_CALL_PHONE)

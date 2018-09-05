@@ -119,8 +119,6 @@ class ActivityAddStudent : AppCompatActivity() {
         student.firstName = firstName.text.toString().trim()
         student.lastName = lastName.text.toString().trim()
 
-        student.phoneNumbers = adapter.phoneNumbers
-
         val email = findViewById<EditText>(R.id.email)
         student.email = email.text.toString().trim()
 
