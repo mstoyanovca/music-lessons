@@ -38,13 +38,23 @@ class PhoneNumberDaoTest {
 
     @Test
     @Throws(Exception::class)
-    fun insert_phone_number() {
+    fun insert_phone_numbers() {
         db.phoneNumberDao.insertAll(phoneNumbers)
         val actualPhoneNumbers = db.phoneNumberDao.findAllByStudentId(1L)
 
         Assert.assertEquals(actualPhoneNumbers.size, 2)
         Assert.assertEquals(phoneNumbers[0], actualPhoneNumbers[0])
         Assert.assertEquals(phoneNumbers[1], actualPhoneNumbers[1])
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun insert_phone_number() {
+        db.phoneNumberDao.insert(phoneNumbers[0])
+        val actualPhoneNumbers = db.phoneNumberDao.findAllByStudentId(1L)
+
+        Assert.assertEquals(actualPhoneNumbers.size, 1)
+        Assert.assertEquals(phoneNumbers[0], actualPhoneNumbers[0])
     }
 
     @Test

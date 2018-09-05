@@ -47,8 +47,8 @@ class LessonTest {
         val timeFrom: Date = format.parse("16:00")
         val timeTo: Date = format.parse("16:30")
 
-        val student1 = Student(1L, "Johm", "Smith", "", "", listOf())
-        val student2 = Student(2L, "John", "Smith", "", "", listOf())
+        val student1 = Student(1L, "Johm", "Smith", "", "", mutableListOf())
+        val student2 = Student(2L, "John", "Smith", "", "", mutableListOf())
 
         val lesson1 = Lesson(1L, Weekday.MONDAY, timeFrom, timeTo, student1.studentId, student1)
         val lesson2 = Lesson(2L, Weekday.MONDAY, timeFrom, timeTo, student2.studentId, student2)
@@ -61,8 +61,8 @@ class LessonTest {
         val timeFrom: Date = format.parse("16:00")
         val timeTo: Date = format.parse("16:30")
 
-        val student1 = Student(1L, "John", "Smitg", "", "", listOf())
-        val student2 = Student(1L, "John", "Smith", "", "", listOf())
+        val student1 = Student(1L, "John", "Smitg", "", "", mutableListOf())
+        val student2 = Student(1L, "John", "Smith", "", "", mutableListOf())
 
         val lesson1 = Lesson(1L, Weekday.MONDAY, timeFrom, timeTo, student1.studentId, student1)
         val lesson2 = Lesson(1L, Weekday.MONDAY, timeFrom, timeTo, student2.studentId, student2)

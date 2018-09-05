@@ -10,7 +10,10 @@ interface PhoneNumberDao {
     fun findAllByStudentId(studentId: Long): MutableList<PhoneNumber>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(phoneNumbers: List<PhoneNumber>)
+    fun insertAll(phoneNumbers: List<PhoneNumber>): List<Long>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(phoneNumber: PhoneNumber): Long
 
     @Delete
     fun delete(phoneNumber: PhoneNumber)

@@ -184,7 +184,7 @@ class ActivityEditStudent : AppCompatActivity() {
                 MusicLessonsApplication.db.studentDao.update(student)
 
                 editStudentActivity.phoneNumbersBeforeEditing.filterNot { student.phoneNumbers.contains(it) }.map { MusicLessonsApplication.db.phoneNumberDao.delete(it) }
-                MusicLessonsApplication.db.phoneNumberDao.insertAll(student.phoneNumbers)
+                student.phoneNumbers.map { it.phoneNumberId =  MusicLessonsApplication.db.phoneNumberDao.insert(it)}
 
                 return student
             }
