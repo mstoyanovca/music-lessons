@@ -19,7 +19,7 @@ import java.lang.ref.WeakReference
 class FragmentStudents : Fragment() {
     private lateinit var progressBar: ProgressBar
     private lateinit var adapter: AdapterStudents
-    private var students: MutableList<Student> = mutableListOf()
+    private lateinit var students: MutableList<Student>
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_students, container, false)
@@ -28,6 +28,7 @@ class FragmentStudents : Fragment() {
         title.setText(R.string.students_label)
 
         val recyclerView = rootView.findViewById<RecyclerView>(R.id.students_list)
+        students = mutableListOf()
         adapter = AdapterStudents(students, this)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(activity)
@@ -76,11 +77,7 @@ class FragmentStudents : Fragment() {
             private val studentsFragmentWeakReference = WeakReference<FragmentStudents>(context)
 
             override fun doInBackground(vararg p0: Long?): MutableList<Student> {
-                /*try {
-                    Thread.sleep(1000)
-                } catch (e: InterruptedException) {
-                    e.printStackTrace()
-                }*/
+                // Thread.sleep(1000)
                 return MusicLessonsApplication.db.studentDao.findAll()
             }
 
