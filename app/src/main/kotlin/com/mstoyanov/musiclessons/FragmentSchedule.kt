@@ -20,8 +20,8 @@ import java.lang.ref.WeakReference
 
 class FragmentSchedule : Fragment() {
     // this field can not be static:
-    private var lessons: MutableList<Lesson> = mutableListOf()
-    private var adapter: AdapterLessons = AdapterLessons(lessons)
+    private lateinit var lessons: MutableList<Lesson>
+    private lateinit var adapter: AdapterLessons
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -30,8 +30,10 @@ class FragmentSchedule : Fragment() {
         val title = rootView.findViewById<TextView>(R.id.weekday)
         val position = arguments!!.getInt("POSITION")
         title.text = ActivityMain.sectionTitles[position]
-
+        lessons = mutableListOf()
+        adapter = AdapterLessons(lessons)
         val recyclerView = rootView.findViewById<RecyclerView>(R.id.lessons)
+
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(activity)
 
@@ -75,11 +77,7 @@ class FragmentSchedule : Fragment() {
             private val scheduleFragmentWeakReference: WeakReference<FragmentSchedule> = WeakReference(context)
 
             override fun doInBackground(vararg p0: Long?): List<LessonStudent> {
-                /*try {
-                    Thread.sleep(1000)
-                } catch (e: InterruptedException) {
-                    e.printStackTrace()
-                }*/
+                // Thread.sleep(1000)
                 return MusicLessonsApplication.db.lessonDao.findAllWithStudentByWeekday(weekday)
             }
 
@@ -87,12 +85,8 @@ class FragmentSchedule : Fragment() {
                 val scheduleFragment = scheduleFragmentWeakReference.get()
                 scheduleFragment!!.view!!.findViewById<ProgressBar>(R.id.progress_bar).visibility = View.GONE
 
-                val lessonList: MutableList<Lesson> = mutableListOf()
-                result.map { lessonWithStudent ->
-                    val lesson: Lesson = lessonWithStudent.lesson
-                    lesson.student = lessonWithStudent.student
-                    lessonList.add(lesson)
-                }
+                result.forEach { it -> it.lesson.student = it.student }
+                val lessonList: MutableList<Lesson> = result.map { it -> it.lesson }.toMutableList()
                 lessonList.sort()
 
                 scheduleFragment.lessons.addAll(lessonList)

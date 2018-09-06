@@ -18,17 +18,17 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListener {
-    private lateinit var minuteFrom: NumberPicker
     private lateinit var hourFrom: NumberPicker
-    private lateinit var minuteTo: NumberPicker
+    private lateinit var minuteFrom: NumberPicker
     private lateinit var hourTo: NumberPicker
+    private lateinit var minuteTo: NumberPicker
     private lateinit var progressBar: ProgressBar
 
     private lateinit var adapter: StudentsAdapter
 
     private lateinit var weekday: Weekday
-    private var lesson: Lesson = Lesson()  // TODO: fix!
-    private var studentList: MutableList<Student> = mutableListOf()  // TODO: fix!
+    private lateinit var lesson: Lesson
+    private lateinit var studentList: MutableList<Student>
     private var studentListIsEmpty: Boolean = true
     private val minutes = arrayOf("00", "15", "30", "45")
 
@@ -37,6 +37,8 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
         setContentView(R.layout.activity_add_lesson)
 
         weekday = intent.getSerializableExtra("WEEKDAY") as Weekday
+        lesson = Lesson()
+        studentList = mutableListOf()
 
         setSupportActionBar(findViewById<View>(R.id.toolbar) as Toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
@@ -77,7 +79,7 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
         students.onItemSelectedListener = this
 
         if (savedInstanceState == null) {
-            // coming from LessonsFragment:
+            // coming from FragmentSchedule:
             lesson.weekday = weekday
             initializeTime()
             LoadStudents(this).execute()
@@ -156,7 +158,7 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
     }
 
     private val hourFromOnValueChangedListener = NumberPicker.OnValueChangeListener { numberPicker, oldValue, newValue ->
-        // 21:30 is maximum value:
+        // 21:30 is the maximum value:
         if (newValue == 21 && minuteFrom.value == 3) minuteFrom.value = 2
         synchronizeTimeToWithTimeFrom()
     }
@@ -165,18 +167,18 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
         // overflow:
         if (oldValue == 3 && newValue == 0) hourTo.value = hourTo.value + 1
         if (oldValue == 0 && newValue == 3) hourTo.value = hourTo.value - 1
-        // 8:30 is minimum value:
+        // 8:30 is the minimum value:
         if (hourTo.value == 8 && (newValue == 0 || newValue == 1)) minuteTo.value = 2
-        // 22:00 is maximum value:
+        // 22:00 is the maximum value:
         if (hourTo.value == 22) minuteTo.value = 0
         synchronizeTimeFromWithTimeTo()
     }
 
     private val hourToOnValueChangedListener = NumberPicker.OnValueChangeListener { numberPicker, oldValue, newValue ->
-        // 8:30 is minimum value:
+        // 8:30 is the minimum value:
         if (newValue == 8 && (minuteTo.value == 0 || minuteTo.value == 1))
             minuteTo.value = 2
-        // 22:00 is maximum value:
+        // 22:00 is the maximum value:
         if (newValue == 22 && minuteTo.value != 0) minuteTo.value = 0
         synchronizeTimeFromWithTimeTo()
     }
@@ -271,11 +273,7 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
             private var addLessonActivityWeakReference: WeakReference<ActivityAddLesson> = WeakReference(context)
 
             override fun doInBackground(vararg p0: Long?): MutableList<Student> {
-                /*try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }*/
+                // Thread.sleep(1000)
                 return MusicLessonsApplication.db.studentDao.findAll()
             }
 
@@ -296,11 +294,7 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
             private var addLessonActivityWeakReference: WeakReference<ActivityAddLesson> = WeakReference(context)
 
             override fun doInBackground(vararg params: Lesson): Lesson {
-                /*try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }*/
+                // Thread.sleep(1000)
                 val addLessonActivity: ActivityAddLesson = addLessonActivityWeakReference.get()!!
 
                 MusicLessonsApplication.db.lessonDao.insert(addLessonActivity.lesson)

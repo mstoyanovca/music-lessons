@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-
 import com.mstoyanov.musiclessons.model.PhoneNumber
 
 class AdapterLessonDetails(private val phoneNumbers: List<PhoneNumber>, private val context: Context) : RecyclerView.Adapter<AdapterLessonDetails.ViewHolder>() {
@@ -25,8 +24,8 @@ class AdapterLessonDetails(private val phoneNumbers: List<PhoneNumber>, private 
 
     override fun onBindViewHolder(holder: AdapterLessonDetails.ViewHolder, position: Int) {
         holder.number.text = phoneNumbers[position].number
-        holder.type.text = phoneNumbers[position].type!!.displayValue()
-        if (phoneNumbers[position].type!!.displayValue().equals("cell", ignoreCase = true)) {
+        holder.type.text = phoneNumbers[position].type.displayValue()
+        if (phoneNumbers[position].type.displayValue().equals("cell", ignoreCase = true)) {
             holder.sms.visibility = View.VISIBLE
             holder.number.setPadding(0, 0, dpToPx(16), 0)
         }

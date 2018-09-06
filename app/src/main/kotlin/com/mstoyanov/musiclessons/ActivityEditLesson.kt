@@ -19,22 +19,25 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListener {
-    private lateinit var minuteFrom: NumberPicker
     private lateinit var hourFrom: NumberPicker
-    private lateinit var minuteTo: NumberPicker
+    private lateinit var minuteFrom: NumberPicker
     private lateinit var hourTo: NumberPicker
+    private lateinit var minuteTo: NumberPicker
     private lateinit var progressBar: ProgressBar
 
     private lateinit var adapter: ActivityEditLesson.StudentsAdapter
 
     private lateinit var lesson: Lesson
-    private var studentList: MutableList<Student> = mutableListOf()
+    private lateinit var studentList: MutableList<Student>
     private var studentListIsEmpty: Boolean = false
     private val minutes = arrayOf("00", "15", "30", "45")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_lesson)
+
+        lesson = Lesson()
+        studentList = mutableListOf()
 
         setSupportActionBar(findViewById<View>(R.id.toolbar) as Toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
@@ -110,7 +113,7 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
             invalidateOptionsMenu()
         }
 
-        weekday.setSelection(lesson.weekday!!.ordinal)
+        weekday.setSelection(lesson.weekday.ordinal)
     }
 
     override fun onSaveInstanceState(state: Bundle) {
@@ -259,11 +262,8 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
         val format = SimpleDateFormat("HH:mm", Locale.US)
         format.timeZone = TimeZone.getTimeZone("UTC")
 
-        var dateFrom: Date? = null
-        var dateTo: Date? = null
-
-        dateFrom = format.parse(timeFromString)
-        dateTo = format.parse(timeToString)
+        val dateFrom = format.parse(timeFromString)
+        val dateTo = format.parse(timeToString)
 
         lesson.timeFrom = dateFrom
         lesson.timeTo = dateTo
@@ -272,15 +272,12 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
     private fun createAlertDialog() {
         val builder = AlertDialog.Builder(this)
         val message: String
-        if (lesson.student!!.firstName!!.replace("\\s+".toRegex(), "").isEmpty() && lesson.student!!.lastName!!.replace(" ", "").isNotEmpty()) {
-            message = "Delete lesson with " + lesson.student!!.lastName + "?"
-        } else if (lesson.student!!.firstName!!.replace(" ", "").isNotEmpty() && lesson.student!!.lastName!!.replace(" ", "").isEmpty()) {
-            message = "Delete lesson with " + lesson.student!!.firstName + "?"
+        if (lesson.student.firstName.trim().isEmpty() && lesson.student.lastName.trim().isNotEmpty()) {
+            message = "Delete lesson with " + lesson.student.lastName + "?"
+        } else if (lesson.student.firstName.trim().isNotEmpty() && lesson.student.lastName.trim().isEmpty()) {
+            message = "Delete lesson with " + lesson.student.firstName + "?"
         } else {
-            message = "Delete lesson with " +
-                    lesson.student!!.firstName +
-                    " " +
-                    lesson.student!!.lastName + "?"
+            message = "Delete lesson with " + lesson.student.firstName + " " + lesson.student.lastName + "?"
         }
         builder.setMessage(message)
         builder.setPositiveButton("OK") { dialog, id -> delete() }
@@ -327,11 +324,7 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
             private var editLessonActivityWeakReference: WeakReference<ActivityEditLesson> = WeakReference(context)
 
             override fun doInBackground(vararg params: Long?): MutableList<Student> {
-                /*try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }*/
+                // Thread.sleep(1000)
                 return MusicLessonsApplication.db.studentDao.findAll()
             }
 
@@ -355,11 +348,7 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
             private var editLessonActivityWeakReference: WeakReference<ActivityEditLesson> = WeakReference(context)
 
             override fun doInBackground(vararg params: Lesson): Lesson {
-                /*try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }*/
+                // Thread.sleep(1000)
                 val editLessonActivity: ActivityEditLesson = editLessonActivityWeakReference.get()!!
                 MusicLessonsApplication.db.lessonDao.update(editLessonActivity.lesson)
                 return editLessonActivity.lesson
@@ -379,11 +368,7 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
             private var editLessonActivityWeakReference: WeakReference<ActivityEditLesson> = WeakReference(context)
 
             override fun doInBackground(vararg params: Void): Lesson {
-                /*try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }*/
+                // Thread.sleep(1000)
                 val editLessonActivity: ActivityEditLesson = editLessonActivityWeakReference.get()!!
 
                 MusicLessonsApplication.db.lessonDao.delete(editLessonActivity.lesson)

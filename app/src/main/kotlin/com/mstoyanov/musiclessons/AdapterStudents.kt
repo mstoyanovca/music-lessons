@@ -45,11 +45,7 @@ class AdapterStudents(private val students: List<Student>, private val fragment:
         private class FindAllPhoneNumbersByStudentId(private val student: Student, private val fragment: FragmentStudents) : AsyncTask<Long, Int, MutableList<PhoneNumber>>() {
 
             override fun doInBackground(vararg p0: Long?): MutableList<PhoneNumber> {
-                /*try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }*/
+                // Thread.sleep(1000)
                 return MusicLessonsApplication.db.phoneNumberDao.findAllByStudentId(student.studentId)
             }
 

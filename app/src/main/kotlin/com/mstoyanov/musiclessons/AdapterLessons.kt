@@ -28,8 +28,8 @@ class AdapterLessons(private val lessons: List<Lesson>) : RecyclerView.Adapter<A
         val timeTo = format.format(lessons[position].timeTo)
         holder.time.text = StringBuilder().append(timeFrom).append(holder.context.getString(R.string.dash)).append(timeTo).toString()
 
-        val firstName = lessons[position].student!!.firstName
-        val lastName = lessons[position].student!!.lastName
+        val firstName = lessons[position].student.firstName
+        val lastName = lessons[position].student.lastName
         holder.name.text = StringBuilder().append(firstName).append(holder.context.getString(R.string.space)).append(lastName).toString()
     }
 

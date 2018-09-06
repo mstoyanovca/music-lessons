@@ -51,25 +51,25 @@ class ActivityLessonDetails : AppCompatActivity() {
         phoneNumbers.addItemDecoration(divider)
 
         if (savedInstanceState == null && intent.getSerializableExtra("LESSON") != null) {
-            // coming from LessonsAdapter:
+            // coming from AdapterLessons:
             lesson = intent.getSerializableExtra("LESSON") as Lesson
             FindAllPhoneNumbersByStudentId(this).execute()
         } else if (savedInstanceState == null && intent.getSerializableExtra("UPDATED_LESSON") != null) {
-            // coming from EditLessonActivity:
+            // coming from ActivityEditLesson:
             progressBar.visibility = View.GONE
             lesson = intent.getSerializableExtra("UPDATED_LESSON") as Lesson
-            val adapter = AdapterLessonDetails(lesson.student!!.phoneNumbers!!, this)
+            val adapter = AdapterLessonDetails(lesson.student.phoneNumbers, this)
             phoneNumbers.adapter = adapter
         } else if (savedInstanceState != null) {
             // after screen rotation:
             progressBar.visibility = View.GONE
             lesson = savedInstanceState.getSerializable("LESSON") as Lesson
-            val adapter = AdapterLessonDetails(lesson.student!!.phoneNumbers!!, this)
+            val adapter = AdapterLessonDetails(lesson.student.phoneNumbers, this)
             phoneNumbers.adapter = adapter
         }
 
         val weekday = findViewById<TextView>(R.id.weekday)
-        weekday.text = lesson.weekday!!.displayValue()
+        weekday.text = lesson.weekday.displayValue()
 
         val time = findViewById<TextView>(R.id.time)
         val format = SimpleDateFormat("HH:mm", Locale.US)
@@ -79,11 +79,11 @@ class ActivityLessonDetails : AppCompatActivity() {
         time.text = StringBuilder().append(timeFrom).append(getString(R.string.space)).append(timeTo).toString()
 
         val name = findViewById<TextView>(R.id.name)
-        name.text = StringBuilder().append(lesson.student!!.firstName).append(getString(R.string.space)).append(lesson.student!!.lastName).toString()
+        name.text = StringBuilder().append(lesson.student.firstName).append(getString(R.string.space)).append(lesson.student.lastName).toString()
 
         val email = findViewById<TextView>(R.id.email)
-        if (lesson.student!!.email!!.isNotEmpty()) {
-            email.text = lesson.student!!.email
+        if (lesson.student.email.isNotEmpty()) {
+            email.text = lesson.student.email
             email.setOnClickListener {
                 val intent = Intent(Intent.ACTION_SENDTO)
                 intent.data = Uri.parse("mailto:" + email.text.toString())
@@ -97,8 +97,8 @@ class ActivityLessonDetails : AppCompatActivity() {
         }
 
         val notes = findViewById<TextView>(R.id.notes)
-        if (lesson.student!!.notes!!.isNotEmpty()) {
-            notes.text = lesson.student!!.notes
+        if (lesson.student.notes.isNotEmpty()) {
+            notes.text = lesson.student.notes
         } else {
             notes.visibility = View.GONE
         }
@@ -141,7 +141,7 @@ class ActivityLessonDetails : AppCompatActivity() {
         this.number = number
         val hasPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE)
         if (hasPermission != PackageManager.PERMISSION_GRANTED) {
-            if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_CONTACTS)) {
+            if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CALL_PHONE)) {
                 showMessageOKCancel("You need to provide CALL_PHONE permission",
                         DialogInterface.OnClickListener { dialog, which -> ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CALL_PHONE), PERMISSION_REQUEST_CALL_PHONE) })
                 return
@@ -169,11 +169,7 @@ class ActivityLessonDetails : AppCompatActivity() {
             private val lessonDetailsActivityWeakReference: WeakReference<ActivityLessonDetails> = WeakReference(context)
 
             override fun doInBackground(vararg p0: Long?): MutableList<PhoneNumber> {
-                /*try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }*/
+                // Thread.sleep(1000)
                 return MusicLessonsApplication.db.phoneNumberDao.findAllByStudentId(lesson.studentId)
             }
 
@@ -182,8 +178,8 @@ class ActivityLessonDetails : AppCompatActivity() {
 
                 lessonDetailsActivity.progressBar.visibility = View.GONE
 
-                lesson.student!!.phoneNumbers = result
-                val adapter = AdapterLessonDetails(lesson.student!!.phoneNumbers!!, lessonDetailsActivity)
+                lesson.student.phoneNumbers = result
+                val adapter = AdapterLessonDetails(lesson.student.phoneNumbers, lessonDetailsActivity)
                 lessonDetailsActivity.phoneNumbers.adapter = adapter
             }
         }
