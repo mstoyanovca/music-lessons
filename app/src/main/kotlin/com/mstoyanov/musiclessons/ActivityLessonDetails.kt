@@ -76,7 +76,7 @@ class ActivityLessonDetails : AppCompatActivity() {
         format.timeZone = TimeZone.getTimeZone("UTC")
         val timeFrom = format.format(lesson.timeFrom)
         val timeTo = format.format(lesson.timeTo)
-        time.text = StringBuilder().append(timeFrom).append(getString(R.string.space)).append(timeTo).toString()
+        time.text = StringBuilder().append(timeFrom).append(getString(R.string.dash)).append(timeTo).toString()
 
         val name = findViewById<TextView>(R.id.name)
         name.text = StringBuilder().append(lesson.student.firstName).append(getString(R.string.space)).append(lesson.student.lastName).toString()

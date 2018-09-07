@@ -21,11 +21,11 @@
     <string name="email">Email</string>
     <string name="notes">Notes</string>
     <string name="colon">:</string>
-    <string name="to">To:</string>
+    <string name="to">to</string>
     <string name="phone_number">Phone Number</string>
     <string name="delete">Delete</string>
     <string name="students_label">Students</string>
-    <string name="dash"> - </string>
+    <string name="dash">" - "</string>
     <string name="space">" "</string>
     <string-array name="section_titles">
         <item>
