@@ -139,13 +139,12 @@ class ActivityEditStudent : AppCompatActivity() {
 
     private fun createAlertDialog() {
         val builder = AlertDialog.Builder(this)
-        val message: String
-        if (student.firstName.trim().isNotEmpty() && student.lastName.trim().isEmpty()) {
-            message = "Delete student " + student.firstName.trim() + "?"
+        val message: String = if (student.firstName.trim().isNotEmpty() && student.lastName.trim().isEmpty()) {
+            "Delete student " + student.firstName.trim() + "?"
         } else if (student.firstName.trim().isEmpty() && student.lastName.trim().isNotEmpty()) {
-            message = "Delete student " + student.lastName.trim() + "?"
+            "Delete student " + student.lastName.trim() + "?"
         } else {
-            message = "Delete student " + student.firstName.trim() + " " + student.lastName.trim() + "?"
+            "Delete student " + student.firstName.trim() + " " + student.lastName.trim() + "?"
         }
         builder.setMessage(message)
         builder.setPositiveButton("OK") { dialogInterface, i -> deleteStudent() }
@@ -184,7 +183,7 @@ class ActivityEditStudent : AppCompatActivity() {
                 MusicLessonsApplication.db.studentDao.update(student)
 
                 editStudentActivity.phoneNumbersBeforeEditing.filterNot { student.phoneNumbers.contains(it) }.map { MusicLessonsApplication.db.phoneNumberDao.delete(it) }
-                student.phoneNumbers.map { it.phoneNumberId =  MusicLessonsApplication.db.phoneNumberDao.insert(it)}
+                student.phoneNumbers.map { it.phoneNumberId = MusicLessonsApplication.db.phoneNumberDao.insert(it) }
 
                 return student
             }

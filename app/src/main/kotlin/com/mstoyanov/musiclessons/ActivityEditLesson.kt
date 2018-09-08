@@ -103,7 +103,7 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
             lesson = savedInstanceState.getSerializable("LESSON") as Lesson
             studentList = savedInstanceState.getSerializable("STUDENTS") as MutableList<Student>
             adapter.addAll(studentList)
-            students.setSelection(studentList.indexOf(lesson.student))
+            students.setSelection(studentList.indexOf(studentList.filter { it.studentId == lesson.student.studentId }[0]))
 
             hourFrom.value = savedInstanceState.getInt("HOUR_FROM")
             minuteFrom.value = savedInstanceState.getInt("MINUTE_FROM")
@@ -271,13 +271,12 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
 
     private fun createAlertDialog() {
         val builder = AlertDialog.Builder(this)
-        val message: String
-        if (lesson.student.firstName.trim().isEmpty() && lesson.student.lastName.trim().isNotEmpty()) {
-            message = "Delete lesson with " + lesson.student.lastName + "?"
+        val message = if (lesson.student.firstName.trim().isEmpty() && lesson.student.lastName.trim().isNotEmpty()) {
+            "Delete lesson with " + lesson.student.lastName + "?"
         } else if (lesson.student.firstName.trim().isNotEmpty() && lesson.student.lastName.trim().isEmpty()) {
-            message = "Delete lesson with " + lesson.student.firstName + "?"
+            "Delete lesson with " + lesson.student.firstName + "?"
         } else {
-            message = "Delete lesson with " + lesson.student.firstName + " " + lesson.student.lastName + "?"
+            "Delete lesson with " + lesson.student.firstName + " " + lesson.student.lastName + "?"
         }
         builder.setMessage(message)
         builder.setPositiveButton("OK") { dialog, id -> delete() }
@@ -338,7 +337,7 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
                 editLessonActivity.adapter.addAll(editLessonActivity.studentList)
 
                 val students: Spinner = editLessonActivity.findViewById(R.id.students)
-                students.setSelection(editLessonActivity.studentList.indexOf(editLessonActivity.lesson.student))
+                students.setSelection(editLessonActivity.studentList.indexOf(editLessonActivity.studentList.filter { it.studentId == editLessonActivity.lesson.student.studentId }[0]))
 
                 editLessonActivity.invalidateOptionsMenu()
             }
@@ -358,8 +357,8 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
                 val editLessonActivity: ActivityEditLesson = editLessonActivityWeakReference.get()!!
                 editLessonActivity.progressBar.visibility = View.GONE
 
-                val intent = Intent(editLessonActivity, ActivityMain::class.java)
-                intent.putExtra("WEEKDAY", editLessonActivity.lesson.weekday)
+                val intent = Intent(editLessonActivity, ActivityLessonDetails::class.java)
+                intent.putExtra("UPDATED_LESSON", editLessonActivity.lesson)
                 editLessonActivity.startActivity(intent)
             }
         }

@@ -32,6 +32,7 @@ import java.util.*
 class ActivityLessonDetails : AppCompatActivity() {
     private lateinit var phoneNumbers: RecyclerView
     private lateinit var progressBar: ProgressBar
+    private lateinit var lesson: Lesson
     private var number: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,7 +64,7 @@ class ActivityLessonDetails : AppCompatActivity() {
         } else if (savedInstanceState != null) {
             // after screen rotation:
             progressBar.visibility = View.GONE
-            lesson = savedInstanceState.getSerializable("LESSON") as Lesson
+            lesson = savedInstanceState.getSerializable("SAVED_LESSON") as Lesson
             val adapter = AdapterLessonDetails(lesson.student.phoneNumbers, this)
             phoneNumbers.adapter = adapter
         }
@@ -113,7 +114,7 @@ class ActivityLessonDetails : AppCompatActivity() {
 
     override fun onSaveInstanceState(state: Bundle?) {
         super.onSaveInstanceState(state)
-        state!!.putSerializable("LESSON", lesson)
+        state!!.putSerializable("SAVED_LESSON", lesson)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -149,7 +150,7 @@ class ActivityLessonDetails : AppCompatActivity() {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CALL_PHONE), PERMISSION_REQUEST_CALL_PHONE)
             return
         }
-        val intent = Intent(Intent.ACTION_CALL, Uri.parse("tel:" + number))
+        val intent = Intent(Intent.ACTION_CALL, Uri.parse("tel:$number"))
         startActivity(intent)
     }
 
@@ -163,14 +164,14 @@ class ActivityLessonDetails : AppCompatActivity() {
     }
 
     companion object {
-        private lateinit var lesson: Lesson
 
         private class FindAllPhoneNumbersByStudentId(context: ActivityLessonDetails) : AsyncTask<Long, Int, MutableList<PhoneNumber>>() {
             private val lessonDetailsActivityWeakReference: WeakReference<ActivityLessonDetails> = WeakReference(context)
 
             override fun doInBackground(vararg p0: Long?): MutableList<PhoneNumber> {
                 // Thread.sleep(1000)
-                return MusicLessonsApplication.db.phoneNumberDao.findAllByStudentId(lesson.studentId)
+                val lessonDetailsActivity: ActivityLessonDetails = lessonDetailsActivityWeakReference.get()!!
+                return MusicLessonsApplication.db.phoneNumberDao.findAllByStudentId(lessonDetailsActivity.lesson.studentId)
             }
 
             override fun onPostExecute(result: MutableList<PhoneNumber>) {
@@ -178,8 +179,8 @@ class ActivityLessonDetails : AppCompatActivity() {
 
                 lessonDetailsActivity.progressBar.visibility = View.GONE
 
-                lesson.student.phoneNumbers = result
-                val adapter = AdapterLessonDetails(lesson.student.phoneNumbers, lessonDetailsActivity)
+                lessonDetailsActivity.lesson.student.phoneNumbers = result
+                val adapter = AdapterLessonDetails(lessonDetailsActivity.lesson.student.phoneNumbers, lessonDetailsActivity)
                 lessonDetailsActivity.phoneNumbers.adapter = adapter
             }
         }
