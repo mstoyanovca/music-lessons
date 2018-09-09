@@ -7,9 +7,7 @@ import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.mstoyanov.musiclessons.model.Student
@@ -23,6 +21,7 @@ class FragmentStudents : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_students, container, false)
+        setHasOptionsMenu(true);
 
         val title = rootView.findViewById<TextView>(R.id.heading)
         title.setText(R.string.students_label)
@@ -42,6 +41,7 @@ class FragmentStudents : Fragment() {
             progressBar.visibility = View.GONE
             students.addAll(savedInstanceState.getSerializable("STUDENTS") as MutableList<Student>)
             adapter.notifyDataSetChanged()
+            activity!!.invalidateOptionsMenu()
         }
 
         val button: FloatingActionButton = rootView.findViewById(R.id.add_student)
@@ -53,6 +53,31 @@ class FragmentStudents : Fragment() {
     override fun onSaveInstanceState(state: Bundle) {
         super.onSaveInstanceState(state)
         state.putSerializable("STUDENTS", students as Serializable)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {
+        menuInflater.inflate(R.menu.menu_export_students, menu)
+        super.onCreateOptionsMenu(menu, menuInflater);
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_export_students -> {
+                // updateStudent()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        if (students.isEmpty()) {
+            menu.findItem(R.id.action_export_students).isEnabled = false
+            menu.findItem(R.id.action_export_students).icon.alpha = 127
+        } else {
+            menu.findItem(R.id.action_export_students).isEnabled = true
+            menu.findItem(R.id.action_export_students).icon.alpha = 255
+        }
     }
 
     fun startProgressBar() {
@@ -86,6 +111,7 @@ class FragmentStudents : Fragment() {
                 result.sort()
                 studentsFragmentWeakReference.get()!!.students.addAll(result)
                 studentsFragmentWeakReference.get()!!.adapter.notifyDataSetChanged()
+                studentsFragmentWeakReference.get()!!.activity!!.invalidateOptionsMenu()
             }
         }
     }

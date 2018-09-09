@@ -2,6 +2,7 @@
 
 <resources>
     <string name="app_label">Music Lessons</string>
+    <string name="export_students">Export Students</string>
     <string name="save_student">Save Student</string>
     <string name="edit_student">Edit Student</string>
     <string name="add_student">Add Student</string>
