@@ -276,7 +276,7 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
         } else if (lesson.student.firstName.trim().isNotEmpty() && lesson.student.lastName.trim().isEmpty()) {
             "Delete lesson with " + lesson.student.firstName + "?"
         } else {
-            "Delete lesson with " + lesson.student.firstName + " " + lesson.student.lastName + "?"
+            "Delete lesson with " + getString(R.string.full_name, lesson.student.firstName, lesson.student.lastName) + "?"
         }
         builder.setMessage(message)
         builder.setPositiveButton("OK") { dialog, id -> delete() }

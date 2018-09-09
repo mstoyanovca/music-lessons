@@ -144,7 +144,7 @@ class ActivityEditStudent : AppCompatActivity() {
         } else if (student.firstName.trim().isEmpty() && student.lastName.trim().isNotEmpty()) {
             "Delete student " + student.lastName.trim() + "?"
         } else {
-            "Delete student " + student.firstName.trim() + " " + student.lastName.trim() + "?"
+            "Delete student " + getString(R.string.full_name, student.firstName.trim(), student.lastName.trim()) + "?"
         }
         builder.setMessage(message)
         builder.setPositiveButton("OK") { dialogInterface, i -> deleteStudent() }

@@ -2,11 +2,10 @@ An Android application for scheduling music lessons, released in the summer of 2
 
 The latest update includes:
 - the app was rewritten in Kotlin;
-- unit and instrumentation tests were added;
-- the DB schema was upgraded;
+- added unit and instrumentation tests;
+- upgraded DB schema;
 - fixed an intermittent bug in the DAO layer;
 
 TODO:
-- missing dash in LessonDetail;
 - add master-detail view for tablets;
-- add pdf export;
+- add student list pdf export;

@@ -49,7 +49,7 @@ class ActivityStudentDetails : AppCompatActivity() {
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         val name = findViewById<TextView>(R.id.name)
-        name.text = student.firstName + " " + student.lastName
+        name.text = getString(R.string.full_name, student.firstName, student.lastName)
 
         val phoneNumbers = findViewById<RecyclerView>(R.id.phone_numbers_list)
         phoneNumbers.layoutManager = LinearLayoutManager(this)
