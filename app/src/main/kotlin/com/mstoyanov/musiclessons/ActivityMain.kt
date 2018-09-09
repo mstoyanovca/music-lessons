@@ -45,7 +45,7 @@ class ActivityMain : AppCompatActivity() {
                 intent.getLongExtra("DELETED_STUDENT_ID", 0) > 0) {
             tabLayout.getTabAt(1)!!.select()
         } else if (intent.getSerializableExtra("WEEKDAY") != null) {
-            // returning from AddLesson or EditLesson after deleting a lesson:
+            // returning from ActivityAddLesson, ActivityLessonDetails or ActivityEditLesson after deleting a lesson:
             val weekday = intent.getSerializableExtra("WEEKDAY") as Weekday
             viewPager.currentItem = weekday.ordinal
         }

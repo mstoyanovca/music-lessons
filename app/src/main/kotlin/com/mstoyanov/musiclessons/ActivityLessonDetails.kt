@@ -9,7 +9,6 @@ import android.os.AsyncTask
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.ActivityCompat
-import android.support.v4.app.NavUtils
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
@@ -120,7 +119,9 @@ class ActivityLessonDetails : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
-                NavUtils.navigateUpFromSameTask(this)
+                val intent = Intent(this, ActivityMain::class.java)
+                intent.putExtra("WEEKDAY", lesson.weekday)
+                this.startActivity(intent)
                 return true
             }
         }

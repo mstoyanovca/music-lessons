@@ -22,6 +22,7 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
     private lateinit var minuteFrom: NumberPicker
     private lateinit var hourTo: NumberPicker
     private lateinit var minuteTo: NumberPicker
+
     private lateinit var progressBar: ProgressBar
 
     private lateinit var adapter: StudentsAdapter
@@ -49,6 +50,11 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
         val weekdayTextView = findViewById<TextView>(R.id.weekday)
         weekdayTextView.text = weekday.displayValue()
 
+        val students: Spinner = findViewById(R.id.students)
+        adapter = StudentsAdapter(this, studentList)
+        students.adapter = adapter
+        students.onItemSelectedListener = this
+
         hourFrom = findViewById(R.id.hour_from)
         hourFrom.minValue = 8
         hourFrom.maxValue = 21
@@ -72,11 +78,6 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
         minuteTo.maxValue = 3
         minuteTo.wrapSelectorWheel = true
         minuteTo.setOnValueChangedListener(minuteToOnValueChangedListener)
-
-        val students: Spinner = findViewById(R.id.students)
-        adapter = StudentsAdapter(this, studentList)
-        students.adapter = adapter
-        students.onItemSelectedListener = this
 
         if (savedInstanceState == null) {
             // coming from FragmentSchedule:
