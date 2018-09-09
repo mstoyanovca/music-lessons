@@ -56,10 +56,8 @@ class ActivityLessonDetails : AppCompatActivity() {
             FindAllPhoneNumbersByStudentId(this).execute()
         } else if (savedInstanceState == null && intent.getSerializableExtra("UPDATED_LESSON") != null) {
             // coming from ActivityEditLesson:
-            progressBar.visibility = View.GONE
             lesson = intent.getSerializableExtra("UPDATED_LESSON") as Lesson
-            val adapter = AdapterLessonDetails(lesson.student.phoneNumbers, this)
-            phoneNumbers.adapter = adapter
+            FindAllPhoneNumbersByStudentId(this).execute()
         } else if (savedInstanceState != null) {
             // after screen rotation:
             progressBar.visibility = View.GONE

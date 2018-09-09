@@ -65,7 +65,7 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
         val students: Spinner = findViewById(R.id.students)
         adapter = ActivityEditLesson.StudentsAdapter(this, studentList)
         students.adapter = adapter
-        students.onItemSelectedListener = this
+        students.onItemSelectedListener = this  // TODO
 
         hourFrom = findViewById(R.id.hour_from)
         hourFrom.minValue = 8
@@ -100,8 +100,11 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
         } else {
             // after screen rotation:
             progressBar.visibility = View.GONE
+
             lesson = savedInstanceState.getSerializable("LESSON") as Lesson
+
             studentList = savedInstanceState.getSerializable("STUDENTS") as MutableList<Student>
+            studentListIsEmpty = studentList.isEmpty()
             adapter.addAll(studentList)
             students.setSelection(studentList.indexOf(studentList.filter { it.studentId == lesson.student.studentId }[0]))
 
@@ -135,22 +138,22 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
+        return when (item.itemId) {
             android.R.id.home -> {
                 NavUtils.navigateUpFromSameTask(this)
-                return true
+                true
             }
             R.id.action_update -> {
                 setTime()
                 progressBar.visibility = View.VISIBLE
                 UpdateLesson(this).execute(lesson)
-                return true
+                true
             }
             R.id.action_delete -> {
                 createAlertDialog()
-                return true
+                true
             }
-            else -> return super.onOptionsItemSelected(item)
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
@@ -171,10 +174,17 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
 
     override fun onItemSelected(adapterView: AdapterView<*>, view: View?, i: Int, l: Long) {
         lesson.studentId = studentList[i].studentId
+        lesson.student = studentList[i]
     }
 
     override fun onNothingSelected(adapterView: AdapterView<*>) {
         // do nothing
+    }
+
+    private val hourFromOnValueChangedListener = NumberPicker.OnValueChangeListener { numberPicker, oldValue, newValue ->
+        // 21:30 is maximum value:
+        if (newValue == 21 && minuteFrom.value == 3) minuteFrom.value = 2
+        synchronizeTimeToWithTimeFrom()
     }
 
     private val minuteFromOnValueChangedListener = NumberPicker.OnValueChangeListener { numberPicker, oldValue, newValue ->
@@ -186,10 +196,13 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
         synchronizeTimeToWithTimeFrom()
     }
 
-    private val hourFromOnValueChangedListener = NumberPicker.OnValueChangeListener { numberPicker, oldValue, newValue ->
-        // 21:30 is maximum value:
-        if (newValue == 21 && minuteFrom.value == 3) minuteFrom.value = 2
-        synchronizeTimeToWithTimeFrom()
+    private val hourToOnValueChangedListener = NumberPicker.OnValueChangeListener { numberPicker, oldValue, newValue ->
+        // 8:30 is minimum value:
+        if (newValue == 8 && (minuteTo.value == 0 || minuteTo.value == 1))
+            minuteTo.value = 2
+        // 22:00 is maximum value:
+        if (newValue == 22 && minuteTo.value != 0) minuteTo.value = 0
+        synchronizeTimeFromWithTimeTo()
     }
 
     private val minuteToOnValueChangedListener = NumberPicker.OnValueChangeListener { numberPicker, oldValue, newValue ->
@@ -200,15 +213,6 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
         if (hourTo.value == 8 && (newValue == 0 || newValue == 1)) minuteTo.value = 2
         // 22:00 is maximum value:
         if (hourTo.value == 22) minuteTo.value = 0
-        synchronizeTimeFromWithTimeTo()
-    }
-
-    private val hourToOnValueChangedListener = NumberPicker.OnValueChangeListener { numberPicker, oldValue, newValue ->
-        // 8:30 is minimum value:
-        if (newValue == 8 && (minuteTo.value == 0 || minuteTo.value == 1))
-            minuteTo.value = 2
-        // 22:00 is maximum value:
-        if (newValue == 22 && minuteTo.value != 0) minuteTo.value = 0
         synchronizeTimeFromWithTimeTo()
     }
 

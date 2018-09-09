@@ -53,7 +53,7 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
         val students: Spinner = findViewById(R.id.students)
         adapter = StudentsAdapter(this, studentList)
         students.adapter = adapter
-        students.onItemSelectedListener = this
+        students.onItemSelectedListener = this  // TODO
 
         hourFrom = findViewById(R.id.hour_from)
         hourFrom.minValue = 8
@@ -107,7 +107,6 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
         super.onSaveInstanceState(state)
 
         state.putSerializable("LESSON", lesson as Serializable)
-
         state.putSerializable("STUDENTS", studentList as Serializable)
 
         state.putInt("HOUR_FROM", hourFrom.value)
@@ -149,13 +148,12 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
         return true
     }
 
-    private val minuteFromOnValueChangedListener = NumberPicker.OnValueChangeListener { numberPicker, oldValue, newValue ->
-        // overflow:
-        if (oldValue == 3 && newValue == 0) hourFrom.value = hourFrom.value + 1
-        if (oldValue == 0 && newValue == 3) hourFrom.value = hourFrom.value - 1
-        // max value:
-        if (newValue == 3 && hourFrom.value == 21) minuteFrom.value = 2
-        synchronizeTimeToWithTimeFrom()
+    override fun onItemSelected(adapterView: AdapterView<*>, view: View?, i: Int, l: Long) {
+        lesson.studentId = studentList[i].studentId
+    }
+
+    override fun onNothingSelected(adapterView: AdapterView<*>) {
+        // do nothing
     }
 
     private val hourFromOnValueChangedListener = NumberPicker.OnValueChangeListener { numberPicker, oldValue, newValue ->
@@ -164,15 +162,13 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
         synchronizeTimeToWithTimeFrom()
     }
 
-    private val minuteToOnValueChangedListener = NumberPicker.OnValueChangeListener { numberPicker, oldValue, newValue ->
+    private val minuteFromOnValueChangedListener = NumberPicker.OnValueChangeListener { numberPicker, oldValue, newValue ->
         // overflow:
-        if (oldValue == 3 && newValue == 0) hourTo.value = hourTo.value + 1
-        if (oldValue == 0 && newValue == 3) hourTo.value = hourTo.value - 1
-        // 8:30 is the minimum value:
-        if (hourTo.value == 8 && (newValue == 0 || newValue == 1)) minuteTo.value = 2
-        // 22:00 is the maximum value:
-        if (hourTo.value == 22) minuteTo.value = 0
-        synchronizeTimeFromWithTimeTo()
+        if (oldValue == 3 && newValue == 0) hourFrom.value = hourFrom.value + 1
+        if (oldValue == 0 && newValue == 3) hourFrom.value = hourFrom.value - 1
+        // max value:
+        if (newValue == 3 && hourFrom.value == 21) minuteFrom.value = 2
+        synchronizeTimeToWithTimeFrom()
     }
 
     private val hourToOnValueChangedListener = NumberPicker.OnValueChangeListener { numberPicker, oldValue, newValue ->
@@ -184,12 +180,15 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
         synchronizeTimeFromWithTimeTo()
     }
 
-    override fun onItemSelected(adapterView: AdapterView<*>, view: View?, i: Int, l: Long) {
-        lesson.studentId = studentList[i].studentId
-    }
-
-    override fun onNothingSelected(adapterView: AdapterView<*>) {
-        // do nothing
+    private val minuteToOnValueChangedListener = NumberPicker.OnValueChangeListener { numberPicker, oldValue, newValue ->
+        // overflow:
+        if (oldValue == 3 && newValue == 0) hourTo.value = hourTo.value + 1
+        if (oldValue == 0 && newValue == 3) hourTo.value = hourTo.value - 1
+        // 8:30 is the minimum value:
+        if (hourTo.value == 8 && (newValue == 0 || newValue == 1)) minuteTo.value = 2
+        // 22:00 is the maximum value:
+        if (hourTo.value == 22) minuteTo.value = 0
+        synchronizeTimeFromWithTimeTo()
     }
 
     private fun initializeTime() {
