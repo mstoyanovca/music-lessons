@@ -177,24 +177,26 @@ class FragmentStudents : Fragment() {
             override fun onPostExecute(result: List<StudentWithPhoneNumbers>) {
                 val studentsFragment = studentsFragmentWeakReference.get()!!
                 studentsFragment.progressBar.visibility = View.GONE
-                // result.sorted() TODO
+
+                result.forEach { it.student.phoneNumbers = it.phoneNumbers.toMutableList() }
+                val students: List<Student> = result.map { it.student }
+                students.sorted()
 
                 if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {
                     val folder = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "student_lists")
                     if (!folder.exists() && !folder.mkdirs()) Toast.makeText(studentsFragment.activity, "Students lists folder could not be created.", Toast.LENGTH_SHORT).show()
                     val file = File(folder, "student_list_" + System.currentTimeMillis().toString() + ".txt")
-                    /*BufferedWriter(FileWriter(file)).use { w ->
-                        result.map { s ->
+                    BufferedWriter(FileWriter(file)).use { w ->
+                        students.map { s ->
                             w.write(s.firstName + " " + s.lastName)
                             w.newLine()
                             s.phoneNumbers.map { pn ->
-                                w.write(pn.number + " " + pn.type)
+                                w.write(pn.number + " " + pn.type.displayValue())
                                 w.newLine()
                             }
                             w.newLine()
-                            w.newLine()
                         }
-                    }*/
+                    }
                     Toast.makeText(studentsFragment.activity, "Exported student list to the Downloads folder", Toast.LENGTH_SHORT).show()
 
                     val intent = Intent(studentsFragment.activity, ActivityMain::class.java)

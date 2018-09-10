@@ -1,10 +1,11 @@
 package com.mstoyanov.musiclessons.model
 
 import android.arch.persistence.room.Embedded
+import android.arch.persistence.room.Relation
 
-class StudentPhoneNumber {
+class StudentWithPhoneNumbers {
     @Embedded
     lateinit var student: Student
-    @Embedded
-    lateinit var phoneNumber: PhoneNumber
+    @Relation(parentColumn = "s_id", entityColumn = "student_id")
+    lateinit var phoneNumbers: List<PhoneNumber>
 }
