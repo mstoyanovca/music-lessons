@@ -13,7 +13,7 @@ import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.mstoyanov.musiclessons.model.Lesson
-import com.mstoyanov.musiclessons.model.LessonStudent
+import com.mstoyanov.musiclessons.model.LessonWithStudent
 import com.mstoyanov.musiclessons.model.Weekday
 import java.io.Serializable
 import java.lang.ref.WeakReference
@@ -73,15 +73,15 @@ class FragmentSchedule : Fragment() {
             return fragment
         }
 
-        private class FindAllLessonsWithStudentByWeekday(context: FragmentSchedule, private val weekday: String) : AsyncTask<Long, Int, List<LessonStudent>>() {
+        private class FindAllLessonsWithStudentByWeekday(context: FragmentSchedule, private val weekday: String) : AsyncTask<Long, Int, List<LessonWithStudent>>() {
             private val scheduleFragmentWeakReference: WeakReference<FragmentSchedule> = WeakReference(context)
 
-            override fun doInBackground(vararg p0: Long?): List<LessonStudent> {
+            override fun doInBackground(vararg p0: Long?): List<LessonWithStudent> {
                 // Thread.sleep(1000)
                 return MusicLessonsApplication.db.lessonDao.findAllWithStudentByWeekday(weekday)
             }
 
-            override fun onPostExecute(result: List<LessonStudent>) {
+            override fun onPostExecute(result: List<LessonWithStudent>) {
                 val scheduleFragment = scheduleFragmentWeakReference.get()
                 scheduleFragment!!.view!!.findViewById<ProgressBar>(R.id.progress_bar).visibility = View.GONE
 

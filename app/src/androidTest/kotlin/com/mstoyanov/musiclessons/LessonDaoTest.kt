@@ -4,7 +4,7 @@ import android.arch.persistence.room.Room
 import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
 import com.mstoyanov.musiclessons.model.Lesson
-import com.mstoyanov.musiclessons.model.LessonStudent
+import com.mstoyanov.musiclessons.model.LessonWithStudent
 import com.mstoyanov.musiclessons.model.Student
 import com.mstoyanov.musiclessons.model.Weekday
 import com.mstoyanov.musiclessons.repository.AppDatabase
@@ -50,7 +50,7 @@ class LessonDaoTest {
     @Test
     @Throws(Exception::class)
     fun insert_lesson() {
-        val actualLessonWithStudent: MutableList<LessonStudent> = db.lessonDao.findAllWithStudentByWeekday("Monday")
+        val actualLessonWithStudent: MutableList<LessonWithStudent> = db.lessonDao.findAllWithStudentByWeekday("Monday")
         val actualStudent = actualLessonWithStudent[0].student
         val actualLesson = actualLessonWithStudent[0].lesson
         actualLesson.student = actualStudent

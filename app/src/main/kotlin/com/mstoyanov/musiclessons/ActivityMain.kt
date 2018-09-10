@@ -42,7 +42,8 @@ class ActivityMain : AppCompatActivity() {
 
         if (intent.getLongExtra("ADDED_STUDENT_ID", 0) > 0 ||
                 intent.getLongExtra("UPDATED_STUDENT_ID", 0) > 0 ||
-                intent.getLongExtra("DELETED_STUDENT_ID", 0) > 0) {
+                intent.getLongExtra("DELETED_STUDENT_ID", 0) > 0 ||
+                intent.getBooleanExtra("EXPORTED_STUDENTS", false)) {
             tabLayout.getTabAt(1)!!.select()
         } else if (intent.getSerializableExtra("WEEKDAY") != null) {
             // returning from ActivityAddLesson, ActivityLessonDetails or ActivityEditLesson after deleting a lesson:

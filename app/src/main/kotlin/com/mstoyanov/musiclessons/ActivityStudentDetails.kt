@@ -109,7 +109,7 @@ class ActivityStudentDetails : AppCompatActivity() {
             PERMISSION_REQUEST_CALL_PHONE -> if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 dial(number)
             } else {
-                Toast.makeText(this@ActivityStudentDetails, "Permission CALL_PHONE denied", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Permission CALL_PHONE denied.", Toast.LENGTH_SHORT).show()
             }
             else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }
@@ -120,8 +120,11 @@ class ActivityStudentDetails : AppCompatActivity() {
         val hasPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE)
         if (hasPermission != PackageManager.PERMISSION_GRANTED) {
             if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CALL_PHONE)) {
-                showMessageOKCancel("You need to provide CALL_PHONE permission",
-                        DialogInterface.OnClickListener { dialog, which -> ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CALL_PHONE), PERMISSION_REQUEST_CALL_PHONE) })
+                showMessageOKCancel("You need to provide CALL_PHONE permission.",
+                        DialogInterface.OnClickListener { dialog,
+                                                          which ->
+                            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CALL_PHONE), PERMISSION_REQUEST_CALL_PHONE)
+                        })
                 return
             }
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CALL_PHONE), PERMISSION_REQUEST_CALL_PHONE)
@@ -132,7 +135,7 @@ class ActivityStudentDetails : AppCompatActivity() {
     }
 
     private fun showMessageOKCancel(message: String, okListener: DialogInterface.OnClickListener) {
-        AlertDialog.Builder(this@ActivityStudentDetails)
+        AlertDialog.Builder(this)
                 .setMessage(message)
                 .setPositiveButton("OK", okListener)
                 .setNegativeButton("Cancel", null)

@@ -2,7 +2,7 @@ package com.mstoyanov.musiclessons.model
 
 import android.arch.persistence.room.Embedded
 
-class LessonStudent {
+class LessonWithStudent {
     @Embedded
     lateinit var lesson: Lesson
     @Embedded
