@@ -33,7 +33,7 @@ class FragmentStudents : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_students, container, false)
-        setHasOptionsMenu(true);
+        setHasOptionsMenu(true)
 
         val title = rootView.findViewById<TextView>(R.id.heading)
         title.setText(R.string.students_label)
@@ -69,7 +69,7 @@ class FragmentStudents : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {
         menuInflater.inflate(R.menu.menu_export_students, menu)
-        super.onCreateOptionsMenu(menu, menuInflater);
+        super.onCreateOptionsMenu(menu, menuInflater)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -111,7 +111,7 @@ class FragmentStudents : Fragment() {
         progressBar.visibility = View.GONE
     }
 
-    fun exportStudents() {
+    private fun exportStudents() {
         val hasPermission = ContextCompat.checkSelfPermission(this.context!!, Manifest.permission.WRITE_EXTERNAL_STORAGE)
         if (hasPermission != PackageManager.PERMISSION_GRANTED) {
             if (!ActivityCompat.shouldShowRequestPermissionRationale(this.activity!!, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
