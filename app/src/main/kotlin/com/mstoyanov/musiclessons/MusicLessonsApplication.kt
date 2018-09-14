@@ -26,7 +26,7 @@ class MusicLessonsApplication : Application() {
                 database.execSQL("create table if not exists lesson (lesson_id integer primary key autoincrement not null, weekday text not null, time_from integer not null, time_to integer not null, student_id integer not null, foreign key(student_id) references student(s_id) on update no action on delete cascade);")
                 database.execSQL("create index index_lesson_student_id on lesson (student_id);")
 
-                database.execSQL("insert into student (first_name, last_name, email, notes) select case when firstName is null then '' else firstName end, case when lastName is null then '' else lastName end, case when email is null then '' else email end, '' from students;")
+                database.execSQL("insert into student (first_name, last_name, email, notes) select firstName, lastName, case when email is null then '' else email end, '' from students;")
                 database.execSQL("insert into phone_number (number, student_id, type) select homePhone, studentID, 'Home' from students where homePhone is not null and length(homePhone) > 0;")
                 database.execSQL("insert into phone_number (number, student_id, type) select cellPhone, studentID, 'Cell' from students where cellPhone is not null and length(cellPhone) > 0;")
                 database.execSQL("insert into phone_number (number, student_id, type) select workPhone, studentID, 'Work' from students where workPhone is not null and length(workPhone) > 0;")
@@ -46,7 +46,7 @@ class MusicLessonsApplication : Application() {
                 database.execSQL("create index index_lesson3_student_id on lesson3 (student_id);")
 
                 database.execSQL("insert into student3 (first_name, last_name, email, notes) select case when first_name is null then '' else first_name end, case when last_name is null then '' else last_name end, case when email is null then '' else email end, case when notes is null then '' else notes end from student;")
-                database.execSQL("insert into phone_number3 (number, student_id,type) select case when number is null then '' else number end, case when student_id is null then '' else student_id end, case when type is null then '' else type end from phone_number;")
+                database.execSQL("insert into phone_number3 (number, student_id, type) select number, student_id, type from phone_number;")
                 database.execSQL("insert into lesson3 (weekday, student_id, time_from, time_to) select weekday, student_id,  time_from, time_to from lesson;")
 
                 database.execSQL("drop table if exists student;")
