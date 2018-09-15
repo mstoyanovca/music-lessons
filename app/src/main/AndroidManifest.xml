@@ -19,8 +19,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="false"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-        android:versionCode="13"
-        android:versionName="3.2">
+        android:versionCode="14"
+        android:versionName="3.3">
         <activity
             android:name=".ActivityMain"
             android:label="@string/app_label"
