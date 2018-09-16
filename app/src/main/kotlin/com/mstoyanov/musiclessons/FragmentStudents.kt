@@ -193,10 +193,14 @@ class FragmentStudents : Fragment() {
                                 w.write(pn.number + " " + pn.type.displayValue())
                                 w.newLine()
                             }
-                            w.write(s.email)
-                            w.newLine()
-                            w.write(s.notes)
-                            w.newLine()
+                            if (s.email.isNotEmpty()) {
+                                w.write(s.email)
+                                w.newLine()
+                            }
+                            if (s.notes.isNotEmpty()) {
+                                w.write(s.notes)
+                                w.newLine()
+                            }
                             w.newLine()
                         }
                     }
