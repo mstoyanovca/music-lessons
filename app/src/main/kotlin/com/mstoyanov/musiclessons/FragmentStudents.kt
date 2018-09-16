@@ -179,8 +179,7 @@ class FragmentStudents : Fragment() {
                 studentsFragment.progressBar.visibility = View.GONE
 
                 result.forEach { it.student.phoneNumbers = it.phoneNumbers.toMutableList() }
-                val students: List<Student> = result.map { it.student }
-                students.sorted()
+                val students: List<Student> = result.map { it.student }.sorted()
 
                 if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {
                     val folder = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "student_lists")
@@ -192,6 +191,14 @@ class FragmentStudents : Fragment() {
                             w.newLine()
                             s.phoneNumbers.map { pn ->
                                 w.write(pn.number + " " + pn.type.displayValue())
+                                w.newLine()
+                            }
+                            if (s.email.isNotEmpty()) {
+                                w.write(s.email)
+                                w.newLine()
+                            }
+                            if (s.notes.isNotEmpty()) {
+                                w.write(s.notes)
                                 w.newLine()
                             }
                             w.newLine()
