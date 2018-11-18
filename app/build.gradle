@@ -7,10 +7,10 @@ android {
     buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "com.mstoyanov.music_lessons"
-        minSdkVersion 15
+        minSdkVersion 19
         targetSdkVersion 28
-        versionCode 14
-        versionName "3.3"
+        versionCode 15
+        versionName "3.4"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         javaCompileOptions {

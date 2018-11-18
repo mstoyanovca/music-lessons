@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.mstoyanov.musiclessons"
     android:largeScreens="true"
     android:normalScreens="true"
     android:smallScreens="true"
-    android:xlargeScreens="true">
+    android:xlargeScreens="true"
+    tools:ignore="GoogleAppIndexingWarning">
 
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.SEND_SMS" />
@@ -19,8 +21,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="false"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-        android:versionCode="14"
-        android:versionName="3.3">
+        android:versionCode="15"
+        android:versionName="3.4"
+        tools:ignore="AllowBackup">
         <activity
             android:name=".ActivityMain"
             android:label="@string/app_label"
@@ -91,5 +94,4 @@
                 android:value=".ActivityLessonDetails" />
         </activity>
     </application>
-
 </manifest>
