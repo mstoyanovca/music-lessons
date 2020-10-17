@@ -11,7 +11,7 @@ import java.util.*
         foreignKeys = [(ForeignKey(entity = Student::class, parentColumns = arrayOf("s_id"), childColumns = arrayOf("student_id"), onDelete = CASCADE))],
         indices = [(Index(value = ["student_id"]))])
 data class Lesson(@PrimaryKey(autoGenerate = true) @ColumnInfo(name = "lesson_id") @NotNull var lessonId: Long,
-                  @ColumnInfo(name = "weekday") @NotNull @TypeConverters(WeekdayConverter::class) var weekday: Weekday,
+                  @NotNull @TypeConverters(WeekdayConverter::class) var weekday: Weekday,
                   @ColumnInfo(name = "time_from") @NotNull @TypeConverters(DateConverter::class) var timeFrom: Date,
                   @ColumnInfo(name = "time_to") @NotNull @TypeConverters(DateConverter::class) var timeTo: Date,
                   @ColumnInfo(name = "student_id") @NotNull var studentId: Long,

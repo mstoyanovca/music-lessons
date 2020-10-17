@@ -56,9 +56,6 @@ android {
         androidTestImplementation "androidx.test:rules:$test_version"
         androidTestImplementation "androidx.room:room-testing:$room_version"
 
-        androidTestImplementation 'com.android.support:support-annotations:28.0.0'
-        //androidTestImplementation 'com.android.support.test:runner:1.0.2'
-        //androidTestImplementation 'com.android.support.test:rules:1.0.2'
         androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
         androidTestImplementation 'com.android.support.test.espresso:espresso-intents:3.0.2'
         androidTestImplementation 'org.hamcrest:hamcrest-library:1.3'
