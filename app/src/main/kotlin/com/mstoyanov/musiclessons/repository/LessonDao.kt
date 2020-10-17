@@ -1,6 +1,6 @@
 package com.mstoyanov.musiclessons.repository
 
-import android.arch.persistence.room.*
+import androidx.room.*
 import com.mstoyanov.musiclessons.model.Lesson
 import com.mstoyanov.musiclessons.model.LessonWithStudent
 

@@ -1,7 +1,7 @@
 package com.mstoyanov.musiclessons.model
 
-import android.arch.persistence.room.*
-import android.arch.persistence.room.ForeignKey.CASCADE
+import androidx.room.*
+import androidx.room.ForeignKey.CASCADE
 import org.jetbrains.annotations.NotNull
 import java.io.Serializable
 import java.text.SimpleDateFormat

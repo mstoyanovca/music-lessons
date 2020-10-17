@@ -1,7 +1,7 @@
 package com.mstoyanov.musiclessons
 
-import android.arch.persistence.room.Room
-import android.support.test.InstrumentationRegistry
+import androidx.room.Room
+import androidx.test.InstrumentationRegistry
 import com.mstoyanov.musiclessons.model.PhoneNumber
 import com.mstoyanov.musiclessons.model.PhoneNumberType
 import com.mstoyanov.musiclessons.model.Student

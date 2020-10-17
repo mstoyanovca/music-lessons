@@ -1,13 +1,13 @@
 package com.mstoyanov.musiclessons
 
 import android.os.Bundle
-import android.support.design.widget.TabLayout
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentStatePagerAdapter
-import android.support.v4.view.ViewPager
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.Toolbar
+import com.google.android.material.tabs.TabLayout
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentStatePagerAdapter
+import androidx.viewpager.widget.ViewPager
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import com.mstoyanov.musiclessons.model.Weekday
 import java.util.*
 
@@ -52,7 +52,7 @@ class ActivityMain : AppCompatActivity() {
         }
     }
 
-    override fun onSaveInstanceState(savedInstanceState: Bundle?) {
+    override fun onSaveInstanceState(savedInstanceState: Bundle) {
         super.onSaveInstanceState(savedInstanceState)
         savedInstanceState!!.putInt("SELECTED_WEEKDAY_INDEX", selectedWeekdayIndex)
         savedInstanceState.putInt("SELECTED_SECTION_INDEX", selectedSectionIndex)

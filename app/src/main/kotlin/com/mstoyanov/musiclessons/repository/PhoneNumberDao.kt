@@ -1,6 +1,6 @@
 package com.mstoyanov.musiclessons.repository
 
-import android.arch.persistence.room.*
+import androidx.room.*
 import com.mstoyanov.musiclessons.model.PhoneNumber
 
 @Dao

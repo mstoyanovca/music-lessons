@@ -1,6 +1,6 @@
 package com.mstoyanov.musiclessons.model
 
-import android.arch.persistence.room.TypeConverter
+import androidx.room.TypeConverter
 
 class WeekdayConverter {
     @TypeConverter
