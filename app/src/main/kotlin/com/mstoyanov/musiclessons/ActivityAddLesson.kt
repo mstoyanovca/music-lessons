@@ -4,18 +4,18 @@ import android.content.Context
 import android.content.Intent
 import android.os.AsyncTask
 import android.os.Bundle
-import androidx.core.app.NavUtils
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import android.view.*
 import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.core.app.NavUtils
 import com.mstoyanov.musiclessons.model.Lesson
 import com.mstoyanov.musiclessons.model.Student
 import com.mstoyanov.musiclessons.model.Weekday
 import java.io.Serializable
 import java.lang.ref.WeakReference
-import java.text.SimpleDateFormat
-import java.util.*
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private lateinit var hourFrom: NumberPicker
@@ -232,11 +232,11 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
     private fun setTime() {
         val timeFromString = hourFrom.value.toString() + ":" + minutes[minuteFrom.value]
         val timeToString = hourTo.value.toString() + ":" + minutes[minuteTo.value]
-        val format = SimpleDateFormat("HH:mm", Locale.US)
-        format.timeZone = TimeZone.getTimeZone("UTC")
 
-        val dateFrom = format.parse(timeFromString)
-        val dateTo = format.parse(timeToString)
+        val formatter = DateTimeFormatter.ofPattern("HH:mm")
+
+        val dateFrom = LocalTime.parse(timeFromString, formatter)
+        val dateTo = LocalTime.parse(timeToString, formatter)
 
         lesson.timeFrom = dateFrom
         lesson.timeTo = dateTo

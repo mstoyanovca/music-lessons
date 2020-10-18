@@ -2,14 +2,13 @@ package com.mstoyanov.musiclessons
 
 import android.content.Context
 import android.content.Intent
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import com.mstoyanov.musiclessons.model.Lesson
-import java.text.SimpleDateFormat
-import java.util.*
+import java.time.format.DateTimeFormatter
 
 class AdapterLessons(private val lessons: List<Lesson>) : RecyclerView.Adapter<AdapterLessons.ViewHolder>() {
 
@@ -22,10 +21,9 @@ class AdapterLessons(private val lessons: List<Lesson>) : RecyclerView.Adapter<A
     }
 
     override fun onBindViewHolder(holder: AdapterLessons.ViewHolder, position: Int) {
-        val format = SimpleDateFormat("HH:mm", Locale.US)
-        format.timeZone = TimeZone.getTimeZone("UTC")
-        val timeFrom = format.format(lessons[position].timeFrom)
-        val timeTo = format.format(lessons[position].timeTo)
+        val formatter = DateTimeFormatter.ofPattern("HH:mm")
+        val timeFrom = formatter.format(lessons[position].timeFrom)
+        val timeTo = formatter.format(lessons[position].timeTo)
         holder.time.text = StringBuilder().append(timeFrom).append(holder.context.getString(R.string.dash)).append(timeTo).toString()
 
         val firstName = lessons[position].student.firstName

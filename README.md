@@ -3,3 +3,6 @@ An Android application for scheduling music lessons, released in the summer of 2
 The latest updates include:
 - updated to SDK version 30;
 - switched to androidx;
+
+TODO:
+- migrate the DB;
