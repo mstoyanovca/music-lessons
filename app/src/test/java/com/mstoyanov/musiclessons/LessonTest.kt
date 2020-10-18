@@ -6,23 +6,22 @@ import com.mstoyanov.musiclessons.model.Weekday
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
-import java.text.SimpleDateFormat
-import java.util.*
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 class LessonTest {
-    private lateinit var format: SimpleDateFormat
+    private lateinit var formatter: DateTimeFormatter
 
     @Before
     fun setUp() {
-        format = SimpleDateFormat("HH:mm", Locale.US)
-        format.timeZone = TimeZone.getTimeZone("UTC")
+        formatter = DateTimeFormatter.ofPattern("HH:mm")
     }
 
     @Test
     fun compare_lessons_by_time_from() {
-        val timeFrom1: Date = format.parse("16:00")
-        val timeFrom2: Date = format.parse("16:15")
-        val timeTo: Date = format.parse("16:45")
+        val timeFrom1: LocalTime = LocalTime.parse("16:00", formatter)
+        val timeFrom2: LocalTime = LocalTime.parse("16:15", formatter)
+        val timeTo: LocalTime = LocalTime.parse("16:45", formatter)
 
         val lesson1 = Lesson(1L, Weekday.MONDAY, timeFrom1, timeTo, 1L, Student())
         val lesson2 = Lesson(2L, Weekday.MONDAY, timeFrom2, timeTo, 2L, Student())
@@ -32,9 +31,9 @@ class LessonTest {
 
     @Test
     fun compare_lessons_by_time_to() {
-        val timeFrom: Date = format.parse("16:00")
-        val timeTo1: Date = format.parse("16:30")
-        val timeTo2: Date = format.parse("16:45")
+        val timeFrom: LocalTime = LocalTime.parse("16:00", formatter)
+        val timeTo1: LocalTime = LocalTime.parse("16:30", formatter)
+        val timeTo2: LocalTime = LocalTime.parse("16:45", formatter)
 
         val lesson1 = Lesson(1L, Weekday.MONDAY, timeFrom, timeTo1, 1L, Student())
         val lesson2 = Lesson(2L, Weekday.MONDAY, timeFrom, timeTo2, 2L, Student())
@@ -44,8 +43,8 @@ class LessonTest {
 
     @Test
     fun compare_lessons_by_student_first_name() {
-        val timeFrom: Date = format.parse("16:00")
-        val timeTo: Date = format.parse("16:30")
+        val timeFrom: LocalTime = LocalTime.parse("16:00", formatter)
+        val timeTo: LocalTime = LocalTime.parse("16:30", formatter)
 
         val student1 = Student(1L, "Johm", "Smith", "", "", mutableListOf())
         val student2 = Student(2L, "John", "Smith", "", "", mutableListOf())
@@ -58,8 +57,8 @@ class LessonTest {
 
     @Test
     fun compare_lessons_by_student_last_name() {
-        val timeFrom: Date = format.parse("16:00")
-        val timeTo: Date = format.parse("16:30")
+        val timeFrom: LocalTime = LocalTime.parse("16:00", formatter)
+        val timeTo: LocalTime = LocalTime.parse("16:30", formatter)
 
         val student1 = Student(1L, "John", "Smitg", "", "", mutableListOf())
         val student2 = Student(1L, "John", "Smith", "", "", mutableListOf())

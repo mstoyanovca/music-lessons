@@ -7,8 +7,8 @@ import androidx.room.migration.Migration
 import androidx.room.testing.MigrationTestHelper
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
-import androidx.test.InstrumentationRegistry
-import androidx.test.runner.AndroidJUnit4
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import com.mstoyanov.musiclessons.repository.AppDatabase
 import org.junit.Rule
 import org.junit.Test
@@ -26,7 +26,7 @@ class MigrationTest {
     @Throws(IOException::class)
     fun migrate_1_to_3_test() {
         // this is an SQLite helper:
-        val sqLiteHelper = TestSQLiteOpenHelper(InstrumentationRegistry.getTargetContext())
+        val sqLiteHelper = TestSQLiteOpenHelper(InstrumentationRegistry.getInstrumentation().targetContext)
         val db = sqLiteHelper.writableDatabase
 
         db.execSQL("create table if not exists students (studentID integer primary key autoincrement not null, firstName text, lastName text, homePhone text, cellPhone text, workPhone text, email text);")
@@ -117,7 +117,6 @@ class MigrationTest {
     }
 
     private inner class TestSQLiteOpenHelper(context: Context) : SQLiteOpenHelper(context, TEST_DB, null, 1) {
-
         override fun onCreate(db: SQLiteDatabase) {
             // do nothing;
         }

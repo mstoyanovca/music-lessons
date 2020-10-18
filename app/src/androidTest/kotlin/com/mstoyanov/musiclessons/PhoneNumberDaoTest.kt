@@ -1,7 +1,8 @@
 package com.mstoyanov.musiclessons
 
 import androidx.room.Room
-import androidx.test.InstrumentationRegistry
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import com.mstoyanov.musiclessons.model.PhoneNumber
 import com.mstoyanov.musiclessons.model.PhoneNumberType
 import com.mstoyanov.musiclessons.model.Student
@@ -10,15 +11,17 @@ import org.junit.After
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
 import java.io.IOException
 
+@RunWith(AndroidJUnit4::class)
 class PhoneNumberDaoTest {
     private lateinit var db: AppDatabase
     private val phoneNumbers: MutableList<PhoneNumber> = mutableListOf()
 
     @Before
     fun createDb() {
-        val context = InstrumentationRegistry.getTargetContext()
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
         db = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java).build()
 
         var phoneNumber = PhoneNumber(1L, "123-456-7890", PhoneNumberType.HOME, 1L, false)
