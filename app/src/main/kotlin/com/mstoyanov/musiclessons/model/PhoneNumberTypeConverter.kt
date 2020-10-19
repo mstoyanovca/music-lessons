@@ -3,7 +3,6 @@ package com.mstoyanov.musiclessons.model
 import androidx.room.TypeConverter
 
 class PhoneNumberTypeConverter {
-
     @TypeConverter
     fun toPhoneNumberType(value: String): PhoneNumberType? {
         return when (value) {
