@@ -7,26 +7,25 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.AsyncTask
 import android.os.Bundle
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.appcompat.widget.Toolbar
 import android.view.MenuItem
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.mstoyanov.musiclessons.ActivityStudentDetails.Companion.PERMISSION_REQUEST_CALL_PHONE
 import com.mstoyanov.musiclessons.model.Lesson
 import com.mstoyanov.musiclessons.model.PhoneNumber
 import java.lang.ref.WeakReference
-import java.text.SimpleDateFormat
-import java.util.*
+import java.time.format.DateTimeFormatter
 
 class ActivityLessonDetails : AppCompatActivity() {
     private lateinit var phoneNumbers: RecyclerView
@@ -70,10 +69,9 @@ class ActivityLessonDetails : AppCompatActivity() {
         weekday.text = lesson.weekday.displayValue()
 
         val time = findViewById<TextView>(R.id.time)
-        val format = SimpleDateFormat("HH:mm", Locale.US)
-        format.timeZone = TimeZone.getTimeZone("UTC")
-        val timeFrom = format.format(lesson.timeFrom)
-        val timeTo = format.format(lesson.timeTo)
+        val formatter = DateTimeFormatter.ofPattern("HH:mm")
+        val timeFrom = formatter.format(lesson.timeFrom)
+        val timeTo = formatter.format(lesson.timeTo)
         time.text = StringBuilder().append(timeFrom).append(getString(R.string.dash)).append(timeTo).toString()
 
         val name = findViewById<TextView>(R.id.name)
@@ -111,7 +109,7 @@ class ActivityLessonDetails : AppCompatActivity() {
 
     override fun onSaveInstanceState(state: Bundle) {
         super.onSaveInstanceState(state)
-        state!!.putSerializable("SAVED_LESSON", lesson)
+        state.putSerializable("SAVED_LESSON", lesson)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -142,8 +140,7 @@ class ActivityLessonDetails : AppCompatActivity() {
         val hasPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE)
         if (hasPermission != PackageManager.PERMISSION_GRANTED) {
             if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CALL_PHONE)) {
-                showMessageOKCancel("You need to provide CALL_PHONE permission",
-                        DialogInterface.OnClickListener { dialog, which -> ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CALL_PHONE), PERMISSION_REQUEST_CALL_PHONE) })
+                showMessageOKCancel { _, _ -> ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CALL_PHONE), PERMISSION_REQUEST_CALL_PHONE) }
                 return
             }
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CALL_PHONE), PERMISSION_REQUEST_CALL_PHONE)
@@ -153,9 +150,9 @@ class ActivityLessonDetails : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun showMessageOKCancel(message: String, okListener: DialogInterface.OnClickListener) {
+    private fun showMessageOKCancel(okListener: DialogInterface.OnClickListener) {
         AlertDialog.Builder(this@ActivityLessonDetails)
-                .setMessage(message)
+                .setMessage("You need to provide CALL_PHONE permission")
                 .setPositiveButton("OK", okListener)
                 .setNegativeButton("Cancel", null)
                 .create()
@@ -163,7 +160,6 @@ class ActivityLessonDetails : AppCompatActivity() {
     }
 
     companion object {
-
         private class FindAllPhoneNumbersByStudentId(context: ActivityLessonDetails) : AsyncTask<Long, Int, MutableList<PhoneNumber>>() {
             private val lessonDetailsActivityWeakReference: WeakReference<ActivityLessonDetails> = WeakReference(context)
 

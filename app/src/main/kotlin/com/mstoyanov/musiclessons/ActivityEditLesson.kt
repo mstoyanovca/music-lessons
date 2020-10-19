@@ -15,7 +15,6 @@ import com.mstoyanov.musiclessons.model.Student
 import com.mstoyanov.musiclessons.model.Weekday
 import java.io.Serializable
 import java.lang.ref.WeakReference
-import java.text.SimpleDateFormat
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -27,7 +26,7 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
     private lateinit var minuteTo: NumberPicker
     private lateinit var progressBar: ProgressBar
 
-    private lateinit var adapter: ActivityEditLesson.StudentsAdapter
+    private lateinit var adapter: StudentsAdapter
 
     private lateinit var lesson: Lesson
     private lateinit var studentList: MutableList<Student>
@@ -48,10 +47,7 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
         progressBar.isIndeterminate = true
 
         val weekday = findViewById<Spinner>(R.id.weekday)
-        val arrayAdapter = ArrayAdapter.createFromResource(
-                this,
-                R.array.weekdays,
-                R.layout.weekday_item)
+        val arrayAdapter = ArrayAdapter.createFromResource(this, R.array.weekdays, R.layout.weekday_item)
         arrayAdapter.setDropDownViewResource(R.layout.phone_type_dropdown_item)
         weekday.adapter = arrayAdapter
         weekday.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -65,7 +61,7 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
         }
 
         val students: Spinner = findViewById(R.id.students)
-        adapter = ActivityEditLesson.StudentsAdapter(this, studentList)
+        adapter = StudentsAdapter(this, studentList)
         students.adapter = adapter
         students.onItemSelectedListener = this  // TODO
 
@@ -219,15 +215,13 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
     }
 
     private fun initializeTime() {
-        var format = SimpleDateFormat("HH", Locale.US)
-        format.timeZone = TimeZone.getTimeZone("UTC")
-        val hrFrom = format.format(lesson.timeFrom)
-        val hrTo = format.format(lesson.timeTo)
+        var formatter = DateTimeFormatter.ofPattern("HH")
+        val hrFrom = formatter.format(lesson.timeFrom)
+        val hrTo = formatter.format(lesson.timeTo)
 
-        format = SimpleDateFormat("mm", Locale.US)
-        format.timeZone = TimeZone.getTimeZone("UTC")
-        val mntFrom = format.format(lesson.timeFrom)
-        val mntTo = format.format(lesson.timeTo)
+        formatter = DateTimeFormatter.ofPattern("mm")
+        val mntFrom = formatter.format(lesson.timeFrom)
+        val mntTo = formatter.format(lesson.timeTo)
 
         hourFrom.value = Integer.parseInt(hrFrom)
         hourTo.value = Integer.parseInt(hrTo)
