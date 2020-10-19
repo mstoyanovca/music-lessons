@@ -7,17 +7,17 @@ import android.content.pm.PackageManager
 import android.os.AsyncTask
 import android.os.Bundle
 import android.os.Environment
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import androidx.core.app.ActivityCompat
-import androidx.fragment.app.Fragment
-import androidx.core.content.ContextCompat
-import androidx.appcompat.app.AlertDialog
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.view.*
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.mstoyanov.musiclessons.model.Student
 import com.mstoyanov.musiclessons.model.StudentWithPhoneNumbers
 import java.io.BufferedWriter
@@ -149,10 +149,9 @@ class FragmentStudents : Fragment() {
         }
 
         private class LoadStudents(context: FragmentStudents) : AsyncTask<Long, Int, MutableList<Student>>() {
-            private val studentsFragmentWeakReference = WeakReference<FragmentStudents>(context)
+            private val studentsFragmentWeakReference = WeakReference(context)
 
             override fun doInBackground(vararg p0: Long?): MutableList<Student> {
-                // Thread.sleep(1000)
                 return MusicLessonsApplication.db.studentDao.findAll()
             }
 
@@ -167,10 +166,9 @@ class FragmentStudents : Fragment() {
         }
 
         class ExportStudents(context: FragmentStudents) : AsyncTask<Long, Int, List<StudentWithPhoneNumbers>>() {
-            private val studentsFragmentWeakReference = WeakReference<FragmentStudents>(context)
+            private val studentsFragmentWeakReference = WeakReference(context)
 
             override fun doInBackground(vararg p0: Long?): List<StudentWithPhoneNumbers> {
-                // Thread.sleep(1000)
                 return MusicLessonsApplication.db.studentDao.findAllWithPhoneNumbers()
             }
 

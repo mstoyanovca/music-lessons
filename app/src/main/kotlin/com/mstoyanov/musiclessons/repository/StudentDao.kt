@@ -6,7 +6,6 @@ import com.mstoyanov.musiclessons.model.StudentWithPhoneNumbers
 
 @Dao
 interface StudentDao {
-
     @Query("SELECT * FROM student")
     fun findAll(): MutableList<Student>
 

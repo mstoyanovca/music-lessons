@@ -11,16 +11,12 @@ import com.mstoyanov.musiclessons.model.Lesson
 import java.time.format.DateTimeFormatter
 
 class AdapterLessons(private val lessons: List<Lesson>) : RecyclerView.Adapter<AdapterLessons.ViewHolder>() {
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdapterLessons.ViewHolder {
-        val lessonItem = LayoutInflater.from(parent.context).inflate(
-                R.layout.lesson_item,
-                parent,
-                false)
-        return AdapterLessons.ViewHolder(lessonItem, lessons)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val lessonItem = LayoutInflater.from(parent.context).inflate(R.layout.lesson_item, parent, false)
+        return ViewHolder(lessonItem, lessons)
     }
 
-    override fun onBindViewHolder(holder: AdapterLessons.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val formatter = DateTimeFormatter.ofPattern("HH:mm")
         val timeFrom = formatter.format(lessons[position].timeFrom)
         val timeTo = formatter.format(lessons[position].timeTo)

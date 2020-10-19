@@ -2,21 +2,17 @@ package com.mstoyanov.musiclessons
 
 import android.content.Intent
 import android.os.AsyncTask
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import com.mstoyanov.musiclessons.model.PhoneNumber
 import com.mstoyanov.musiclessons.model.Student
 
 class AdapterStudents(private val students: List<Student>, private val fragment: FragmentStudents) : RecyclerView.Adapter<AdapterStudents.ViewHolder>() {
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdapterStudents.ViewHolder {
-        val name = LayoutInflater.from(parent.context).inflate(
-                R.layout.student_item,
-                parent,
-                false) as TextView
+        val name = LayoutInflater.from(parent.context).inflate(R.layout.student_item, parent, false) as TextView
         return ViewHolder(name, fragment)
     }
 
@@ -29,7 +25,6 @@ class AdapterStudents(private val students: List<Student>, private val fragment:
     }
 
     inner class ViewHolder(val name: TextView, private val fragment: FragmentStudents) : RecyclerView.ViewHolder(name), View.OnClickListener {
-
         init {
             name.setOnClickListener(this)
         }
@@ -41,11 +36,8 @@ class AdapterStudents(private val students: List<Student>, private val fragment:
     }
 
     companion object {
-
         private class FindAllPhoneNumbersByStudentId(private val student: Student, private val fragment: FragmentStudents) : AsyncTask<Long, Int, MutableList<PhoneNumber>>() {
-
             override fun doInBackground(vararg p0: Long?): MutableList<PhoneNumber> {
-                // Thread.sleep(1000)
                 return MusicLessonsApplication.db.phoneNumberDao.findAllByStudentId(student.studentId)
             }
 

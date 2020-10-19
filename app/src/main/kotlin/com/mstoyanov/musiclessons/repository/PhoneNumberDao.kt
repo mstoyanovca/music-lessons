@@ -5,7 +5,6 @@ import com.mstoyanov.musiclessons.model.PhoneNumber
 
 @Dao
 interface PhoneNumberDao {
-
     @Query("select * from phone_number where student_id == :studentId")
     fun findAllByStudentId(studentId: Long): MutableList<PhoneNumber>
 
