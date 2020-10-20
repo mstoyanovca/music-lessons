@@ -51,6 +51,7 @@ class FragmentStudents : Fragment() {
             LoadStudents(this).execute()
         } else {
             progressBar.visibility = View.GONE
+            @Suppress("UNCHECKED_CAST")
             students.addAll(savedInstanceState.getSerializable("STUDENTS") as MutableList<Student>)
             adapter.notifyDataSetChanged()
             activity!!.invalidateOptionsMenu()
@@ -115,11 +116,9 @@ class FragmentStudents : Fragment() {
         val hasPermission = ContextCompat.checkSelfPermission(this.context!!, Manifest.permission.WRITE_EXTERNAL_STORAGE)
         if (hasPermission != PackageManager.PERMISSION_GRANTED) {
             if (!ActivityCompat.shouldShowRequestPermissionRationale(this.activity!!, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                showMessageOKCancel("You need to provide WRITE_EXTERNAL_STORAGE permission.",
-                        DialogInterface.OnClickListener { dialog,
-                                                          which ->
-                            ActivityCompat.requestPermissions(this.activity!!, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE)
-                        })
+                showMessageOKCancel { _, _ ->
+                    ActivityCompat.requestPermissions(this.activity!!, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE)
+                }
                 return
             }
             ActivityCompat.requestPermissions(this.activity!!, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE)
@@ -128,9 +127,9 @@ class FragmentStudents : Fragment() {
         ExportStudents(this).execute()
     }
 
-    private fun showMessageOKCancel(message: String, okListener: DialogInterface.OnClickListener) {
+    private fun showMessageOKCancel(okListener: DialogInterface.OnClickListener) {
         AlertDialog.Builder(this.context!!)
-                .setMessage(message)
+                .setMessage("You need to provide WRITE_EXTERNAL_STORAGE permission.")
                 .setPositiveButton("OK", okListener)
                 .setNegativeButton("Cancel", null)
                 .create()

@@ -3,15 +3,15 @@ package com.mstoyanov.musiclessons
 import android.content.Intent
 import android.os.AsyncTask
 import android.os.Bundle
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.mstoyanov.musiclessons.model.Lesson
 import com.mstoyanov.musiclessons.model.LessonWithStudent
 import com.mstoyanov.musiclessons.model.Weekday
@@ -44,6 +44,7 @@ class FragmentSchedule : Fragment() {
             FindAllLessonsWithStudentByWeekday(this, ActivityMain.sectionTitles[position]).execute()
         } else {
             progressBar.visibility = View.GONE
+            @Suppress("UNCHECKED_CAST")
             lessons.addAll(savedInstanceState.getSerializable("LESSONS") as MutableList<Lesson>)
             adapter.notifyDataSetChanged()
         }
@@ -85,8 +86,8 @@ class FragmentSchedule : Fragment() {
                 val scheduleFragment = scheduleFragmentWeakReference.get()
                 scheduleFragment!!.view!!.findViewById<ProgressBar>(R.id.progress_bar).visibility = View.GONE
 
-                result.forEach { it -> it.lesson.student = it.student }
-                val lessonList: MutableList<Lesson> = result.map { it -> it.lesson }.toMutableList()
+                result.forEach { it.lesson.student = it.student }
+                val lessonList: MutableList<Lesson> = result.map { it.lesson }.toMutableList()
                 lessonList.sort()
 
                 scheduleFragment.lessons.addAll(lessonList)
