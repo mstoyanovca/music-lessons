@@ -9,6 +9,7 @@ interface StudentDao {
     @Query("SELECT * FROM student")
     fun findAll(): MutableList<Student>
 
+    @Transaction
     @Query("SELECT * FROM student")
     fun findAllWithPhoneNumbers(): List<StudentWithPhoneNumbers>
 

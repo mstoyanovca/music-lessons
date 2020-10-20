@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull
 import java.io.Serializable
 
 @Entity(tableName = "student")
-data class Student(@PrimaryKey(autoGenerate = true) @ColumnInfo(name = "s_id") @NotNull var studentId: Long,
+data class Student(@PrimaryKey(autoGenerate = true) @ColumnInfo(name = "student_id") @NotNull var studentId: Long,
                    @ColumnInfo(name = "first_name") @NotNull var firstName: String,
                    @ColumnInfo(name = "last_name") @NotNull var lastName: String,
                    @NotNull var email: String,

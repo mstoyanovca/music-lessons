@@ -1,10 +1,10 @@
 package com.mstoyanov.musiclessons.model
 
 import androidx.room.Embedded
+import androidx.room.Relation
 
-class LessonWithStudent {
-    @Embedded
-    lateinit var lesson: Lesson
-    @Embedded
-    lateinit var student: Student
-}
+data class LessonWithStudent(
+        @Embedded val lesson: Lesson,
+        @Relation(parentColumn = "lesson_id", entityColumn = "student_id")
+        val student: Student
+)
