@@ -5,11 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.mstoyanov.musiclessons.model.PhoneNumber
 import com.mstoyanov.musiclessons.model.Student
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class AdapterStudents(private val students: List<Student>, private val fragment: FragmentStudents) : RecyclerView.Adapter<AdapterStudents.ViewHolder>() {
@@ -34,18 +33,14 @@ class AdapterStudents(private val students: List<Student>, private val fragment:
         override fun onClick(view: View) {
             fragment.startProgressBar()
             val student = students[adapterPosition]
-            GlobalScope.launch(Dispatchers.Main) {
+            fragment.lifecycleScope.launch {
                 val phoneNumbers: MutableList<PhoneNumber> = MusicLessonsApplication.db.phoneNumberDao.findAllByStudentId2(student.studentId)
-                onResult(fragment, student, phoneNumbers)
+                fragment.stopProgressBar()
+                student.phoneNumbers = phoneNumbers
+                val intent = Intent(fragment.context, ActivityStudentDetails::class.java)
+                intent.putExtra("STUDENT", student)
+                fragment.startActivity(intent)
             }
-        }
-
-        private fun onResult(fragment: FragmentStudents, student: Student, phoneNumbers: MutableList<PhoneNumber>) {
-            fragment.stopProgressBar()
-            student.phoneNumbers = phoneNumbers
-            val intent = Intent(fragment.context, ActivityStudentDetails::class.java)
-            intent.putExtra("STUDENT", student)
-            fragment.startActivity(intent)
         }
     }
 }
