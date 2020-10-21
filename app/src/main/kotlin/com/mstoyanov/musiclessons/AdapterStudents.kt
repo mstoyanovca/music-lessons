@@ -1,7 +1,6 @@
 package com.mstoyanov.musiclessons
 
 import android.content.Intent
-import android.os.AsyncTask
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +8,9 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.mstoyanov.musiclessons.model.PhoneNumber
 import com.mstoyanov.musiclessons.model.Student
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class AdapterStudents(private val students: List<Student>, private val fragment: FragmentStudents) : RecyclerView.Adapter<AdapterStudents.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdapterStudents.ViewHolder {
@@ -31,23 +33,19 @@ class AdapterStudents(private val students: List<Student>, private val fragment:
 
         override fun onClick(view: View) {
             fragment.startProgressBar()
-            FindAllPhoneNumbersByStudentId(students[adapterPosition], fragment).execute()
+            val student = students[adapterPosition]
+            GlobalScope.launch(Dispatchers.Main) {
+                val phoneNumbers: MutableList<PhoneNumber> = MusicLessonsApplication.db.phoneNumberDao.findAllByStudentId2(student.studentId)
+                onResult(fragment, student, phoneNumbers)
+            }
         }
-    }
 
-    companion object {
-        private class FindAllPhoneNumbersByStudentId(private val student: Student, private val fragment: FragmentStudents) : AsyncTask<Long, Int, MutableList<PhoneNumber>>() {
-            override fun doInBackground(vararg p0: Long?): MutableList<PhoneNumber> {
-                return MusicLessonsApplication.db.phoneNumberDao.findAllByStudentId(student.studentId)
-            }
-
-            override fun onPostExecute(result: MutableList<PhoneNumber>) {
-                fragment.stopProgressBar()
-                student.phoneNumbers = result
-                val intent = Intent(fragment.context, ActivityStudentDetails::class.java)
-                intent.putExtra("STUDENT", student)
-                fragment.startActivity(intent)
-            }
+        private fun onResult(fragment: FragmentStudents, student: Student, phoneNumbers: MutableList<PhoneNumber>) {
+            fragment.stopProgressBar()
+            student.phoneNumbers = phoneNumbers
+            val intent = Intent(fragment.context, ActivityStudentDetails::class.java)
+            intent.putExtra("STUDENT", student)
+            fragment.startActivity(intent)
         }
     }
 }
