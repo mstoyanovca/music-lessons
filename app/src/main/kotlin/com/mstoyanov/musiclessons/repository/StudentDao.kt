@@ -7,11 +7,15 @@ import com.mstoyanov.musiclessons.model.StudentWithPhoneNumbers
 @Dao
 interface StudentDao {
     @Query("SELECT * FROM student")
+    suspend fun findAll2(): MutableList<Student>
+
+    // TODO: remove this:
+    @Query("SELECT * FROM student")
     fun findAll(): MutableList<Student>
 
     @Transaction
     @Query("SELECT * FROM student")
-    fun findAllWithPhoneNumbers(): List<StudentWithPhoneNumbers>
+    suspend fun findAllWithPhoneNumbers(): List<StudentWithPhoneNumbers>
 
     @Insert
     fun insert(student: Student): Long

@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.AsyncTask
 import android.os.Bundle
 import android.os.Environment
 import android.view.*
@@ -15,16 +14,17 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.mstoyanov.musiclessons.model.Student
 import com.mstoyanov.musiclessons.model.StudentWithPhoneNumbers
+import kotlinx.coroutines.launch
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
 import java.io.Serializable
-import java.lang.ref.WeakReference
 
 class FragmentStudents : Fragment() {
     private lateinit var progressBar: ProgressBar
@@ -48,7 +48,11 @@ class FragmentStudents : Fragment() {
         progressBar.isIndeterminate = true
 
         if (savedInstanceState == null) {
-            LoadStudents(this).execute()
+            lifecycleScope.launch {
+                val students: MutableList<Student> = MusicLessonsApplication.db.studentDao.findAll2()
+                students.sort()
+                onFindAllResult(students)
+            }
         } else {
             progressBar.visibility = View.GONE
             @Suppress("UNCHECKED_CAST")
@@ -124,7 +128,10 @@ class FragmentStudents : Fragment() {
             ActivityCompat.requestPermissions(this.activity!!, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE)
             return
         }
-        ExportStudents(this).execute()
+        lifecycleScope.launch {
+            val studentsWithPhoneNumbers: List<StudentWithPhoneNumbers> = MusicLessonsApplication.db.studentDao.findAllWithPhoneNumbers()
+            onFindAllWithPhoneNumbersResult(studentsWithPhoneNumbers)
+        }
     }
 
     private fun showMessageOKCancel(okListener: DialogInterface.OnClickListener) {
@@ -136,6 +143,52 @@ class FragmentStudents : Fragment() {
                 .show()
     }
 
+    private fun onFindAllResult(students: MutableList<Student>) {
+        this.progressBar.visibility = View.GONE
+        this.students.addAll(students)
+        this.adapter.notifyDataSetChanged()
+        this.activity!!.invalidateOptionsMenu()
+    }
+
+    private fun onFindAllWithPhoneNumbersResult(result: List<StudentWithPhoneNumbers>) {
+        this.progressBar.visibility = View.GONE
+
+        result.forEach { it.student.phoneNumbers = it.phoneNumbers.toMutableList() }
+        val students: List<Student> = result.map { it.student }.sorted()
+
+        if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {
+            val folder = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "student_lists")
+            if (!folder.exists() && !folder.mkdirs()) Toast.makeText(this.activity, "Students lists folder could not be created.", Toast.LENGTH_SHORT).show()
+            val file = File(folder, "student_list_" + System.currentTimeMillis().toString() + ".txt")
+            BufferedWriter(FileWriter(file)).use { w ->
+                students.map { s ->
+                    w.write(s.firstName + " " + s.lastName)
+                    w.newLine()
+                    s.phoneNumbers.map { pn ->
+                        w.write(pn.number + " " + pn.type.displayValue())
+                        w.newLine()
+                    }
+                    if (s.email.isNotEmpty()) {
+                        w.write(s.email)
+                        w.newLine()
+                    }
+                    if (s.notes.isNotEmpty()) {
+                        w.write(s.notes)
+                        w.newLine()
+                    }
+                    w.newLine()
+                }
+            }
+            Toast.makeText(this.activity, "Exported student list to the Downloads folder", Toast.LENGTH_SHORT).show()
+
+            val intent = Intent(this.activity, ActivityMain::class.java)
+            intent.putExtra("EXPORTED_STUDENTS", true)
+            this.activity!!.startActivity(intent)
+        } else {
+            Toast.makeText(this.activity, "External storage is not writable.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     companion object {
         const val PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE = 456
 
@@ -145,71 +198,6 @@ class FragmentStudents : Fragment() {
             args.putInt("POSITION", position)
             fragment.arguments = args
             return fragment
-        }
-
-        private class LoadStudents(context: FragmentStudents) : AsyncTask<Long, Int, MutableList<Student>>() {
-            private val studentsFragmentWeakReference = WeakReference(context)
-
-            override fun doInBackground(vararg p0: Long?): MutableList<Student> {
-                return MusicLessonsApplication.db.studentDao.findAll()
-            }
-
-            override fun onPostExecute(result: MutableList<Student>) {
-                val studentsFragment = studentsFragmentWeakReference.get()!!
-                studentsFragment.progressBar.visibility = View.GONE
-                result.sort()
-                studentsFragment.students.addAll(result)
-                studentsFragment.adapter.notifyDataSetChanged()
-                studentsFragment.activity!!.invalidateOptionsMenu()
-            }
-        }
-
-        class ExportStudents(context: FragmentStudents) : AsyncTask<Long, Int, List<StudentWithPhoneNumbers>>() {
-            private val studentsFragmentWeakReference = WeakReference(context)
-
-            override fun doInBackground(vararg p0: Long?): List<StudentWithPhoneNumbers> {
-                return MusicLessonsApplication.db.studentDao.findAllWithPhoneNumbers()
-            }
-
-            override fun onPostExecute(result: List<StudentWithPhoneNumbers>) {
-                val studentsFragment = studentsFragmentWeakReference.get()!!
-                studentsFragment.progressBar.visibility = View.GONE
-
-                result.forEach { it.student.phoneNumbers = it.phoneNumbers.toMutableList() }
-                val students: List<Student> = result.map { it.student }.sorted()
-
-                if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {
-                    val folder = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "student_lists")
-                    if (!folder.exists() && !folder.mkdirs()) Toast.makeText(studentsFragment.activity, "Students lists folder could not be created.", Toast.LENGTH_SHORT).show()
-                    val file = File(folder, "student_list_" + System.currentTimeMillis().toString() + ".txt")
-                    BufferedWriter(FileWriter(file)).use { w ->
-                        students.map { s ->
-                            w.write(s.firstName + " " + s.lastName)
-                            w.newLine()
-                            s.phoneNumbers.map { pn ->
-                                w.write(pn.number + " " + pn.type.displayValue())
-                                w.newLine()
-                            }
-                            if (s.email.isNotEmpty()) {
-                                w.write(s.email)
-                                w.newLine()
-                            }
-                            if (s.notes.isNotEmpty()) {
-                                w.write(s.notes)
-                                w.newLine()
-                            }
-                            w.newLine()
-                        }
-                    }
-                    Toast.makeText(studentsFragment.activity, "Exported student list to the Downloads folder", Toast.LENGTH_SHORT).show()
-
-                    val intent = Intent(studentsFragment.activity, ActivityMain::class.java)
-                    intent.putExtra("EXPORTED_STUDENTS", true)
-                    studentsFragment.activity!!.startActivity(intent)
-                } else {
-                    Toast.makeText(studentsFragment.activity, "External storage is not writable.", Toast.LENGTH_SHORT).show()
-                }
-            }
         }
     }
 }
