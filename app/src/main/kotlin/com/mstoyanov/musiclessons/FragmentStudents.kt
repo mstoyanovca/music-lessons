@@ -85,7 +85,13 @@ class FragmentStudents : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_export_students -> {
-                exportStudents()
+                val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+                    addCategory(Intent.CATEGORY_OPENABLE)
+                    type = "text/plain"
+                    putExtra(Intent.EXTRA_TITLE, "student_list_" + System.currentTimeMillis().toString() + ".txt")
+                    putExtra(DocumentsContract.EXTRA_INITIAL_URI, Environment.DIRECTORY_DOWNLOADS)
+                }
+                startActivityForResult(intent, WRITE_REQUEST_CODE)
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -102,46 +108,31 @@ class FragmentStudents : Fragment() {
         }
     }
 
-    fun startProgressBar() {
-        progressBar.visibility = View.VISIBLE
-    }
-
-    fun stopProgressBar() {
-        progressBar.visibility = View.GONE
-    }
-
-    private fun exportStudents() {
-        lifecycleScope.launch {
-            val studentsWithPhoneNumbers: List<StudentWithPhoneNumbers> = MusicLessonsApplication.db.studentDao.findAllWithPhoneNumbers()
-            onFindAllWithPhoneNumbersResult(studentsWithPhoneNumbers)
-        }
-    }
-
-    private fun onFindAllWithPhoneNumbersResult(result: List<StudentWithPhoneNumbers>) {
-        this.progressBar.visibility = View.GONE
-
-        result.forEach { it.student.phoneNumbers = it.phoneNumbers.toMutableList() }
-        val studentList: List<Student> = result.map { it.student }.sorted()
-
-        val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
-            addCategory(Intent.CATEGORY_OPENABLE)
-            type = "text/plain"
-            putExtra(Intent.EXTRA_TITLE, "student_list_" + System.currentTimeMillis().toString() + ".txt")
-            putExtra(DocumentsContract.EXTRA_INITIAL_URI, Environment.DIRECTORY_DOWNLOADS)
-            putExtra("STUDENTS", ArrayList(studentList))
-        }
-        startActivityForResult(intent, WRITE_REQUEST_CODE)
-    }
-
     @Suppress("UNCHECKED_CAST")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+
+        progressBar.visibility = View.VISIBLE
+        var studentList: List<Student> = mutableListOf()
+
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                // Thread.sleep(1_000)
+                val studentsWithPhoneNumbers: List<StudentWithPhoneNumbers> = MusicLessonsApplication.db.studentDao.findAllWithPhoneNumbers()
+                withContext(Dispatchers.Main) {
+                    progressBar.visibility = View.GONE
+                    studentsWithPhoneNumbers.forEach { it.student.phoneNumbers = it.phoneNumbers.toMutableList() }
+                    studentList = studentsWithPhoneNumbers.map { it.student }.sorted()
+                }
+            }
+        }
+
         if (requestCode == WRITE_REQUEST_CODE) {
             when (resultCode) {
                 Activity.RESULT_OK -> if (data?.data != null) {
                     val outputStream: OutputStream? = activity?.contentResolver?.openOutputStream(data.data!!)
                     val w = BufferedWriter(OutputStreamWriter(outputStream))
-                    (data.getSerializableExtra("students") as List<Student>).map { s ->
+                    studentList.map { s ->
                         w.write(s.firstName + " " + s.lastName)
                         w.newLine()
                         s.phoneNumbers.map { pn ->
@@ -160,7 +151,7 @@ class FragmentStudents : Fragment() {
                         w.close()
                         w.flush()
                     }
-                    Toast.makeText(this.activity, "Exported student list to the Downloads folder", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this.activity, "Exported student list", Toast.LENGTH_LONG).show()
                     val intent = Intent(this.activity, ActivityMain::class.java)
                     intent.putExtra("EXPORTED_STUDENTS", true)
                     this.activity!!.startActivity(intent)
@@ -169,6 +160,14 @@ class FragmentStudents : Fragment() {
                 }
             }
         }
+    }
+
+    fun startProgressBar() {
+        progressBar.visibility = View.VISIBLE
+    }
+
+    fun stopProgressBar() {
+        progressBar.visibility = View.GONE
     }
 
     companion object {
