@@ -46,6 +46,7 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
 
         progressBar = findViewById(R.id.progress_bar)
         progressBar.isIndeterminate = true
+        progressBar.visibility = View.VISIBLE
 
         val weekdayTextView = findViewById<TextView>(R.id.weekday)
         weekdayTextView.text = weekday.displayValue()

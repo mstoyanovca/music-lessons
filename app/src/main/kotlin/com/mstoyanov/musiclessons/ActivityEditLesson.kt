@@ -45,6 +45,7 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
 
         progressBar = findViewById(R.id.progress_bar)
         progressBar.isIndeterminate = true
+        progressBar.visibility = View.VISIBLE
 
         val weekday = findViewById<Spinner>(R.id.weekday)
         val arrayAdapter = ArrayAdapter.createFromResource(this, R.array.weekdays, R.layout.weekday_item)

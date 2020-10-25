@@ -42,6 +42,7 @@ class ActivityLessonDetails : AppCompatActivity() {
 
         progressBar = findViewById(R.id.progress_bar)
         progressBar.isIndeterminate = true
+        progressBar.visibility = View.VISIBLE
 
         phoneNumbers = findViewById(R.id.phone_numbers)
         val layoutManager = LinearLayoutManager(this)

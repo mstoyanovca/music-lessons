@@ -38,15 +38,14 @@ class FragmentSchedule : Fragment() {
 
         val progressBar: ProgressBar = rootView.findViewById(R.id.progress_bar)
         progressBar.isIndeterminate = true
+        progressBar.visibility = View.VISIBLE
 
         if (savedInstanceState == null) {
             lifecycleScope.launch {
                 val result: MutableList<LessonWithStudent> = MusicLessonsApplication.db.lessonDao.findAllWithStudentByWeekday(ActivityMain.sectionTitles[position])
-
                 result.forEach { it.lesson.student = it.student }
                 val lessonList: MutableList<Lesson> = result.map { it.lesson }.toMutableList()
                 lessonList.sort()
-
                 onResult(lessonList)
             }
         } else {

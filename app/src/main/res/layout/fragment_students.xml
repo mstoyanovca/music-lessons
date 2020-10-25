@@ -10,13 +10,12 @@
         android:layout_height="wrap_content"
         android:background="@color/light_gray"
         android:gravity="center_vertical"
-        android:paddingBottom="@dimen/padding_top_bottom"
         android:paddingLeft="@dimen/margin_padding_left_right"
         android:paddingTop="@dimen/padding_top_bottom"
+        android:paddingBottom="@dimen/padding_top_bottom"
         android:textSize="@dimen/text_size" />
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -27,6 +26,7 @@
 
             <ProgressBar
                 android:id="@+id/progress_bar"
+                style="?android:attr/progressBarStyleLarge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -38,10 +38,9 @@
                 android:id="@+id/students_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
                 android:layout_marginLeft="@dimen/margin_padding_left_right"
-                android:layout_marginRight="@dimen/margin_padding_left_right" />
-
+                android:layout_marginRight="@dimen/margin_padding_left_right"
+                android:layout_marginBottom="16dp" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -56,7 +55,5 @@
             app:layout_anchor="@id/constraint_layout"
             app:layout_anchorGravity="bottom|right"
             app:rippleColor="@color/ripple_color" />
-
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
 </LinearLayout>
