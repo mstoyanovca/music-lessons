@@ -2,6 +2,7 @@ package com.mstoyanov.musiclessons
 
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.DocumentsContract
@@ -20,7 +21,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.BufferedWriter
-import java.io.OutputStream
 import java.io.OutputStreamWriter
 import java.io.Serializable
 
@@ -36,8 +36,8 @@ class FragmentStudents : Fragment() {
         val title = rootView.findViewById<TextView>(R.id.heading)
         title.setText(R.string.students_label)
 
-        val recyclerView = rootView.findViewById<RecyclerView>(R.id.students_list)
         students = mutableListOf()
+        val recyclerView = rootView.findViewById<RecyclerView>(R.id.students_list)
 
         progressBar = rootView.findViewById(R.id.progress_bar)
         progressBar.isIndeterminate = true
@@ -85,6 +85,8 @@ class FragmentStudents : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_export_students -> {
+                progressBar.visibility = View.VISIBLE
+
                 val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
                     addCategory(Intent.CATEGORY_OPENABLE)
                     type = "text/plain"
@@ -92,6 +94,7 @@ class FragmentStudents : Fragment() {
                     putExtra(DocumentsContract.EXTRA_INITIAL_URI, Environment.DIRECTORY_DOWNLOADS)
                 }
                 startActivityForResult(intent, WRITE_REQUEST_CODE)
+
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -112,54 +115,59 @@ class FragmentStudents : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        progressBar.visibility = View.VISIBLE
-        var studentList: List<Student> = mutableListOf()
-
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
                 // Thread.sleep(1_000)
                 val studentsWithPhoneNumbers: List<StudentWithPhoneNumbers> = MusicLessonsApplication.db.studentDao.findAllWithPhoneNumbers()
+
                 withContext(Dispatchers.Main) {
                     progressBar.visibility = View.GONE
+
                     studentsWithPhoneNumbers.forEach { it.student.phoneNumbers = it.phoneNumbers.toMutableList() }
-                    studentList = studentsWithPhoneNumbers.map { it.student }.sorted()
+                    val studentList: List<Student> = studentsWithPhoneNumbers.map { it.student }.sorted()
+
+                    if (requestCode == WRITE_REQUEST_CODE) {
+                        when (resultCode) {
+                            Activity.RESULT_OK -> if (data?.data != null) {
+                                onFindAllWithPhoneNumbersResult(studentList, data.data!!)
+                            }
+                            Activity.RESULT_CANCELED -> {
+                            }
+                        }
+                    }
                 }
             }
+        }
+    }
+
+    private fun onFindAllWithPhoneNumbersResult(studentList: List<Student>, uri: Uri) {
+        val outputStream = activity?.contentResolver?.openOutputStream(uri)
+        val bufferedWriter = BufferedWriter(OutputStreamWriter(outputStream))
+
+        studentList.map { s ->
+            bufferedWriter.write(s.firstName + " " + s.lastName)
+            bufferedWriter.newLine()
+            s.phoneNumbers.map { pn ->
+                bufferedWriter.write(pn.number + " " + pn.type.displayValue())
+                bufferedWriter.newLine()
+            }
+            if (s.email.isNotEmpty()) {
+                bufferedWriter.write(s.email)
+                bufferedWriter.newLine()
+            }
+            if (s.notes.isNotEmpty()) {
+                bufferedWriter.write(s.notes)
+                bufferedWriter.newLine()
+            }
+            bufferedWriter.newLine()
+            bufferedWriter.close()
         }
 
-        if (requestCode == WRITE_REQUEST_CODE) {
-            when (resultCode) {
-                Activity.RESULT_OK -> if (data?.data != null) {
-                    val outputStream: OutputStream? = activity?.contentResolver?.openOutputStream(data.data!!)
-                    val w = BufferedWriter(OutputStreamWriter(outputStream))
-                    studentList.map { s ->
-                        w.write(s.firstName + " " + s.lastName)
-                        w.newLine()
-                        s.phoneNumbers.map { pn ->
-                            w.write(pn.number + " " + pn.type.displayValue())
-                            w.newLine()
-                        }
-                        if (s.email.isNotEmpty()) {
-                            w.write(s.email)
-                            w.newLine()
-                        }
-                        if (s.notes.isNotEmpty()) {
-                            w.write(s.notes)
-                            w.newLine()
-                        }
-                        w.newLine()
-                        w.close()
-                        w.flush()
-                    }
-                    Toast.makeText(this.activity, "Exported student list", Toast.LENGTH_LONG).show()
-                    val intent = Intent(this.activity, ActivityMain::class.java)
-                    intent.putExtra("EXPORTED_STUDENTS", true)
-                    this.activity!!.startActivity(intent)
-                }
-                Activity.RESULT_CANCELED -> {
-                }
-            }
-        }
+        Toast.makeText(activity, "Exported student list", Toast.LENGTH_LONG).show()
+
+        val intent = Intent(activity, ActivityMain::class.java)
+        intent.putExtra("EXPORTED_STUDENTS", true)
+        activity!!.startActivity(intent)
     }
 
     fun startProgressBar() {

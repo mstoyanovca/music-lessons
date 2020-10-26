@@ -15,7 +15,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.mstoyanov.musiclessons.model.Lesson
 import com.mstoyanov.musiclessons.model.LessonWithStudent
 import com.mstoyanov.musiclessons.model.Weekday
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.Serializable
 
 class FragmentSchedule : Fragment() {
@@ -29,12 +31,9 @@ class FragmentSchedule : Fragment() {
         val title = rootView.findViewById<TextView>(R.id.weekday)
         val position = arguments!!.getInt("POSITION")
         title.text = ActivityMain.sectionTitles[position]
-        lessons = mutableListOf()
-        adapter = AdapterLessons(lessons)
-        val recyclerView = rootView.findViewById<RecyclerView>(R.id.lessons)
 
-        recyclerView.adapter = adapter
-        recyclerView.layoutManager = LinearLayoutManager(activity)
+        lessons = mutableListOf()
+        val recyclerView = rootView.findViewById<RecyclerView>(R.id.lessons)
 
         val progressBar: ProgressBar = rootView.findViewById(R.id.progress_bar)
         progressBar.isIndeterminate = true
@@ -42,19 +41,29 @@ class FragmentSchedule : Fragment() {
 
         if (savedInstanceState == null) {
             lifecycleScope.launch {
-                val result: MutableList<LessonWithStudent> = MusicLessonsApplication.db.lessonDao.findAllWithStudentByWeekday(ActivityMain.sectionTitles[position])
-                result.forEach { it.lesson.student = it.student }
-                val lessonList: MutableList<Lesson> = result.map { it.lesson }.toMutableList()
-                lessonList.sort()
-                onResult(lessonList)
+                withContext(Dispatchers.IO) {
+                    // Thread.sleep(1_000)
+                    val result: MutableList<LessonWithStudent> = MusicLessonsApplication.db.lessonDao.findAllWithStudentByWeekday(ActivityMain.sectionTitles[position])
+                    withContext(Dispatchers.Main) {
+                        result.forEach { it.lesson.student = it.student }
+                        val lessonList: MutableList<Lesson> = result.map { it.lesson }.toMutableList()
+                        lessonList.sort()
+                        progressBar.visibility = View.GONE
+
+                        lessons.addAll(lessonList)
+                        adapter.notifyDataSetChanged()
+                    }
+                }
             }
         } else {
-            progressBar.visibility = View.GONE
-
             @Suppress("UNCHECKED_CAST")
             lessons.addAll(savedInstanceState.getSerializable("LESSONS") as MutableList<Lesson>)
-            adapter.notifyDataSetChanged()
+            progressBar.visibility = View.GONE
         }
+
+        adapter = AdapterLessons(lessons)
+        recyclerView.adapter = adapter
+        recyclerView.layoutManager = LinearLayoutManager(activity)
 
         val button = rootView.findViewById<FloatingActionButton>(R.id.add_lesson)
         button.setOnClickListener {
@@ -69,13 +78,6 @@ class FragmentSchedule : Fragment() {
     override fun onSaveInstanceState(state: Bundle) {
         super.onSaveInstanceState(state)
         state.putSerializable("LESSONS", lessons as Serializable)
-    }
-
-    private fun onResult(lessonList: MutableList<Lesson>) {
-        this.view!!.findViewById<ProgressBar>(R.id.progress_bar).visibility = View.GONE
-
-        this.lessons.addAll(lessonList)
-        this.adapter.notifyDataSetChanged()
     }
 
     companion object {
