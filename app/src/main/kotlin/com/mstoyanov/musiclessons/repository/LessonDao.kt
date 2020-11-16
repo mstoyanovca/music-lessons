@@ -7,8 +7,8 @@ import com.mstoyanov.musiclessons.model.LessonWithStudent
 @Dao
 interface LessonDao {
     @Transaction
-    @Query("select * from lesson where lesson.weekday == :weekday")
-    suspend fun findAllWithStudentByWeekday(weekday: String): MutableList<LessonWithStudent>
+    @Query("select lesson.*, student.* from lesson inner join student on lesson.student_owner_id == student.student_id where lesson.weekday == :weekday")
+    suspend fun findWithStudentByWeekday(weekday: String): List<LessonWithStudent>
 
     @Insert
     fun insert(lesson: Lesson)

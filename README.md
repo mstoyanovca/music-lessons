@@ -2,7 +2,8 @@ An Android application for scheduling music lessons, released in the summer of 2
 
 The latest updates include:
 - updated to SDK version 30;
-- switched to androidx;
+- replaced the support library with androidx;
+- implemented Kotlin coroutines in the DAO layer;
 
 TODO:
 - migrate the DB;

@@ -49,7 +49,7 @@ class LessonDaoTest {
     @Test
     @Throws(Exception::class)
     fun insert_lesson() {
-        val actualLessonWithStudent: MutableList<LessonWithStudent> = db.lessonDao.findAllWithStudentByWeekday("Monday")
+        val actualLessonWithStudent: List<LessonWithStudent> = db.lessonDao.findWithStudentByWeekday("Monday")
         val actualStudent = actualLessonWithStudent[0].student
         val actualLesson = actualLessonWithStudent[0].lesson
         actualLesson.student = actualStudent
@@ -65,12 +65,12 @@ class LessonDaoTest {
         lesson.timeTo = LocalTime.parse("16:45", formatter)
         db.lessonDao.update(lesson)
 
-        var actualLessonWithStudent = db.lessonDao.findAllWithStudentByWeekday("Monday")
+        var actualLessonWithStudent = db.lessonDao.findWithStudentByWeekday("Monday")
         val actualLesson = actualLessonWithStudent[0].lesson
         assertEquals(LocalTime.parse("16:45", formatter), actualLesson.timeTo)
 
         db.lessonDao.delete(lesson)
-        actualLessonWithStudent = db.lessonDao.findAllWithStudentByWeekday("Monday")
+        actualLessonWithStudent = db.lessonDao.findWithStudentByWeekday("Monday")
         assertEquals(actualLessonWithStudent.size, 0)
     }
 
@@ -78,7 +78,7 @@ class LessonDaoTest {
     @Throws(Exception::class)
     fun delete_lesson() {
         db.lessonDao.delete(lesson)
-        val actualLessonWithStudent = db.lessonDao.findAllWithStudentByWeekday("Monday")
+        val actualLessonWithStudent = db.lessonDao.findWithStudentByWeekday("Monday")
         assertEquals(actualLessonWithStudent.size, 0)
     }
 }

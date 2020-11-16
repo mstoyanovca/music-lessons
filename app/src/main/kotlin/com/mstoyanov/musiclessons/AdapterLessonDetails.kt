@@ -14,15 +14,15 @@ import com.mstoyanov.musiclessons.model.PhoneNumber
 
 class AdapterLessonDetails(private val phoneNumbers: List<PhoneNumber>, private val context: Context) : RecyclerView.Adapter<AdapterLessonDetails.ViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdapterLessonDetails.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val phoneNumberItem = LayoutInflater.from(parent.context).inflate(
                 R.layout.phone_item_st_details,
                 parent,
                 false)
-        return AdapterLessonDetails.ViewHolder(phoneNumberItem)
+        return ViewHolder(phoneNumberItem)
     }
 
-    override fun onBindViewHolder(holder: AdapterLessonDetails.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.number.text = phoneNumbers[position].number
         holder.type.text = phoneNumbers[position].type.displayValue()
         if (phoneNumbers[position].type.displayValue().equals("cell", ignoreCase = true)) {

@@ -2,18 +2,20 @@ package com.mstoyanov.musiclessons
 
 import android.content.Context
 import android.content.Intent
-import android.os.AsyncTask
 import android.os.Bundle
 import android.view.*
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.NavUtils
+import androidx.lifecycle.lifecycleScope
 import com.mstoyanov.musiclessons.model.Lesson
 import com.mstoyanov.musiclessons.model.Student
 import com.mstoyanov.musiclessons.model.Weekday
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.Serializable
-import java.lang.ref.WeakReference
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
@@ -52,9 +54,7 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
         weekdayTextView.text = weekday.displayValue()
 
         val students: Spinner = findViewById(R.id.students)
-        adapter = StudentsAdapter(this, studentList)
-        students.adapter = adapter
-        students.onItemSelectedListener = this  // TODO
+        students.onItemSelectedListener = this
 
         hourFrom = findViewById(R.id.hour_from)
         hourFrom.minValue = 8
@@ -84,24 +84,42 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
             // coming from FragmentSchedule:
             lesson.weekday = weekday
             initializeTime()
-            LoadStudents(this).execute()
+
+            lifecycleScope.launch {
+                withContext(Dispatchers.IO) {
+                    // Thread.sleep(1_000)
+                    val result: MutableList<Student> = MusicLessonsApplication.db.studentDao.findAll2()
+                    result.sort()
+                    withContext(Dispatchers.Main) {
+                        progressBar.visibility = View.GONE
+
+                        studentList = result
+                        studentListIsEmpty = studentList.isEmpty()
+
+                        adapter.addAll(studentList)
+                        invalidateOptionsMenu()
+                    }
+                }
+            }
         } else {
             // after screen rotation:
             progressBar.visibility = View.GONE
 
             lesson = savedInstanceState.getSerializable("LESSON") as Lesson
 
+            @Suppress("UNCHECKED_CAST")
             studentList = savedInstanceState.getSerializable("STUDENTS") as MutableList<Student>
             studentListIsEmpty = studentList.isEmpty()
-            adapter.addAll(studentList)
 
             hourFrom.value = savedInstanceState.getInt("HOUR_FROM")
             minuteFrom.value = savedInstanceState.getInt("MINUTE_FROM")
             hourTo.value = savedInstanceState.getInt("HOUR_TO")
             minuteTo.value = savedInstanceState.getInt("MINUTE_TO")
-
-            invalidateOptionsMenu()
         }
+
+        adapter = StudentsAdapter(this, studentList)
+        students.adapter = adapter
+        invalidateOptionsMenu()
     }
 
     override fun onSaveInstanceState(state: Bundle) {
@@ -131,7 +149,20 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
             R.id.action_insert -> {
                 setTime()
                 progressBar.visibility = View.VISIBLE
-                AddLesson(this).execute(lesson)
+
+                lifecycleScope.launch {
+                    withContext(Dispatchers.IO) {
+                        MusicLessonsApplication.db.lessonDao.insert(lesson)
+                        withContext(Dispatchers.Main) {
+                            progressBar.visibility = View.GONE
+
+                            val intent = Intent(this@ActivityAddLesson, ActivityMain::class.java)
+                            intent.putExtra("WEEKDAY", lesson.weekday)
+                            startActivity(intent)
+                        }
+                    }
+                }
+
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -157,13 +188,13 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
         // do nothing
     }
 
-    private val hourFromOnValueChangedListener = NumberPicker.OnValueChangeListener { numberPicker, oldValue, newValue ->
+    private val hourFromOnValueChangedListener = NumberPicker.OnValueChangeListener { _, _, newValue ->
         // 21:30 is the maximum value:
         if (newValue == 21 && minuteFrom.value == 3) minuteFrom.value = 2
         synchronizeTimeToWithTimeFrom()
     }
 
-    private val minuteFromOnValueChangedListener = NumberPicker.OnValueChangeListener { numberPicker, oldValue, newValue ->
+    private val minuteFromOnValueChangedListener = NumberPicker.OnValueChangeListener { _, oldValue, newValue ->
         // overflow:
         if (oldValue == 3 && newValue == 0) hourFrom.value = hourFrom.value + 1
         if (oldValue == 0 && newValue == 3) hourFrom.value = hourFrom.value - 1
@@ -172,7 +203,7 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
         synchronizeTimeToWithTimeFrom()
     }
 
-    private val hourToOnValueChangedListener = NumberPicker.OnValueChangeListener { numberPicker, oldValue, newValue ->
+    private val hourToOnValueChangedListener = NumberPicker.OnValueChangeListener { _, _, newValue ->
         // 8:30 is the minimum value:
         if (newValue == 8 && (minuteTo.value == 0 || minuteTo.value == 1))
             minuteTo.value = 2
@@ -181,7 +212,7 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
         synchronizeTimeFromWithTimeTo()
     }
 
-    private val minuteToOnValueChangedListener = NumberPicker.OnValueChangeListener { numberPicker, oldValue, newValue ->
+    private val minuteToOnValueChangedListener = NumberPicker.OnValueChangeListener { _, oldValue, newValue ->
         // overflow:
         if (oldValue == 3 && newValue == 0) hourTo.value = hourTo.value + 1
         if (oldValue == 0 && newValue == 3) hourTo.value = hourTo.value - 1
@@ -244,7 +275,6 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
     }
 
     private class StudentsAdapter(context: Context, studentList: List<Student>) : ArrayAdapter<Student>(context, 0, studentList) {
-
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
             var view = convertView
             val student = getItem(position)
@@ -265,51 +295,6 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
             val dropDownName = view!!.findViewById<TextView>(R.id.name)
             dropDownName.text = StringBuilder().append(student!!.firstName).append(view.context.getString(R.string.space)).append(student.lastName).toString()
             return view
-        }
-    }
-
-    companion object {
-
-        private class LoadStudents(context: ActivityAddLesson) : AsyncTask<Long, Int, MutableList<Student>>() {
-            private var addLessonActivityWeakReference: WeakReference<ActivityAddLesson> = WeakReference(context)
-
-            override fun doInBackground(vararg p0: Long?): MutableList<Student> {
-                // Thread.sleep(1000)
-                return MusicLessonsApplication.db.studentDao.findAll()
-            }
-
-            override fun onPostExecute(result: MutableList<Student>) {
-                val addLessonActivity: ActivityAddLesson = addLessonActivityWeakReference.get()!!
-                addLessonActivity.progressBar.visibility = View.GONE
-
-                result.sort()
-                addLessonActivity.studentList = result
-                addLessonActivity.studentListIsEmpty = addLessonActivity.studentList.isEmpty()
-                addLessonActivity.adapter.addAll(addLessonActivity.studentList)
-
-                addLessonActivity.invalidateOptionsMenu()
-            }
-        }
-
-        private class AddLesson(context: ActivityAddLesson) : AsyncTask<Lesson, Int, Lesson>() {
-            private var addLessonActivityWeakReference: WeakReference<ActivityAddLesson> = WeakReference(context)
-
-            override fun doInBackground(vararg params: Lesson): Lesson {
-                // Thread.sleep(1000)
-                val addLessonActivity: ActivityAddLesson = addLessonActivityWeakReference.get()!!
-
-                MusicLessonsApplication.db.lessonDao.insert(addLessonActivity.lesson)
-                return addLessonActivity.lesson
-            }
-
-            override fun onPostExecute(result: Lesson) {
-                val addLessonActivity: ActivityAddLesson = addLessonActivityWeakReference.get()!!
-                addLessonActivity.progressBar.visibility = View.GONE
-
-                val intent = Intent(addLessonActivity, ActivityMain::class.java)
-                intent.putExtra("WEEKDAY", addLessonActivity.lesson.weekday)
-                addLessonActivity.startActivity(intent)
-            }
         }
     }
 }
