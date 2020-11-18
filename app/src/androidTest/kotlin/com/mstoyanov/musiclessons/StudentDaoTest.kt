@@ -1,13 +1,15 @@
 package com.mstoyanov.musiclessons
 
+import android.content.Context
 import androidx.room.Room
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.platform.app.InstrumentationRegistry
 import com.mstoyanov.musiclessons.model.PhoneNumber
 import com.mstoyanov.musiclessons.model.PhoneNumberType
 import com.mstoyanov.musiclessons.model.Student
 import com.mstoyanov.musiclessons.model.StudentWithPhoneNumbers
 import com.mstoyanov.musiclessons.repository.AppDatabase
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before
@@ -23,7 +25,7 @@ class StudentDaoTest {
 
     @Before
     fun createDb() {
-        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val context = ApplicationProvider.getApplicationContext<Context>()
         db = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java).build()
 
         phoneNumbers = mutableListOf(PhoneNumber(1L, "123-456-7890", PhoneNumberType.HOME, 1L, isValid = false))
@@ -42,7 +44,7 @@ class StudentDaoTest {
     @Test
     @Throws(Exception::class)
     fun find_all_with_phone_numbers() {
-        val actualStudentsWithPhoneNumbers: List<StudentWithPhoneNumbers> = db.studentDao.findAllWithPhoneNumbers()
+        val actualStudentsWithPhoneNumbers: List<StudentWithPhoneNumbers> = runBlocking { db.studentDao.findAllWithPhoneNumbers() }
 
         Assert.assertEquals(actualStudentsWithPhoneNumbers.size, 1)
         Assert.assertEquals(student, actualStudentsWithPhoneNumbers[0].student)
