@@ -13,7 +13,7 @@ interface PhoneNumberDao {
     suspend fun findAllByStudentId2(studentId: Long): MutableList<PhoneNumber>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(phoneNumbers: List<PhoneNumber>): List<Long>
+    suspend fun insertAll(phoneNumbers: List<PhoneNumber>): List<Long>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(phoneNumber: PhoneNumber): Long

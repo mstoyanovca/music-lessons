@@ -18,7 +18,7 @@ interface StudentDao {
     suspend fun findAllWithPhoneNumbers(): List<StudentWithPhoneNumbers>
 
     @Insert
-    fun insert(student: Student): Long
+    suspend fun insert(student: Student): Long
 
     @Update
     fun update(student: Student)
