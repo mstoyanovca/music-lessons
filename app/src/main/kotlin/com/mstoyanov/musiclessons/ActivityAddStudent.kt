@@ -16,7 +16,6 @@ import androidx.core.app.NavUtils
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.room.Transaction
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.mstoyanov.musiclessons.model.PhoneNumber
 import com.mstoyanov.musiclessons.model.Student
@@ -118,7 +117,6 @@ class ActivityAddStudent : AppCompatActivity() {
         return firstName.text.toString().trim().isNotEmpty() || lastName.text.toString().trim().isNotEmpty()
     }
 
-    @Transaction
     private fun insertStudent() {
         student.firstName = firstName.text.toString().trim()
         student.lastName = lastName.text.toString().trim()
@@ -135,11 +133,8 @@ class ActivityAddStudent : AppCompatActivity() {
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
                 // Thread.sleep(1_000)
-                val id = MusicLessonsApplication.db.studentDao.insert(student)
-                student.studentId = id
+                MusicLessonsApplication.db.studentDao.insertWithPhoneNumbers(student)
 
-                student.phoneNumbers.forEach { it.studentId = id }
-                MusicLessonsApplication.db.phoneNumberDao.insertAll(student.phoneNumbers)
                 withContext(Dispatchers.Main) {
                     progressBar.visibility = View.GONE
 
@@ -155,7 +150,6 @@ class ActivityAddStudent : AppCompatActivity() {
     }
 
     private inner class NameTextWatcher(private val activity: Activity) : TextWatcher {
-
         override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
             // do nothing
         }

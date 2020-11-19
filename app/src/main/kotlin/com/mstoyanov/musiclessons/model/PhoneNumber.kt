@@ -14,7 +14,7 @@ data class PhoneNumber(@PrimaryKey(autoGenerate = true) @ColumnInfo(name = "phon
                        @ColumnInfo(name = "student_owner_id") @NotNull var studentId: Long,
                        @Ignore var isValid: Boolean) : Serializable {
 
-    constructor() : this(0L, "", PhoneNumberType.HOME, 0L, false)
+    constructor() : this(0L, "", PhoneNumberType.CELL, 0L, false)
 
     @Ignore
     constructor(number: String, type: PhoneNumberType) : this() {

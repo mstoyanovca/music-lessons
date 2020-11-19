@@ -16,7 +16,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.mstoyanov.musiclessons.model.Student
-import com.mstoyanov.musiclessons.model.StudentWithPhoneNumbers
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -118,18 +117,15 @@ class FragmentStudents : Fragment() {
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
                 // Thread.sleep(1_000)
-                val studentsWithPhoneNumbers: List<StudentWithPhoneNumbers> = MusicLessonsApplication.db.studentDao.findAllWithPhoneNumbers()
+                val studentsWithPhoneNumbers: List<Student> = MusicLessonsApplication.db.studentDao.findAllWithPhoneNumbers()
 
                 withContext(Dispatchers.Main) {
                     progressBar.visibility = View.GONE
 
-                    studentsWithPhoneNumbers.forEach { it.student.phoneNumbers = it.phoneNumbers.toMutableList() }
-                    val studentList: List<Student> = studentsWithPhoneNumbers.map { it.student }.sorted()
-
                     if (requestCode == WRITE_REQUEST_CODE) {
                         when (resultCode) {
                             Activity.RESULT_OK -> if (data?.data != null) {
-                                onFindAllWithPhoneNumbersResult(studentList, data.data!!)
+                                onFindAllWithPhoneNumbersResult(studentsWithPhoneNumbers, data.data!!)
                             }
                             Activity.RESULT_CANCELED -> {
                             }

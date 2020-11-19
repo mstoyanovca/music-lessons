@@ -16,8 +16,8 @@ interface PhoneNumberDao {
     suspend fun insertAll(phoneNumbers: List<PhoneNumber>): List<Long>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(phoneNumber: PhoneNumber): Long
+    suspend fun insert(phoneNumber: PhoneNumber): Long
 
     @Delete
-    fun delete(phoneNumber: PhoneNumber)
+    suspend fun delete(phoneNumber: PhoneNumber)
 }
