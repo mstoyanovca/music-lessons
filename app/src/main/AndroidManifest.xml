@@ -92,4 +92,10 @@
                 android:value=".ActivityLessonDetails" />
         </activity>
     </application>
+
+    <queries>
+        <intent>
+            <action android:name="android.media.action.ACTION_SENDTO" />
+        </intent>
+    </queries>
 </manifest>
