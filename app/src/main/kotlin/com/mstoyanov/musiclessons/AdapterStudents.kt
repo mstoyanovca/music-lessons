@@ -38,7 +38,7 @@ class AdapterStudents(private val students: List<Student>, private val fragment:
             fragment.lifecycleScope.launch {
                 withContext(Dispatchers.IO) {
                     // Thread.sleep(1_000)
-                    val phoneNumbers: MutableList<PhoneNumber> = MusicLessonsApplication.db.phoneNumberDao.findAllByStudentId2(student.studentId)
+                    val phoneNumbers: MutableList<PhoneNumber> = MusicLessonsApplication.db.phoneNumberDao.findByStudentId(student.studentId)
                     withContext(Dispatchers.Main) {
                         fragment.stopProgressBar()
                         student.phoneNumbers = phoneNumbers

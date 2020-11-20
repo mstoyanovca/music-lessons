@@ -5,7 +5,6 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.AsyncTask
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -17,14 +16,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.mstoyanov.musiclessons.ActivityStudentDetails.Companion.PERMISSION_REQUEST_CALL_PHONE
 import com.mstoyanov.musiclessons.model.Lesson
-import com.mstoyanov.musiclessons.model.PhoneNumber
-import java.lang.ref.WeakReference
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.format.DateTimeFormatter
 
 class ActivityLessonDetails : AppCompatActivity() {
@@ -53,11 +54,11 @@ class ActivityLessonDetails : AppCompatActivity() {
         if (savedInstanceState == null && intent.getSerializableExtra("LESSON") != null) {
             // coming from AdapterLessons:
             lesson = intent.getSerializableExtra("LESSON") as Lesson
-            FindAllPhoneNumbersByStudentId(this).execute()
+            findPhoneNumbersByStudentId()
         } else if (savedInstanceState == null && intent.getSerializableExtra("UPDATED_LESSON") != null) {
             // coming from ActivityEditLesson:
             lesson = intent.getSerializableExtra("UPDATED_LESSON") as Lesson
-            FindAllPhoneNumbersByStudentId(this).execute()
+            findPhoneNumbersByStudentId()
         } else if (savedInstanceState != null) {
             // after screen rotation:
             progressBar.visibility = View.GONE
@@ -136,6 +137,24 @@ class ActivityLessonDetails : AppCompatActivity() {
         }
     }
 
+    private fun findPhoneNumbersByStudentId() {
+        val context = this
+
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                // Thread.sleep(1_000)
+                val phoneNumberList = MusicLessonsApplication.db.phoneNumberDao.findByStudentId(lesson.studentId)
+
+                withContext(Dispatchers.Main) {
+                    progressBar.visibility = View.GONE
+
+                    lesson.student.phoneNumbers = phoneNumberList
+                    phoneNumbers.adapter = AdapterLessonDetails(phoneNumberList, context)
+                }
+            }
+        }
+    }
+
     fun dial(number: String) {
         this.number = number
         val hasPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE)
@@ -158,27 +177,5 @@ class ActivityLessonDetails : AppCompatActivity() {
                 .setNegativeButton("Cancel", null)
                 .create()
                 .show()
-    }
-
-    companion object {
-        private class FindAllPhoneNumbersByStudentId(context: ActivityLessonDetails) : AsyncTask<Long, Int, MutableList<PhoneNumber>>() {
-            private val lessonDetailsActivityWeakReference: WeakReference<ActivityLessonDetails> = WeakReference(context)
-
-            override fun doInBackground(vararg p0: Long?): MutableList<PhoneNumber> {
-                // Thread.sleep(1000)
-                val lessonDetailsActivity: ActivityLessonDetails = lessonDetailsActivityWeakReference.get()!!
-                return MusicLessonsApplication.db.phoneNumberDao.findAllByStudentId(lessonDetailsActivity.lesson.studentId)
-            }
-
-            override fun onPostExecute(result: MutableList<PhoneNumber>) {
-                val lessonDetailsActivity: ActivityLessonDetails = lessonDetailsActivityWeakReference.get()!!
-
-                lessonDetailsActivity.progressBar.visibility = View.GONE
-
-                lessonDetailsActivity.lesson.student.phoneNumbers = result
-                val adapter = AdapterLessonDetails(lessonDetailsActivity.lesson.student.phoneNumbers, lessonDetailsActivity)
-                lessonDetailsActivity.phoneNumbers.adapter = adapter
-            }
-        }
     }
 }
