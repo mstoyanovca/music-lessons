@@ -88,7 +88,7 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
             lifecycleScope.launch {
                 withContext(Dispatchers.IO) {
                     // Thread.sleep(1_000)
-                    val result: MutableList<Student> = MusicLessonsApplication.db.studentDao.findAll2()
+                    val result: MutableList<Student> = MusicLessonsApplication.db.studentDao.findAll()
                     result.sort()
                     withContext(Dispatchers.Main) {
                         progressBar.visibility = View.GONE

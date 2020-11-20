@@ -9,11 +9,7 @@ import com.mstoyanov.musiclessons.model.StudentWithPhoneNumbers
 @Dao
 abstract class StudentDao {
     @Query("select * from student")
-    abstract suspend fun findAll2(): MutableList<Student>
-
-    // TODO: remove this:
-    @Query("SELECT * FROM student")
-    abstract fun findAll(): MutableList<Student>
+    abstract suspend fun findAll(): MutableList<Student>
 
     @Transaction
     @Query("select * from student")

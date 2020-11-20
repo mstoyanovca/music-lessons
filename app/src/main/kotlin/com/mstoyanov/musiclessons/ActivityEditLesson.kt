@@ -2,7 +2,6 @@ package com.mstoyanov.musiclessons
 
 import android.content.Context
 import android.content.Intent
-import android.os.AsyncTask
 import android.os.Bundle
 import android.view.*
 import android.widget.*
@@ -10,11 +9,14 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.NavUtils
+import androidx.lifecycle.lifecycleScope
 import com.mstoyanov.musiclessons.model.Lesson
 import com.mstoyanov.musiclessons.model.Student
 import com.mstoyanov.musiclessons.model.Weekday
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.Serializable
-import java.lang.ref.WeakReference
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -64,7 +66,7 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
         val students: Spinner = findViewById(R.id.students)
         adapter = StudentsAdapter(this, studentList)
         students.adapter = adapter
-        students.onItemSelectedListener = this  // TODO
+        students.onItemSelectedListener = this
 
         hourFrom = findViewById(R.id.hour_from)
         hourFrom.minValue = 8
@@ -95,13 +97,13 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
             lesson = intent.getSerializableExtra("LESSON") as Lesson
             initializeTime()
             studentListIsEmpty = true
-            LoadStudents(this).execute()
+            loadStudents()
         } else {
             // after screen rotation:
             progressBar.visibility = View.GONE
 
             lesson = savedInstanceState.getSerializable("LESSON") as Lesson
-
+            @Suppress("UNCHECKED_CAST")
             studentList = savedInstanceState.getSerializable("STUDENTS") as MutableList<Student>
             studentListIsEmpty = studentList.isEmpty()
             adapter.addAll(studentList)
@@ -145,7 +147,7 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
             R.id.action_update -> {
                 setTime()
                 progressBar.visibility = View.VISIBLE
-                UpdateLesson(this).execute(lesson)
+                updateLesson()
                 true
             }
             R.id.action_delete -> {
@@ -180,13 +182,13 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
         // do nothing
     }
 
-    private val hourFromOnValueChangedListener = NumberPicker.OnValueChangeListener { numberPicker, oldValue, newValue ->
+    private val hourFromOnValueChangedListener = NumberPicker.OnValueChangeListener { _, _, newValue ->
         // 21:30 is maximum value:
         if (newValue == 21 && minuteFrom.value == 3) minuteFrom.value = 2
         synchronizeTimeToWithTimeFrom()
     }
 
-    private val minuteFromOnValueChangedListener = NumberPicker.OnValueChangeListener { numberPicker, oldValue, newValue ->
+    private val minuteFromOnValueChangedListener = NumberPicker.OnValueChangeListener { _, oldValue, newValue ->
         // overflow:
         if (oldValue == 3 && newValue == 0) hourFrom.value = hourFrom.value + 1
         if (oldValue == 0 && newValue == 3) hourFrom.value = hourFrom.value - 1
@@ -195,7 +197,7 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
         synchronizeTimeToWithTimeFrom()
     }
 
-    private val hourToOnValueChangedListener = NumberPicker.OnValueChangeListener { numberPicker, oldValue, newValue ->
+    private val hourToOnValueChangedListener = NumberPicker.OnValueChangeListener { _, _, newValue ->
         // 8:30 is minimum value:
         if (newValue == 8 && (minuteTo.value == 0 || minuteTo.value == 1))
             minuteTo.value = 2
@@ -204,7 +206,7 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
         synchronizeTimeFromWithTimeTo()
     }
 
-    private val minuteToOnValueChangedListener = NumberPicker.OnValueChangeListener { numberPicker, oldValue, newValue ->
+    private val minuteToOnValueChangedListener = NumberPicker.OnValueChangeListener { _, oldValue, newValue ->
         // overflow:
         if (oldValue == 3 && newValue == 0) hourTo.value = hourTo.value + 1
         if (oldValue == 0 && newValue == 3) hourTo.value = hourTo.value - 1
@@ -279,8 +281,8 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
             "Delete lesson with " + getString(R.string.full_name, lesson.student.firstName, lesson.student.lastName) + "?"
         }
         builder.setMessage(message)
-        builder.setPositiveButton("OK") { dialog, id -> delete() }
-        builder.setNegativeButton("Cancel") { dialog, id ->
+        builder.setPositiveButton("OK") { _, _ -> delete() }
+        builder.setNegativeButton("Cancel") { _, _ ->
             // do nothing
         }
         val dialog = builder.create()
@@ -289,7 +291,7 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
 
     private fun delete() {
         progressBar.visibility = View.VISIBLE
-        DeleteLesson(this).execute()
+        deleteLesson()
     }
 
     private class StudentsAdapter(context: Context, studentList: List<Student>) : ArrayAdapter<Student>(context, 0, studentList) {
@@ -317,70 +319,61 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
         }
     }
 
-    companion object {
+    private fun loadStudents() {
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                // Thread.sleep(1_000)
+                val result = MusicLessonsApplication.db.studentDao.findAll()
 
-        private class LoadStudents(context: ActivityEditLesson) : AsyncTask<Long, Int, MutableList<Student>>() {
-            private var editLessonActivityWeakReference: WeakReference<ActivityEditLesson> = WeakReference(context)
+                withContext(Dispatchers.Main) {
+                    progressBar.visibility = View.GONE
 
-            override fun doInBackground(vararg params: Long?): MutableList<Student> {
-                // Thread.sleep(1000)
-                return MusicLessonsApplication.db.studentDao.findAll()
-            }
+                    result.sort()
+                    studentList = result
+                    studentListIsEmpty = studentList.isEmpty()
+                    adapter.addAll(studentList)
 
-            override fun onPostExecute(result: MutableList<Student>) {
-                val editLessonActivity: ActivityEditLesson = editLessonActivityWeakReference.get()!!
-                editLessonActivity.progressBar.visibility = View.GONE
+                    val students: Spinner = findViewById(R.id.students)
+                    students.setSelection(studentList.indexOf(studentList.filter { it.studentId == lesson.student.studentId }[0]))
 
-                result.sort()
-                editLessonActivity.studentList = result
-                editLessonActivity.studentListIsEmpty = editLessonActivity.studentList.isEmpty()
-                editLessonActivity.adapter.addAll(editLessonActivity.studentList)
-
-                val students: Spinner = editLessonActivity.findViewById(R.id.students)
-                students.setSelection(editLessonActivity.studentList.indexOf(editLessonActivity.studentList.filter { it.studentId == editLessonActivity.lesson.student.studentId }[0]))
-
-                editLessonActivity.invalidateOptionsMenu()
+                    invalidateOptionsMenu()
+                }
             }
         }
+    }
 
-        private class UpdateLesson(context: ActivityEditLesson) : AsyncTask<Lesson, Int, Lesson>() {
-            private var editLessonActivityWeakReference: WeakReference<ActivityEditLesson> = WeakReference(context)
+    private fun updateLesson() {
+        val intent = Intent(this, ActivityLessonDetails::class.java)
 
-            override fun doInBackground(vararg params: Lesson): Lesson {
-                // Thread.sleep(1000)
-                val editLessonActivity: ActivityEditLesson = editLessonActivityWeakReference.get()!!
-                MusicLessonsApplication.db.lessonDao.update(editLessonActivity.lesson)
-                return editLessonActivity.lesson
-            }
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                // Thread.sleep(1_000)
+                MusicLessonsApplication.db.lessonDao.update(lesson)
 
-            override fun onPostExecute(result: Lesson) {
-                val editLessonActivity: ActivityEditLesson = editLessonActivityWeakReference.get()!!
-                editLessonActivity.progressBar.visibility = View.GONE
+                withContext(Dispatchers.Main) {
+                    progressBar.visibility = View.GONE
 
-                val intent = Intent(editLessonActivity, ActivityLessonDetails::class.java)
-                intent.putExtra("UPDATED_LESSON", editLessonActivity.lesson)
-                editLessonActivity.startActivity(intent)
+                    intent.putExtra("UPDATED_LESSON", lesson)
+                    startActivity(intent)
+                }
             }
         }
+    }
 
-        private class DeleteLesson(context: ActivityEditLesson) : AsyncTask<Void, Int, Lesson>() {
-            private var editLessonActivityWeakReference: WeakReference<ActivityEditLesson> = WeakReference(context)
+    private fun deleteLesson() {
+        val intent = Intent(this, ActivityMain::class.java)
 
-            override fun doInBackground(vararg params: Void): Lesson {
-                // Thread.sleep(1000)
-                val editLessonActivity: ActivityEditLesson = editLessonActivityWeakReference.get()!!
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                // Thread.sleep(1_000)
+                MusicLessonsApplication.db.lessonDao.delete(lesson)
 
-                MusicLessonsApplication.db.lessonDao.delete(editLessonActivity.lesson)
-                return editLessonActivity.lesson
-            }
+                withContext(Dispatchers.Main) {
+                    progressBar.visibility = View.GONE
 
-            override fun onPostExecute(lesson: Lesson) {
-                val editLessonActivity: ActivityEditLesson = editLessonActivityWeakReference.get()!!
-                editLessonActivity.progressBar.visibility = View.GONE
-
-                val intent = Intent(editLessonActivity, ActivityMain::class.java)
-                intent.putExtra("WEEKDAY", lesson.weekday)
-                editLessonActivity.startActivity(intent)
+                    intent.putExtra("WEEKDAY", lesson.weekday)
+                    startActivity(intent)
+                }
             }
         }
     }

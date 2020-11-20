@@ -11,11 +11,11 @@ interface LessonDao {
     suspend fun findWithStudentByWeekday(weekday: String): List<LessonWithStudent>
 
     @Insert
-    fun insert(lesson: Lesson)
+    suspend fun insert(lesson: Lesson)
 
     @Update
-    fun update(lesson: Lesson)
+    suspend fun update(lesson: Lesson)
 
     @Delete
-    fun delete(lesson: Lesson)
+    suspend fun delete(lesson: Lesson)
 }
