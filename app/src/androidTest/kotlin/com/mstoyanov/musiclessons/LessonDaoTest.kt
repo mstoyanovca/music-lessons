@@ -34,12 +34,12 @@ class LessonDaoTest {
         db = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java).build()
 
         student = Student(1L, "John", "Smith", "jsmith@google.com", "Test student", mutableListOf())
-        db.studentDao.insert(student)
+        runBlocking { db.studentDao.insert(student) }
 
         val timeFrom: LocalTime = LocalTime.parse("16:00", formatter)
         val timeTo: LocalTime = LocalTime.parse("16:30", formatter)
         lesson = Lesson(1L, Weekday.MONDAY, timeFrom, timeTo, student.studentId, student)
-        db.lessonDao.insert(lesson)
+        runBlocking { db.lessonDao.insert(lesson) }
     }
 
     @After
@@ -65,13 +65,13 @@ class LessonDaoTest {
     @Throws(Exception::class)
     fun update_lesson() {
         lesson.timeTo = LocalTime.parse("16:45", formatter)
-        db.lessonDao.update(lesson)
+        runBlocking { db.lessonDao.update(lesson) }
 
         var actualLessonWithStudent = runBlocking { db.lessonDao.findWithStudentByWeekday("Monday") }
         val actualLesson = actualLessonWithStudent[0].lesson
         assertEquals(LocalTime.parse("16:45", formatter), actualLesson.timeTo)
 
-        db.lessonDao.delete(lesson)
+        runBlocking { db.lessonDao.delete(lesson) }
         actualLessonWithStudent = runBlocking { db.lessonDao.findWithStudentByWeekday("Monday") }
         assertEquals(actualLessonWithStudent.size, 0)
     }
@@ -79,7 +79,7 @@ class LessonDaoTest {
     @Test
     @Throws(Exception::class)
     fun delete_lesson() {
-        db.lessonDao.delete(lesson)
+        runBlocking { db.lessonDao.delete(lesson) }
         val actualLessonWithStudent = runBlocking { db.lessonDao.findWithStudentByWeekday("Monday") }
         assertEquals(actualLessonWithStudent.size, 0)
     }
