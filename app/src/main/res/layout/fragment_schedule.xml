@@ -41,13 +41,12 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|right"
             android:layout_marginBottom="@dimen/fab_margin"
+            android:contentDescription="@string/edit_fab"
             android:src="@drawable/ic_add_black_24dp"
             app:elevation="@dimen/fab_elevation"
             app:fabSize="normal"
             app:layout_anchor="@id/lessons"
             app:layout_anchorGravity="bottom|right"
             app:rippleColor="@color/ripple_color" />
-
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
 </RelativeLayout>

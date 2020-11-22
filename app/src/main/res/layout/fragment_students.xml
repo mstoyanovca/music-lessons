@@ -40,7 +40,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/margin_padding_left_right"
                 android:layout_marginRight="@dimen/margin_padding_left_right"
-                android:layout_marginBottom="16dp" />
+                android:layout_marginBottom="16dp"
+                app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -49,6 +50,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|right"
             android:layout_margin="@dimen/fab_margin"
+            android:contentDescription="@string/edit_fab"
             android:src="@drawable/ic_add_black_24dp"
             app:elevation="@dimen/fab_elevation"
             app:fabSize="normal"

@@ -36,60 +36,36 @@
             android:label="@string/add_student"
             android:launchMode="singleTop"
             android:parentActivityName=".ActivityMain">
-            <!-- Parent activity meta-data to support API level 7+ -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ActivityMain" />
         </activity>
         <activity
             android:name=".ActivityStudentDetails"
             android:label="@string/student_details"
             android:launchMode="singleTop"
             android:parentActivityName=".ActivityMain">
-            <!-- Parent activity meta-data to support API level 7+ -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ActivityMain" />
         </activity>
         <activity
             android:name=".ActivityEditStudent"
             android:label="@string/edit_student"
             android:launchMode="singleTop"
             android:parentActivityName=".ActivityStudentDetails">
-            <!-- Parent activity meta-data to support API level 7+ -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ActivityStudentDetails" />
         </activity>
         <activity
             android:name=".ActivityAddLesson"
             android:label="@string/add_lesson"
             android:launchMode="singleTop"
             android:parentActivityName=".ActivityMain">
-            <!-- Parent activity meta-data to support API level 7+ -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ActivityMain" />
         </activity>
         <activity
             android:name=".ActivityLessonDetails"
             android:label="@string/lesson_details"
             android:launchMode="singleTop"
             android:parentActivityName=".ActivityMain">
-            <!-- Parent activity meta-data to support API level 7+ -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ActivityMain" />
         </activity>
         <activity
             android:name=".ActivityEditLesson"
             android:label="@string/edit_lesson"
             android:launchMode="singleTop"
             android:parentActivityName=".ActivityLessonDetails">
-            <!-- Parent activity meta-data to support API level 7+ -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ActivityLessonDetails" />
         </activity>
     </application>
 
