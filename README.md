@@ -4,6 +4,3 @@ The latest updates include:
 - updated to SDK version 30;
 - replaced the support library with androidx;
 - implemented Kotlin coroutines in the DAO layer;
-
-TODO:
-- migrate the DB;
