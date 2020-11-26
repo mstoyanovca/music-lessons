@@ -21,9 +21,9 @@ class MusicLessonsApplication : Application() {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("CREATE TABLE IF NOT EXISTS student_4 (student_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, first_name TEXT NOT NULL, last_name TEXT NOT NULL, email TEXT NOT NULL, notes TEXT NOT NULL);")
                 database.execSQL("CREATE TABLE IF NOT EXISTS phone_number_4 (phone_number_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, number TEXT NOT NULL, type TEXT NOT NULL, student_owner_id INTEGER NOT NULL, FOREIGN KEY(student_owner_id) REFERENCES student(student_id) ON UPDATE NO ACTION ON DELETE CASCADE);")
-                database.execSQL("CREATE INDEX IF NOT EXISTS index_phone_number_4_student_owner_id ON student(student_owner_id);")
-                database.execSQL("CREATE TABLE IF NOT EXISTS lesson (lesson_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, weekday TEXT NOT NULL, time_from TEXT NOT NULL, time_to TEXT NOT NULL, student_owner_id INTEGER NOT NULL, FOREIGN KEY(student_owner_id) REFERENCES student(student_id) ON UPDATE NO ACTION ON DELETE CASCADE );")
-                database.execSQL("CREATE INDEX IF NOT EXISTS index_lesson_4_student_owner_id ON lesson(student_owner_id);")
+                database.execSQL("CREATE INDEX IF NOT EXISTS index_phone_number_4_student_owner_id ON phone_number_4(student_owner_id);")
+                database.execSQL("CREATE TABLE IF NOT EXISTS lesson_4 (lesson_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, weekday TEXT NOT NULL, time_from TEXT NOT NULL, time_to TEXT NOT NULL, student_owner_id INTEGER NOT NULL, FOREIGN KEY(student_owner_id) REFERENCES student(student_id) ON UPDATE NO ACTION ON DELETE CASCADE );")
+                database.execSQL("CREATE INDEX IF NOT EXISTS index_lesson_4_student_owner_id ON lesson_4(student_owner_id);")
 
                 database.execSQL("insert into student_4 (student_id, first_name, last_name, email, notes) select s_id, first_name, last_name, email, notes from student;")
                 database.execSQL("insert into phone_number_4 (phone_number_id, number, type, student_owner_id) select phone_number_id, number, type, student_id from phone_number;")

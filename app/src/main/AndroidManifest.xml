@@ -19,8 +19,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="false"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-        android:versionCode="15"
-        android:versionName="3.4"
+        android:versionCode="16"
+        android:versionName="3.5"
         tools:ignore="AllowBackup">
         <activity
             android:name=".ActivityMain"
