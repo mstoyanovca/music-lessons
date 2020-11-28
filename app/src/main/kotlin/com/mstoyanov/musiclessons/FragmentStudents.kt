@@ -22,6 +22,8 @@ import kotlinx.coroutines.withContext
 import java.io.BufferedWriter
 import java.io.OutputStreamWriter
 import java.io.Serializable
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class FragmentStudents : Fragment() {
     private lateinit var progressBar: ProgressBar
@@ -89,7 +91,7 @@ class FragmentStudents : Fragment() {
                 val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
                     addCategory(Intent.CATEGORY_OPENABLE)
                     type = "text/plain"
-                    putExtra(Intent.EXTRA_TITLE, "student_list_" + System.currentTimeMillis().toString() + ".txt")
+                    putExtra(Intent.EXTRA_TITLE, "student_list_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd-HH_mm_ss")) + ".txt")
                     putExtra(DocumentsContract.EXTRA_INITIAL_URI, Environment.DIRECTORY_DOWNLOADS)
                 }
                 startActivityForResult(intent, WRITE_REQUEST_CODE)
@@ -111,9 +113,7 @@ class FragmentStudents : Fragment() {
     }
 
     @Suppress("UNCHECKED_CAST")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
+    override fun onActivityResult(requestCode: Int, resultCode: Int, resultData: Intent?) {
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
                 // Thread.sleep(1_000)
@@ -122,13 +122,9 @@ class FragmentStudents : Fragment() {
                 withContext(Dispatchers.Main) {
                     progressBar.visibility = View.GONE
 
-                    if (requestCode == WRITE_REQUEST_CODE) {
-                        when (resultCode) {
-                            Activity.RESULT_OK -> if (data?.data != null) {
-                                onFindAllWithPhoneNumbersResult(studentsWithPhoneNumbers, data.data!!)
-                            }
-                            Activity.RESULT_CANCELED -> {
-                            }
+                    if (requestCode == WRITE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+                        resultData?.data?.also { uri ->
+                            onFindAllWithPhoneNumbersResult(studentsWithPhoneNumbers, uri)
                         }
                     }
                 }
@@ -137,33 +133,39 @@ class FragmentStudents : Fragment() {
     }
 
     private fun onFindAllWithPhoneNumbersResult(studentList: List<Student>, uri: Uri) {
-        val outputStream = activity?.contentResolver?.openOutputStream(uri)
-        val bufferedWriter = BufferedWriter(OutputStreamWriter(outputStream))
+        if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {
+            val outputStream = activity?.contentResolver?.openOutputStream(uri)
+            val bufferedWriter = BufferedWriter(OutputStreamWriter(outputStream))
 
-        studentList.map { s ->
-            bufferedWriter.write(s.firstName + " " + s.lastName)
-            bufferedWriter.newLine()
-            s.phoneNumbers.map { pn ->
-                bufferedWriter.write(pn.number + " " + pn.type.displayValue())
+            studentList.map { s ->
+                bufferedWriter.write(s.firstName + " " + s.lastName)
+                bufferedWriter.newLine()
+                s.phoneNumbers.map { pn ->
+                    bufferedWriter.write(pn.number + " " + pn.type.displayValue())
+                    bufferedWriter.newLine()
+                }
+                if (s.email.isNotEmpty()) {
+                    bufferedWriter.write(s.email)
+                    bufferedWriter.newLine()
+                }
+                if (s.notes.isNotEmpty()) {
+                    bufferedWriter.write(s.notes)
+                    bufferedWriter.newLine()
+                }
                 bufferedWriter.newLine()
             }
-            if (s.email.isNotEmpty()) {
-                bufferedWriter.write(s.email)
-                bufferedWriter.newLine()
-            }
-            if (s.notes.isNotEmpty()) {
-                bufferedWriter.write(s.notes)
-                bufferedWriter.newLine()
-            }
-            bufferedWriter.newLine()
+
             bufferedWriter.close()
+            outputStream?.close()
+
+            Toast.makeText(activity, "Exported student list", Toast.LENGTH_LONG).show()
+
+            val intent = Intent(activity, ActivityMain::class.java)
+            intent.putExtra("EXPORTED_STUDENTS", true)
+            activity!!.startActivity(intent)
+        } else {
+            Toast.makeText(activity, "External storage is not writable.", Toast.LENGTH_LONG).show()
         }
-
-        Toast.makeText(activity, "Exported student list", Toast.LENGTH_LONG).show()
-
-        val intent = Intent(activity, ActivityMain::class.java)
-        intent.putExtra("EXPORTED_STUDENTS", true)
-        activity!!.startActivity(intent)
     }
 
     fun startProgressBar() {
