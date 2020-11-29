@@ -1,24 +1,48 @@
 package com.mstoyanov.musiclessons.repository
 
 import androidx.room.*
+import com.mstoyanov.musiclessons.MusicLessonsApplication
+import com.mstoyanov.musiclessons.model.PhoneNumber
 import com.mstoyanov.musiclessons.model.Student
 import com.mstoyanov.musiclessons.model.StudentWithPhoneNumbers
 
 @Dao
-interface StudentDao {
+abstract class StudentDao {
+    @Query("select * from student")
+    abstract suspend fun findAll(): MutableList<Student>
 
-    @Query("SELECT * FROM student")
-    fun findAll(): MutableList<Student>
+    @Transaction
+    @Query("select * from student")
+    abstract suspend fun findAllStudentWithPhoneNumbers(): List<StudentWithPhoneNumbers>
 
-    @Query("SELECT * FROM student")
-    fun findAllWithPhoneNumbers(): List<StudentWithPhoneNumbers>
+    open suspend fun findAllWithPhoneNumbers(): List<Student> {
+        val studentsWithPhoneNumbers = findAllStudentWithPhoneNumbers()
+        studentsWithPhoneNumbers.forEach { it.student.phoneNumbers = it.phoneNumbers.toMutableList() }
+        return studentsWithPhoneNumbers.map { it.student }.sorted()
+    }
 
     @Insert
-    fun insert(student: Student): Long
+    abstract suspend fun insert(student: Student): Long
+
+    @Transaction
+    open suspend fun insertWithPhoneNumbers(student: Student) {
+        val id = insert(student)
+        student.studentId = id
+        student.phoneNumbers.forEach { it.studentId = id }
+        MusicLessonsApplication.db.phoneNumberDao.insertAll(student.phoneNumbers)
+    }
 
     @Update
-    fun update(student: Student)
+    abstract suspend fun update(student: Student)
+
+    @Transaction
+    open suspend fun updateStudentWithPhoneNumbers(student: Student, phoneNumbersBeforeEditing: List<PhoneNumber>): Student {
+        update(student)
+        phoneNumbersBeforeEditing.forEach { MusicLessonsApplication.db.phoneNumberDao.delete(it) }
+        student.phoneNumbers.forEach { it.phoneNumberId = MusicLessonsApplication.db.phoneNumberDao.insert(it) }
+        return student
+    }
 
     @Delete
-    fun delete(student: Student)
+    abstract suspend fun delete(student: Student)
 }

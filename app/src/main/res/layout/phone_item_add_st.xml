@@ -11,7 +11,8 @@
         android:id="@+id/phone_number"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:drawableLeft="@drawable/ic_phone_black_24dp"
+        android:autofillHints="AUTOFILL_HINT_PHONE_NUMBER"
+        android:drawableStart="@drawable/ic_phone_black_24dp"
         android:drawablePadding="@dimen/drawable_padding"
         android:hint="@string/phone_number"
         android:inputType="phone"
@@ -21,18 +22,6 @@
         app:layout_constraintBottom_toTopOf="@id/phone_number_type"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
-
-    <Spinner
-        android:id="@+id/phone_number_type"
-        style="@style/Widget.AppCompat.Spinner.Underlined"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="@dimen/margin_padding_left_right"
-        android:drawSelectorOnTop="true"
-        app:layout_constraintHorizontal_weight="1"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/delete"
-        app:layout_constraintTop_toBottomOf="@+id/phone_number" />
 
     <ImageButton
         android:id="@+id/delete"
@@ -45,4 +34,15 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/phone_number" />
 
+    <Spinner
+        android:id="@+id/phone_number_type"
+        style="@style/Widget.AppCompat.Spinner.Underlined"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="@dimen/margin_padding_left_right"
+        android:drawSelectorOnTop="true"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/delete"
+        app:layout_constraintTop_toBottomOf="@+id/phone_number" />
 </androidx.constraintlayout.widget.ConstraintLayout>

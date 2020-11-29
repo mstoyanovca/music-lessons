@@ -1,11 +1,12 @@
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/name"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:drawableLeft="@drawable/ic_person_black_24dp"
     android:drawablePadding="@dimen/drawable_padding"
     android:ellipsize="end"
-    android:paddingBottom="@dimen/padding_top_bottom"
     android:paddingTop="@dimen/padding_top_bottom"
+    android:paddingBottom="@dimen/padding_top_bottom"
     android:singleLine="true"
-    android:textSize="@dimen/text_size" />
+    android:textSize="@dimen/text_size"
+    app:drawableLeftCompat="@drawable/ic_person_black_24dp" />

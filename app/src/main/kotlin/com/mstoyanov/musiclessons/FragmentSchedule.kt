@@ -1,28 +1,29 @@
 package com.mstoyanov.musiclessons
 
 import android.content.Intent
-import android.os.AsyncTask
 import android.os.Bundle
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.mstoyanov.musiclessons.model.Lesson
 import com.mstoyanov.musiclessons.model.LessonWithStudent
 import com.mstoyanov.musiclessons.model.Weekday
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.Serializable
-import java.lang.ref.WeakReference
 
 class FragmentSchedule : Fragment() {
     // this field can not be static:
     private lateinit var lessons: MutableList<Lesson>
     private lateinit var adapter: AdapterLessons
-
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_schedule, container, false)
@@ -30,23 +31,39 @@ class FragmentSchedule : Fragment() {
         val title = rootView.findViewById<TextView>(R.id.weekday)
         val position = arguments!!.getInt("POSITION")
         title.text = ActivityMain.sectionTitles[position]
-        lessons = mutableListOf()
-        adapter = AdapterLessons(lessons)
-        val recyclerView = rootView.findViewById<RecyclerView>(R.id.lessons)
 
-        recyclerView.adapter = adapter
-        recyclerView.layoutManager = LinearLayoutManager(activity)
+        lessons = mutableListOf()
+        val recyclerView = rootView.findViewById<RecyclerView>(R.id.lessons)
 
         val progressBar: ProgressBar = rootView.findViewById(R.id.progress_bar)
         progressBar.isIndeterminate = true
+        progressBar.visibility = View.VISIBLE
 
         if (savedInstanceState == null) {
-            FindAllLessonsWithStudentByWeekday(this, ActivityMain.sectionTitles[position]).execute()
+            lifecycleScope.launch {
+                withContext(Dispatchers.IO) {
+                    // Thread.sleep(1_000)
+                    val result: List<LessonWithStudent> = MusicLessonsApplication.db.lessonDao.findWithStudentByWeekday(ActivityMain.sectionTitles[position])
+                    withContext(Dispatchers.Main) {
+                        result.forEach { it.lesson.student = it.student }
+                        val lessonList: MutableList<Lesson> = result.map { it.lesson }.toMutableList()
+                        lessonList.sort()
+                        progressBar.visibility = View.GONE
+
+                        lessons.addAll(lessonList)
+                        adapter.notifyDataSetChanged()
+                    }
+                }
+            }
         } else {
-            progressBar.visibility = View.GONE
+            @Suppress("UNCHECKED_CAST")
             lessons.addAll(savedInstanceState.getSerializable("LESSONS") as MutableList<Lesson>)
-            adapter.notifyDataSetChanged()
+            progressBar.visibility = View.GONE
         }
+
+        adapter = AdapterLessons(lessons)
+        recyclerView.adapter = adapter
+        recyclerView.layoutManager = LinearLayoutManager(activity)
 
         val button = rootView.findViewById<FloatingActionButton>(R.id.add_lesson)
         button.setOnClickListener {
@@ -64,34 +81,12 @@ class FragmentSchedule : Fragment() {
     }
 
     companion object {
-
         fun create(position: Int): FragmentSchedule {
             val fragment = FragmentSchedule()
             val args = Bundle()
             args.putInt("POSITION", position)
             fragment.arguments = args
             return fragment
-        }
-
-        private class FindAllLessonsWithStudentByWeekday(context: FragmentSchedule, private val weekday: String) : AsyncTask<Long, Int, List<LessonWithStudent>>() {
-            private val scheduleFragmentWeakReference: WeakReference<FragmentSchedule> = WeakReference(context)
-
-            override fun doInBackground(vararg p0: Long?): List<LessonWithStudent> {
-                // Thread.sleep(1000)
-                return MusicLessonsApplication.db.lessonDao.findAllWithStudentByWeekday(weekday)
-            }
-
-            override fun onPostExecute(result: List<LessonWithStudent>) {
-                val scheduleFragment = scheduleFragmentWeakReference.get()
-                scheduleFragment!!.view!!.findViewById<ProgressBar>(R.id.progress_bar).visibility = View.GONE
-
-                result.forEach { it -> it.lesson.student = it.student }
-                val lessonList: MutableList<Lesson> = result.map { it -> it.lesson }.toMutableList()
-                lessonList.sort()
-
-                scheduleFragment.lessons.addAll(lessonList)
-                scheduleFragment.adapter.notifyDataSetChanged()
-            }
         }
     }
 }

@@ -9,7 +9,6 @@
     android:xlargeScreens="true"
     tools:ignore="GoogleAppIndexingWarning">
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
 
     <application
@@ -20,8 +19,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="false"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-        android:versionCode="15"
-        android:versionName="3.4"
+        android:versionCode="16"
+        android:versionName="3.5"
         tools:ignore="AllowBackup">
         <activity
             android:name=".ActivityMain"
@@ -37,60 +36,42 @@
             android:label="@string/add_student"
             android:launchMode="singleTop"
             android:parentActivityName=".ActivityMain">
-            <!-- Parent activity meta-data to support API level 7+ -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ActivityMain" />
         </activity>
         <activity
             android:name=".ActivityStudentDetails"
             android:label="@string/student_details"
             android:launchMode="singleTop"
             android:parentActivityName=".ActivityMain">
-            <!-- Parent activity meta-data to support API level 7+ -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ActivityMain" />
         </activity>
         <activity
             android:name=".ActivityEditStudent"
             android:label="@string/edit_student"
             android:launchMode="singleTop"
             android:parentActivityName=".ActivityStudentDetails">
-            <!-- Parent activity meta-data to support API level 7+ -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ActivityStudentDetails" />
         </activity>
         <activity
             android:name=".ActivityAddLesson"
             android:label="@string/add_lesson"
             android:launchMode="singleTop"
             android:parentActivityName=".ActivityMain">
-            <!-- Parent activity meta-data to support API level 7+ -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ActivityMain" />
         </activity>
         <activity
             android:name=".ActivityLessonDetails"
             android:label="@string/lesson_details"
             android:launchMode="singleTop"
             android:parentActivityName=".ActivityMain">
-            <!-- Parent activity meta-data to support API level 7+ -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ActivityMain" />
         </activity>
         <activity
             android:name=".ActivityEditLesson"
             android:label="@string/edit_lesson"
             android:launchMode="singleTop"
             android:parentActivityName=".ActivityLessonDetails">
-            <!-- Parent activity meta-data to support API level 7+ -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ActivityLessonDetails" />
         </activity>
     </application>
+
+    <queries>
+        <intent>
+            <action android:name="android.media.action.ACTION_SENDTO" />
+        </intent>
+    </queries>
 </manifest>

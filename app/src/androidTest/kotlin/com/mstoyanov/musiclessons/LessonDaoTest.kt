@@ -1,13 +1,15 @@
 package com.mstoyanov.musiclessons
 
+import android.content.Context
 import androidx.room.Room
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.platform.app.InstrumentationRegistry
 import com.mstoyanov.musiclessons.model.Lesson
 import com.mstoyanov.musiclessons.model.LessonWithStudent
 import com.mstoyanov.musiclessons.model.Student
 import com.mstoyanov.musiclessons.model.Weekday
 import com.mstoyanov.musiclessons.repository.AppDatabase
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -28,16 +30,16 @@ class LessonDaoTest {
     fun createDb() {
         formatter = DateTimeFormatter.ofPattern("HH:mm")
 
-        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val context = ApplicationProvider.getApplicationContext<Context>()
         db = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java).build()
 
         student = Student(1L, "John", "Smith", "jsmith@google.com", "Test student", mutableListOf())
-        db.studentDao.insert(student)
+        runBlocking { db.studentDao.insert(student) }
 
         val timeFrom: LocalTime = LocalTime.parse("16:00", formatter)
         val timeTo: LocalTime = LocalTime.parse("16:30", formatter)
         lesson = Lesson(1L, Weekday.MONDAY, timeFrom, timeTo, student.studentId, student)
-        db.lessonDao.insert(lesson)
+        runBlocking { db.lessonDao.insert(lesson) }
     }
 
     @After
@@ -49,7 +51,7 @@ class LessonDaoTest {
     @Test
     @Throws(Exception::class)
     fun insert_lesson() {
-        val actualLessonWithStudent: MutableList<LessonWithStudent> = db.lessonDao.findAllWithStudentByWeekday("Monday")
+        val actualLessonWithStudent: List<LessonWithStudent> = runBlocking { db.lessonDao.findWithStudentByWeekday("Monday") }
         val actualStudent = actualLessonWithStudent[0].student
         val actualLesson = actualLessonWithStudent[0].lesson
         actualLesson.student = actualStudent
@@ -63,22 +65,22 @@ class LessonDaoTest {
     @Throws(Exception::class)
     fun update_lesson() {
         lesson.timeTo = LocalTime.parse("16:45", formatter)
-        db.lessonDao.update(lesson)
+        runBlocking { db.lessonDao.update(lesson) }
 
-        var actualLessonWithStudent = db.lessonDao.findAllWithStudentByWeekday("Monday")
+        var actualLessonWithStudent = runBlocking { db.lessonDao.findWithStudentByWeekday("Monday") }
         val actualLesson = actualLessonWithStudent[0].lesson
         assertEquals(LocalTime.parse("16:45", formatter), actualLesson.timeTo)
 
-        db.lessonDao.delete(lesson)
-        actualLessonWithStudent = db.lessonDao.findAllWithStudentByWeekday("Monday")
+        runBlocking { db.lessonDao.delete(lesson) }
+        actualLessonWithStudent = runBlocking { db.lessonDao.findWithStudentByWeekday("Monday") }
         assertEquals(actualLessonWithStudent.size, 0)
     }
 
     @Test
     @Throws(Exception::class)
     fun delete_lesson() {
-        db.lessonDao.delete(lesson)
-        val actualLessonWithStudent = db.lessonDao.findAllWithStudentByWeekday("Monday")
+        runBlocking { db.lessonDao.delete(lesson) }
+        val actualLessonWithStudent = runBlocking { db.lessonDao.findWithStudentByWeekday("Monday") }
         assertEquals(actualLessonWithStudent.size, 0)
     }
 }

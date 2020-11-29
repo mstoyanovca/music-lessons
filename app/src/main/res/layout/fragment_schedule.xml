@@ -3,31 +3,31 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true" />
+
     <TextView
         android:id="@+id/weekday"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/light_gray"
         android:gravity="center_vertical"
-        android:paddingBottom="@dimen/padding_top_bottom"
         android:paddingLeft="@dimen/margin_padding_left_right"
         android:paddingTop="@dimen/padding_top_bottom"
+        android:paddingBottom="@dimen/padding_top_bottom"
         android:textSize="@dimen/text_size" />
 
-    <ProgressBar
-        android:id="@+id/progress_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true" />
-
-    <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginLeft="@dimen/margin_padding_left_right"
-        android:layout_marginRight="@dimen/margin_padding_left_right"
-        android:layout_marginTop="?attr/actionBarSize">
+        android:layout_marginTop="?attr/actionBarSize"
+        android:layout_marginRight="@dimen/margin_padding_left_right">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/lessons"
@@ -41,13 +41,12 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|right"
             android:layout_marginBottom="@dimen/fab_margin"
+            android:contentDescription="@string/edit_fab"
             android:src="@drawable/ic_add_black_24dp"
             app:elevation="@dimen/fab_elevation"
             app:fabSize="normal"
             app:layout_anchor="@id/lessons"
             app:layout_anchorGravity="bottom|right"
             app:rippleColor="@color/ripple_color" />
-
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
 </RelativeLayout>

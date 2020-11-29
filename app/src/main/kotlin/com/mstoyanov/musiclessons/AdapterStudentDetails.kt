@@ -3,18 +3,19 @@ package com.mstoyanov.musiclessons
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import androidx.recyclerview.widget.RecyclerView
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import com.mstoyanov.musiclessons.model.PhoneNumber
+import kotlin.math.roundToInt
 
 class AdapterStudentDetails(private val phoneNumbers: List<PhoneNumber>, private val context: Context) : RecyclerView.Adapter<AdapterStudentDetails.ViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdapterStudentDetails.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val phoneNumberItem = LayoutInflater.from(parent.context).inflate(
                 R.layout.phone_item_st_details,
                 parent,
@@ -22,12 +23,12 @@ class AdapterStudentDetails(private val phoneNumbers: List<PhoneNumber>, private
         return ViewHolder(phoneNumberItem)
     }
 
-    override fun onBindViewHolder(holder: AdapterStudentDetails.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.number.text = phoneNumbers[position].number
         holder.type.text = phoneNumbers[position].type.displayValue()
         if (phoneNumbers[position].type.displayValue().equals("cell", ignoreCase = true)) {
             holder.sms.visibility = View.VISIBLE
-            holder.number.setPadding(0, 0, dpToPx(16), 0)
+            holder.number.setPadding(0, 0, dpToPx(), 0)
         }
     }
 
@@ -35,9 +36,10 @@ class AdapterStudentDetails(private val phoneNumbers: List<PhoneNumber>, private
         return phoneNumbers.size
     }
 
-    private fun dpToPx(dp: Int): Int {
+    private fun dpToPx(): Int {
+        val dp = 16
         val displayMetrics = context.resources.displayMetrics
-        return Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT))
+        return (dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT)).roundToInt()
     }
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {

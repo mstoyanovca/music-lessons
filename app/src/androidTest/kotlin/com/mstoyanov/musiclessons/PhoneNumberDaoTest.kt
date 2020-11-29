@@ -7,6 +7,7 @@ import com.mstoyanov.musiclessons.model.PhoneNumber
 import com.mstoyanov.musiclessons.model.PhoneNumberType
 import com.mstoyanov.musiclessons.model.Student
 import com.mstoyanov.musiclessons.repository.AppDatabase
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before
@@ -30,7 +31,7 @@ class PhoneNumberDaoTest {
         phoneNumbers.add(phoneNumber)
 
         val student = Student(1L, "John", "Smith", "jsmith@google.com", "Test student", phoneNumbers)
-        db.studentDao.insert(student)
+        runBlocking { db.studentDao.insert(student) }
     }
 
     @After
@@ -42,8 +43,11 @@ class PhoneNumberDaoTest {
     @Test
     @Throws(Exception::class)
     fun insert_phone_numbers() {
-        db.phoneNumberDao.insertAll(phoneNumbers)
-        val actualPhoneNumbers = db.phoneNumberDao.findAllByStudentId(1L)
+        val actualPhoneNumbers: List<PhoneNumber>
+        runBlocking {
+            db.phoneNumberDao.insertAll(phoneNumbers)
+            actualPhoneNumbers = db.phoneNumberDao.findByStudentId(1L)
+        }
 
         Assert.assertEquals(actualPhoneNumbers.size, 2)
         Assert.assertEquals(phoneNumbers[0], actualPhoneNumbers[0])
@@ -53,8 +57,11 @@ class PhoneNumberDaoTest {
     @Test
     @Throws(Exception::class)
     fun insert_phone_number() {
-        db.phoneNumberDao.insert(phoneNumbers[0])
-        val actualPhoneNumbers = db.phoneNumberDao.findAllByStudentId(1L)
+        val actualPhoneNumbers: List<PhoneNumber>
+        runBlocking {
+            db.phoneNumberDao.insert(phoneNumbers[0])
+            actualPhoneNumbers = db.phoneNumberDao.findByStudentId(1L)
+        }
 
         Assert.assertEquals(actualPhoneNumbers.size, 1)
         Assert.assertEquals(phoneNumbers[0], actualPhoneNumbers[0])
@@ -63,13 +70,17 @@ class PhoneNumberDaoTest {
     @Test
     @Throws(Exception::class)
     fun update_phone_number() {
-        db.phoneNumberDao.insertAll(phoneNumbers)
-        var actualPhoneNumbers = db.phoneNumberDao.findAllByStudentId(1L)
+        var actualPhoneNumbers: List<PhoneNumber>
+        runBlocking {
+            db.phoneNumberDao.insertAll(phoneNumbers)
+            actualPhoneNumbers = db.phoneNumberDao.findByStudentId(1L)
+        }
 
         actualPhoneNumbers[0].number = "123-456-7899"
-        db.phoneNumberDao.insertAll(actualPhoneNumbers)
-
-        actualPhoneNumbers = db.phoneNumberDao.findAllByStudentId(1L)
+        runBlocking {
+            db.phoneNumberDao.insertAll(actualPhoneNumbers)
+            actualPhoneNumbers = db.phoneNumberDao.findByStudentId(1L)
+        }
 
         Assert.assertEquals("123-456-7899", actualPhoneNumbers[0].number)
     }
@@ -77,10 +88,13 @@ class PhoneNumberDaoTest {
     @Test
     @Throws(Exception::class)
     fun delete_phone_number() {
-        db.phoneNumberDao.insertAll(phoneNumbers)
-        db.phoneNumberDao.delete(phoneNumbers[0])
+        val actualPhoneNumbers: List<PhoneNumber>
+        runBlocking {
+            db.phoneNumberDao.insertAll(phoneNumbers)
+            db.phoneNumberDao.delete(phoneNumbers[0])
+            actualPhoneNumbers = db.phoneNumberDao.findByStudentId(1L)
+        }
 
-        val actualPhoneNumbers = db.phoneNumberDao.findAllByStudentId(1L)
 
         Assert.assertEquals(actualPhoneNumbers.size, 1)
         Assert.assertEquals(phoneNumbers[1], actualPhoneNumbers[0])

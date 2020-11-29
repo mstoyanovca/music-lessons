@@ -6,15 +6,16 @@ import com.mstoyanov.musiclessons.model.LessonWithStudent
 
 @Dao
 interface LessonDao {
-    @Query("select lesson.*, student.* from lesson inner join student on lesson.student_id == student.s_id where lesson.weekday == :weekday")
-    fun findAllWithStudentByWeekday(weekday: String): MutableList<LessonWithStudent>
+    @Transaction
+    @Query("select lesson.*, student.* from lesson inner join student on lesson.student_owner_id == student.student_id where lesson.weekday == :weekday")
+    suspend fun findWithStudentByWeekday(weekday: String): List<LessonWithStudent>
 
     @Insert
-    fun insert(lesson: Lesson)
+    suspend fun insert(lesson: Lesson)
 
     @Update
-    fun update(lesson: Lesson)
+    suspend fun update(lesson: Lesson)
 
     @Delete
-    fun delete(lesson: Lesson)
+    suspend fun delete(lesson: Lesson)
 }

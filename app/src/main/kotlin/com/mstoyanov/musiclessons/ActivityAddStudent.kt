@@ -2,14 +2,7 @@ package com.mstoyanov.musiclessons
 
 import android.app.Activity
 import android.content.Intent
-import android.os.AsyncTask
 import android.os.Bundle
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import androidx.core.app.NavUtils
-import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.appcompat.widget.Toolbar
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.Menu
@@ -17,9 +10,18 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
 import android.widget.ProgressBar
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.core.app.NavUtils
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.mstoyanov.musiclessons.model.PhoneNumber
 import com.mstoyanov.musiclessons.model.Student
-import java.lang.ref.WeakReference
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ActivityAddStudent : AppCompatActivity() {
     private lateinit var firstName: EditText
@@ -125,8 +127,22 @@ class ActivityAddStudent : AppCompatActivity() {
         val notes = findViewById<EditText>(R.id.notes)
         student.notes = notes.text.toString().trim()
 
+        val intent = Intent(this, ActivityMain::class.java)
         progressBar.visibility = View.VISIBLE
-        AddStudent(this).execute(student)
+
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                // Thread.sleep(1_000)
+                MusicLessonsApplication.db.studentDao.insertWithPhoneNumbers(student)
+
+                withContext(Dispatchers.Main) {
+                    progressBar.visibility = View.GONE
+
+                    intent.putExtra("ADDED_STUDENT_ID", student.studentId)
+                    startActivity(intent)
+                }
+            }
+        }
     }
 
     fun invokeFirstNameTextWatcher() {
@@ -134,7 +150,6 @@ class ActivityAddStudent : AppCompatActivity() {
     }
 
     private inner class NameTextWatcher(private val activity: Activity) : TextWatcher {
-
         override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
             // do nothing
         }
@@ -154,35 +169,6 @@ class ActivityAddStudent : AppCompatActivity() {
                 if (!pristine) firstName.error = activity.resources.getString(R.string.name_error)
             }
             activity.invalidateOptionsMenu()
-        }
-    }
-
-    companion object {
-
-        private class AddStudent(context: ActivityAddStudent) : AsyncTask<Student, Int, Student>() {
-            private val addStudentActivityWeakReference: WeakReference<ActivityAddStudent> = WeakReference(context)
-
-            override fun doInBackground(vararg params: Student): Student {
-                // Thread.sleep(1000)
-                val addStudentActivity = addStudentActivityWeakReference.get()!!
-                val student = addStudentActivity.student
-
-                val id = MusicLessonsApplication.db.studentDao.insert(student)
-                student.studentId = id
-
-                student.phoneNumbers.map { it.studentId = id }
-                MusicLessonsApplication.db.phoneNumberDao.insertAll(student.phoneNumbers)
-                return student
-            }
-
-            override fun onPostExecute(result: Student) {
-                val addStudentActivity = addStudentActivityWeakReference.get()!!
-                addStudentActivity.progressBar.visibility = View.GONE
-
-                val intent = Intent(addStudentActivity, ActivityMain::class.java)
-                intent.putExtra("ADDED_STUDENT_ID", result.studentId)
-                addStudentActivity.startActivity(intent)
-            }
         }
     }
 }

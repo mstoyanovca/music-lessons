@@ -6,20 +6,20 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import androidx.core.app.ActivityCompat
-import androidx.core.app.NavUtils
-import androidx.core.content.ContextCompat
-import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.appcompat.widget.Toolbar
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NavUtils
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.mstoyanov.musiclessons.model.Student
 
 class ActivityStudentDetails : AppCompatActivity() {
@@ -120,11 +120,9 @@ class ActivityStudentDetails : AppCompatActivity() {
         val hasPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE)
         if (hasPermission != PackageManager.PERMISSION_GRANTED) {
             if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CALL_PHONE)) {
-                showMessageOKCancel("You need to provide CALL_PHONE permission.",
-                        DialogInterface.OnClickListener { dialog,
-                                                          which ->
-                            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CALL_PHONE), PERMISSION_REQUEST_CALL_PHONE)
-                        })
+                showMessageOKCancel { _, _ ->
+                    ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CALL_PHONE), PERMISSION_REQUEST_CALL_PHONE)
+                }
                 return
             }
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CALL_PHONE), PERMISSION_REQUEST_CALL_PHONE)
@@ -134,9 +132,9 @@ class ActivityStudentDetails : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun showMessageOKCancel(message: String, okListener: DialogInterface.OnClickListener) {
+    private fun showMessageOKCancel(okListener: DialogInterface.OnClickListener) {
         AlertDialog.Builder(this)
-                .setMessage(message)
+                .setMessage("You need to provide CALL_PHONE permission.")
                 .setPositiveButton("OK", okListener)
                 .setNegativeButton("Cancel", null)
                 .create()

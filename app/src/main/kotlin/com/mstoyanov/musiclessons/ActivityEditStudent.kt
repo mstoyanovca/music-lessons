@@ -2,15 +2,7 @@ package com.mstoyanov.musiclessons
 
 import android.app.Activity
 import android.content.Intent
-import android.os.AsyncTask
 import android.os.Bundle
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import androidx.core.app.NavUtils
-import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.appcompat.widget.Toolbar
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.Menu
@@ -18,9 +10,19 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
 import android.widget.ProgressBar
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.core.app.NavUtils
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.mstoyanov.musiclessons.model.PhoneNumber
 import com.mstoyanov.musiclessons.model.Student
-import java.lang.ref.WeakReference
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ActivityEditStudent : AppCompatActivity() {
     private lateinit var firstName: EditText
@@ -108,7 +110,6 @@ class ActivityEditStudent : AppCompatActivity() {
     }
 
     private inner class EditStudentTextWatcher(private val activity: Activity) : TextWatcher {
-
         override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
             // do nothing
         }
@@ -133,8 +134,22 @@ class ActivityEditStudent : AppCompatActivity() {
         student.email = email.text.toString().trim()
         student.notes = notes.text.toString().trim()
 
+        val intent = Intent(this, ActivityStudentDetails::class.java)
         progressBar.visibility = View.VISIBLE
-        UpdateStudent(this).execute()
+
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                // Thread.sleep(1_000)
+                student = MusicLessonsApplication.db.studentDao.updateStudentWithPhoneNumbers(student, phoneNumbersBeforeEditing)
+
+            }
+            withContext(Dispatchers.Main) {
+                progressBar.visibility = View.GONE
+
+                intent.putExtra("UPDATED_STUDENT", student)
+                startActivity(intent)
+            }
+        }
     }
 
     private fun createAlertDialog() {
@@ -147,8 +162,8 @@ class ActivityEditStudent : AppCompatActivity() {
             "Delete student " + getString(R.string.full_name, student.firstName.trim(), student.lastName.trim()) + "?"
         }
         builder.setMessage(message)
-        builder.setPositiveButton("OK") { dialogInterface, i -> deleteStudent() }
-        builder.setNegativeButton("Cancel") { dialogInterface, i ->
+        builder.setPositiveButton("OK") { _, _ -> deleteStudent() }
+        builder.setNegativeButton("Cancel") { _, _ ->
             // do nothing
         }
         val dialog = builder.create()
@@ -156,8 +171,21 @@ class ActivityEditStudent : AppCompatActivity() {
     }
 
     private fun deleteStudent() {
+        val intent = Intent(this, ActivityMain::class.java)
         progressBar.visibility = View.VISIBLE
-        DeleteStudent(this).execute()
+
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                MusicLessonsApplication.db.studentDao.delete(student)
+
+            }
+            withContext(Dispatchers.Main) {
+                progressBar.visibility = View.GONE
+
+                intent.putExtra("DELETED_STUDENT_ID", student.studentId)
+                startActivity(intent)
+            }
+        }
     }
 
     private fun studentIsValid(): Boolean {
@@ -168,56 +196,5 @@ class ActivityEditStudent : AppCompatActivity() {
 
     private fun nameIsValid(): Boolean {
         return firstName.text.toString().trim().isNotEmpty() || lastName.text.toString().trim().isNotEmpty()
-    }
-
-    companion object {
-
-        private class UpdateStudent(context: ActivityEditStudent) : AsyncTask<Student, Int, Student>() {
-            private val editStudentActivityWeakReference: WeakReference<ActivityEditStudent> = WeakReference(context)
-
-            override fun doInBackground(vararg params: Student): Student {
-                // Thread.sleep(1000)
-                val editStudentActivity = editStudentActivityWeakReference.get()!!
-
-                val student = editStudentActivity.student
-                MusicLessonsApplication.db.studentDao.update(student)
-
-                editStudentActivity.phoneNumbersBeforeEditing.filterNot { student.phoneNumbers.contains(it) }.map { MusicLessonsApplication.db.phoneNumberDao.delete(it) }
-                student.phoneNumbers.map { it.phoneNumberId = MusicLessonsApplication.db.phoneNumberDao.insert(it) }
-
-                return student
-            }
-
-            override fun onPostExecute(result: Student) {
-                val editStudentActivity: ActivityEditStudent = editStudentActivityWeakReference.get()!!
-                editStudentActivity.progressBar.visibility = View.GONE
-
-                val intent = Intent(editStudentActivity, ActivityStudentDetails::class.java)
-                intent.putExtra("UPDATED_STUDENT", result)
-                editStudentActivity.startActivity(intent)
-            }
-        }
-
-        private class DeleteStudent(context: ActivityEditStudent) : AsyncTask<Void, Int, Student>() {
-            private val editStudentActivityWeakReference: WeakReference<ActivityEditStudent> = WeakReference(context)
-
-            override fun doInBackground(vararg params: Void): Student {
-                // Thread.sleep(1000)
-                val editStudentActivity = editStudentActivityWeakReference.get()!!
-                val student = editStudentActivity.student
-
-                MusicLessonsApplication.db.studentDao.delete(student)
-                return student
-            }
-
-            override fun onPostExecute(student: Student) {
-                val editStudentActivity: ActivityEditStudent = editStudentActivityWeakReference.get()!!
-                editStudentActivity.progressBar.visibility = View.GONE
-
-                val intent = Intent(editStudentActivity, ActivityMain::class.java)
-                intent.putExtra("DELETED_STUDENT_ID", student.studentId)
-                editStudentActivity.startActivity(intent)
-            }
-        }
     }
 }

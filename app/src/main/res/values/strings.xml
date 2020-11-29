@@ -29,6 +29,8 @@
     <string name="students_label">Students</string>
     <string name="dash">" - "</string>
     <string name="space">" "</string>
+    <string name="add_fab">add_fab</string>
+    <string name="edit_fab">edit_fab</string>
     <string-array name="section_titles">
         <item>
             Monday

@@ -1,13 +1,14 @@
 package com.mstoyanov.musiclessons
 
+import android.content.Context
 import androidx.room.Room
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.platform.app.InstrumentationRegistry
 import com.mstoyanov.musiclessons.model.PhoneNumber
 import com.mstoyanov.musiclessons.model.PhoneNumberType
 import com.mstoyanov.musiclessons.model.Student
-import com.mstoyanov.musiclessons.model.StudentWithPhoneNumbers
 import com.mstoyanov.musiclessons.repository.AppDatabase
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before
@@ -23,14 +24,16 @@ class StudentDaoTest {
 
     @Before
     fun createDb() {
-        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val context = ApplicationProvider.getApplicationContext<Context>()
         db = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java).build()
 
         phoneNumbers = mutableListOf(PhoneNumber(1L, "123-456-7890", PhoneNumberType.HOME, 1L, isValid = false))
-        student = Student(1L, "John", "Smith", "jsmith@google.com", "Test student", mutableListOf())
+        student = Student(1L, "John", "Smith", "jsmith@google.com", "Test student", phoneNumbers as MutableList<PhoneNumber>)
 
-        db.studentDao.insert(student)
-        db.phoneNumberDao.insertAll(phoneNumbers)
+        runBlocking {
+            db.studentDao.insert(student)
+            db.phoneNumberDao.insertAll(phoneNumbers)
+        }
     }
 
     @After
@@ -42,37 +45,48 @@ class StudentDaoTest {
     @Test
     @Throws(Exception::class)
     fun find_all_with_phone_numbers() {
-        val actualStudentsWithPhoneNumbers: List<StudentWithPhoneNumbers> = db.studentDao.findAllWithPhoneNumbers()
+        val actualStudentsWithPhoneNumbers: List<Student> = runBlocking { db.studentDao.findAllWithPhoneNumbers() }
 
         Assert.assertEquals(actualStudentsWithPhoneNumbers.size, 1)
-        Assert.assertEquals(student, actualStudentsWithPhoneNumbers[0].student)
+        Assert.assertEquals(student, actualStudentsWithPhoneNumbers[0])
         Assert.assertEquals(phoneNumbers, actualStudentsWithPhoneNumbers[0].phoneNumbers)
     }
 
     @Test
     @Throws(Exception::class)
     fun insert_student() {
-        val actualStudent = db.studentDao.findAll()
+        val actualStudents: List<Student>
+        runBlocking { actualStudents = db.studentDao.findAll() }
+        student.phoneNumbers = mutableListOf()
 
-        Assert.assertEquals(actualStudent.size, 1)
-        Assert.assertEquals(student, actualStudent[0])
+        Assert.assertEquals(actualStudents.size, 1)
+        Assert.assertEquals(student, actualStudents[0])
     }
 
     @Test
     @Throws(Exception::class)
     fun update_student() {
         student.firstName = "Joane"
-        db.studentDao.update(student)
+        val actualStudent: Student
 
-        val actualStudent = db.studentDao.findAll()[0]
+        runBlocking {
+            db.studentDao.update(student)
+            actualStudent = db.studentDao.findAll()[0]
+        }
+
         Assert.assertEquals("Joane", actualStudent.firstName)
     }
 
     @Test
     @Throws(Exception::class)
     fun delete_student() {
-        db.studentDao.delete(student)
-        val actualStudent = db.studentDao.findAll()
-        Assert.assertEquals(actualStudent.size, 0)
+        val actualStudents: List<Student>
+
+        runBlocking {
+            db.studentDao.delete(student)
+            actualStudents = db.studentDao.findAll()
+        }
+
+        Assert.assertEquals(actualStudents.size, 0)
     }
 }
