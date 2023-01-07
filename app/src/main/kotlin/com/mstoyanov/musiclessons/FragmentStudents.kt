@@ -30,7 +30,11 @@ class FragmentStudents : Fragment() {
     private lateinit var adapter: AdapterStudents
     private lateinit var students: MutableList<Student>
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         val rootView = inflater.inflate(R.layout.fragment_students, container, false)
         setHasOptionsMenu(true)
 
@@ -53,7 +57,7 @@ class FragmentStudents : Fragment() {
                         students.sort()
                         progressBar.visibility = View.GONE
                         adapter.notifyDataSetChanged()
-                        activity!!.invalidateOptionsMenu()
+                        requireActivity().invalidateOptionsMenu()
                     }
                 }
             }
@@ -68,7 +72,14 @@ class FragmentStudents : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(activity)
 
         val button: FloatingActionButton = rootView.findViewById(R.id.add_student)
-        button.setOnClickListener { startActivity(Intent(activity, ActivityAddStudent::class.java)) }
+        button.setOnClickListener {
+            startActivity(
+                Intent(
+                    activity,
+                    ActivityAddStudent::class.java
+                )
+            )
+        }
 
         return rootView
     }
@@ -91,7 +102,11 @@ class FragmentStudents : Fragment() {
                 val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
                     addCategory(Intent.CATEGORY_OPENABLE)
                     type = "text/plain"
-                    putExtra(Intent.EXTRA_TITLE, "student_list_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd-HH_mm_ss")) + ".txt")
+                    putExtra(
+                        Intent.EXTRA_TITLE,
+                        "student_list_" + LocalDateTime.now()
+                            .format(DateTimeFormatter.ofPattern("yyyy_MM_dd-HH_mm_ss")) + ".txt"
+                    )
                     putExtra(DocumentsContract.EXTRA_INITIAL_URI, Environment.DIRECTORY_DOWNLOADS)
                 }
                 startActivityForResult(intent, WRITE_REQUEST_CODE)
@@ -105,10 +120,10 @@ class FragmentStudents : Fragment() {
     override fun onPrepareOptionsMenu(menu: Menu) {
         if (students.isEmpty()) {
             menu.findItem(R.id.action_export_students).isEnabled = false
-            menu.findItem(R.id.action_export_students).icon.alpha = 127
+            menu.findItem(R.id.action_export_students).icon?.alpha = 127
         } else {
             menu.findItem(R.id.action_export_students).isEnabled = true
-            menu.findItem(R.id.action_export_students).icon.alpha = 255
+            menu.findItem(R.id.action_export_students).icon?.alpha = 255
         }
     }
 
@@ -117,7 +132,8 @@ class FragmentStudents : Fragment() {
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
                 // Thread.sleep(1_000)
-                val studentsWithPhoneNumbers: List<Student> = MusicLessonsApplication.db.studentDao.findAllWithPhoneNumbers()
+                val studentsWithPhoneNumbers: List<Student> =
+                    MusicLessonsApplication.db.studentDao.findAllWithPhoneNumbers()
 
                 withContext(Dispatchers.Main) {
                     progressBar.visibility = View.GONE
@@ -162,7 +178,7 @@ class FragmentStudents : Fragment() {
 
             val intent = Intent(activity, ActivityMain::class.java)
             intent.putExtra("EXPORTED_STUDENTS", true)
-            activity!!.startActivity(intent)
+            requireActivity().startActivity(intent)
         } else {
             Toast.makeText(activity, "External storage is not writable.", Toast.LENGTH_LONG).show()
         }

@@ -99,10 +99,10 @@ class ActivityAddStudent : AppCompatActivity() {
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         if (studentIsValid()) {
             menu.findItem(R.id.action_insert).isEnabled = true
-            menu.findItem(R.id.action_insert).icon.alpha = 255
+            menu.findItem(R.id.action_insert).icon?.alpha = 255
         } else {
             menu.findItem(R.id.action_insert).isEnabled = false
-            menu.findItem(R.id.action_insert).icon.alpha = 127
+            menu.findItem(R.id.action_insert).icon?.alpha = 127
         }
         return true
     }

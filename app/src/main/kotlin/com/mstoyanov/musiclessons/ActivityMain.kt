@@ -36,9 +36,10 @@ class ActivityMain : AppCompatActivity() {
         tabLayout.addOnTabSelectedListener(MyOnTabSelectedListener())
 
         if (intent.getLongExtra("ADDED_STUDENT_ID", 0) > 0 ||
-                intent.getLongExtra("UPDATED_STUDENT_ID", 0) > 0 ||
-                intent.getLongExtra("DELETED_STUDENT_ID", 0) > 0 ||
-                intent.getBooleanExtra("EXPORTED_STUDENTS", false)) {
+            intent.getLongExtra("UPDATED_STUDENT_ID", 0) > 0 ||
+            intent.getLongExtra("DELETED_STUDENT_ID", 0) > 0 ||
+            intent.getBooleanExtra("EXPORTED_STUDENTS", false)
+        ) {
             tabLayout.getTabAt(1)!!.select()
         } else if (intent.getSerializableExtra("WEEKDAY") != null) {
             // returning from ActivityAddLesson, ActivityLessonDetails or ActivityEditLesson after deleting a lesson:
@@ -64,14 +65,15 @@ class ActivityMain : AppCompatActivity() {
         else viewPager.currentItem = viewPager.currentItem - 1
     }
 
-    private class MyAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+    private class MyAdapter(fm: FragmentManager) :
+        FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
         override fun getItem(position: Int): Fragment {
             return if (position == sectionTitles.size - 1) FragmentStudents.create(position)
             else FragmentSchedule.create(position)
         }
 
         override fun getItemPosition(item: Any): Int {
-            return (item as Fragment).arguments!!.getInt("POSITION")
+            return (item as Fragment).requireArguments().getInt("POSITION")
         }
 
         override fun getCount(): Int {
@@ -104,7 +106,11 @@ class ActivityMain : AppCompatActivity() {
     }
 
     private inner class MyOnPageChangeListener : ViewPager.OnPageChangeListener {
-        override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+        override fun onPageScrolled(
+            position: Int,
+            positionOffset: Float,
+            positionOffsetPixels: Int
+        ) {
             // do nothing
         }
 

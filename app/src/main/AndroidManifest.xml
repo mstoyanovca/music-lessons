@@ -2,7 +2,6 @@
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.mstoyanov.musiclessons"
     android:largeScreens="true"
     android:normalScreens="true"
     android:smallScreens="true"
@@ -24,6 +23,7 @@
         tools:ignore="AllowBackup">
         <activity
             android:name=".ActivityMain"
+            android:exported="true"
             android:label="@string/app_label"
             android:launchMode="singleTop">
             <intent-filter>
@@ -35,38 +35,32 @@
             android:name=".ActivityAddStudent"
             android:label="@string/add_student"
             android:launchMode="singleTop"
-            android:parentActivityName=".ActivityMain">
-        </activity>
+            android:parentActivityName=".ActivityMain"></activity>
         <activity
             android:name=".ActivityStudentDetails"
             android:label="@string/student_details"
             android:launchMode="singleTop"
-            android:parentActivityName=".ActivityMain">
-        </activity>
+            android:parentActivityName=".ActivityMain"></activity>
         <activity
             android:name=".ActivityEditStudent"
             android:label="@string/edit_student"
             android:launchMode="singleTop"
-            android:parentActivityName=".ActivityStudentDetails">
-        </activity>
+            android:parentActivityName=".ActivityStudentDetails"></activity>
         <activity
             android:name=".ActivityAddLesson"
             android:label="@string/add_lesson"
             android:launchMode="singleTop"
-            android:parentActivityName=".ActivityMain">
-        </activity>
+            android:parentActivityName=".ActivityMain"></activity>
         <activity
             android:name=".ActivityLessonDetails"
             android:label="@string/lesson_details"
             android:launchMode="singleTop"
-            android:parentActivityName=".ActivityMain">
-        </activity>
+            android:parentActivityName=".ActivityMain"></activity>
         <activity
             android:name=".ActivityEditLesson"
             android:label="@string/edit_lesson"
             android:launchMode="singleTop"
-            android:parentActivityName=".ActivityLessonDetails">
-        </activity>
+            android:parentActivityName=".ActivityLessonDetails"></activity>
     </application>
 
     <queries>
