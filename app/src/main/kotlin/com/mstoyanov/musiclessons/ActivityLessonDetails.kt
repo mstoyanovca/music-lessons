@@ -52,11 +52,11 @@ class ActivityLessonDetails : AppCompatActivity() {
         val divider = DividerItemDecoration(phoneNumbers.context, layoutManager.orientation)
         phoneNumbers.addItemDecoration(divider)
 
-        if (savedInstanceState == null && intent.serializable("LESSON") as? Lesson != null) {
+        if (savedInstanceState == null && intent.serializable<Lesson>("LESSON") != null) {
             // coming from AdapterLessons:
             lesson = intent.serializable("LESSON")!!
             findPhoneNumbersByStudentId()
-        } else if (savedInstanceState == null && intent.serializable("UPDATED_LESSON") as? Lesson != null) {
+        } else if (savedInstanceState == null && intent.serializable<Lesson>("UPDATED_LESSON") != null) {
             // coming from ActivityEditLesson:
             lesson = intent.serializable("UPDATED_LESSON")!!
             findPhoneNumbersByStudentId()

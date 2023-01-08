@@ -42,7 +42,7 @@ class ActivityMain : AppCompatActivity() {
             intent.getBooleanExtra("EXPORTED_STUDENTS", false)
         ) {
             tabLayout.getTabAt(1)!!.select()
-        } else if (intent.serializable("WEEKDAY") as? Weekday != null) {
+        } else if (intent.serializable<Weekday>("WEEKDAY") != null) {
             // returning from ActivityAddLesson, ActivityLessonDetails or ActivityEditLesson after deleting a lesson:
             val weekday = intent.serializable<Weekday>("WEEKDAY")!!
             viewPager.currentItem = weekday.ordinal

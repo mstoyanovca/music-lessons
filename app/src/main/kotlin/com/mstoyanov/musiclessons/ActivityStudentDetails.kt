@@ -36,11 +36,11 @@ class ActivityStudentDetails : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_student_details)
 
-        if (intent.serializable("STUDENT") as? Student != null) {
+        if (intent.serializable<Student>("STUDENT") != null) {
             // coming from AdapterStudents:
             student = intent.serializable("STUDENT")!!
             updatedStudentId = 0L
-        } else if (intent.serializable("UPDATED_STUDENT") as? Student != null) {
+        } else if (intent.serializable<Student>("UPDATED_STUDENT") != null) {
             // coming from ActivityEditStudent:
             student = intent.serializable("UPDATED_STUDENT")!!
             updatedStudentId = student.studentId
