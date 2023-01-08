@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.mstoyanov.musiclessons.global.Functions.serializable
 import com.mstoyanov.musiclessons.model.Student
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -62,8 +63,7 @@ class FragmentStudents : Fragment() {
                 }
             }
         } else {
-            @Suppress("UNCHECKED_CAST")
-            students.addAll(savedInstanceState.getSerializable("STUDENTS") as MutableList<Student>)
+            students.addAll(savedInstanceState.serializable("STUDENTS")!!)
             progressBar.visibility = View.GONE
         }
 
@@ -127,7 +127,6 @@ class FragmentStudents : Fragment() {
         }
     }
 
-    @Suppress("UNCHECKED_CAST")
     override fun onActivityResult(requestCode: Int, resultCode: Int, resultData: Intent?) {
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {

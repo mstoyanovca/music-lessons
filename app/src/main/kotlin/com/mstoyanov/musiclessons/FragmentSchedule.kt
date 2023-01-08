@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.mstoyanov.musiclessons.global.Functions.serializable
 import com.mstoyanov.musiclessons.model.Lesson
 import com.mstoyanov.musiclessons.model.LessonWithStudent
 import com.mstoyanov.musiclessons.model.Weekday
@@ -29,7 +30,7 @@ class FragmentSchedule : Fragment() {
         val rootView = inflater.inflate(R.layout.fragment_schedule, container, false)
 
         val title = rootView.findViewById<TextView>(R.id.weekday)
-        val position = arguments!!.getInt("POSITION")
+        val position = requireArguments().getInt("POSITION")
         title.text = ActivityMain.sectionTitles[position]
 
         lessons = mutableListOf()
@@ -43,7 +44,8 @@ class FragmentSchedule : Fragment() {
             lifecycleScope.launch {
                 withContext(Dispatchers.IO) {
                     // Thread.sleep(1_000)
-                    val result: List<LessonWithStudent> = MusicLessonsApplication.db.lessonDao.findWithStudentByWeekday(ActivityMain.sectionTitles[position])
+                    val result: List<LessonWithStudent> =
+                        MusicLessonsApplication.db.lessonDao.findWithStudentByWeekday(ActivityMain.sectionTitles[position])
                     withContext(Dispatchers.Main) {
                         result.forEach { it.lesson.student = it.student }
                         val lessonList: MutableList<Lesson> = result.map { it.lesson }.toMutableList()
@@ -56,8 +58,7 @@ class FragmentSchedule : Fragment() {
                 }
             }
         } else {
-            @Suppress("UNCHECKED_CAST")
-            lessons.addAll(savedInstanceState.getSerializable("LESSONS") as MutableList<Lesson>)
+            lessons.addAll(savedInstanceState.serializable("LESSONS")!!)
             progressBar.visibility = View.GONE
         }
 

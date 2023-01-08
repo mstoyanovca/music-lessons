@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.NavUtils
 import androidx.lifecycle.lifecycleScope
+import com.mstoyanov.musiclessons.global.Functions.serializable
 import com.mstoyanov.musiclessons.model.Lesson
 import com.mstoyanov.musiclessons.model.Student
 import com.mstoyanov.musiclessons.model.Weekday
@@ -100,7 +101,7 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
 
         if (savedInstanceState == null) {
             // coming from LessonDetails:
-            lesson = intent.getSerializableExtra("LESSON") as Lesson
+            lesson = intent.serializable("LESSON")!!
             initializeTime()
             studentListIsEmpty = true
             loadStudents()
@@ -108,9 +109,8 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
             // after screen rotation:
             progressBar.visibility = View.GONE
 
-            lesson = savedInstanceState.getSerializable("LESSON") as Lesson
-            @Suppress("UNCHECKED_CAST")
-            studentList = savedInstanceState.getSerializable("STUDENTS") as MutableList<Student>
+            lesson = savedInstanceState.serializable("LESSON")!!
+            studentList = savedInstanceState.serializable("STUDENTS")!!
             studentListIsEmpty = studentList.isEmpty()
             adapter.addAll(studentList)
             students.setSelection(studentList.indexOf(studentList.filter { it.studentId == lesson.student.studentId }[0]))
