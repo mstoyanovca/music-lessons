@@ -10,6 +10,8 @@ import android.view.*
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -104,13 +106,27 @@ class FragmentStudents : Fragment() {
                     type = "text/plain"
                     putExtra(
                         Intent.EXTRA_TITLE,
-                        "student_list_" + LocalDateTime.now()
-                            .format(DateTimeFormatter.ofPattern("yyyy_MM_dd-HH_mm_ss")) + ".txt"
+                        "student_list_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd-HH_mm_ss")) + ".txt"
                     )
                     putExtra(DocumentsContract.EXTRA_INITIAL_URI, Environment.DIRECTORY_DOWNLOADS)
                 }
-                startActivityForResult(intent, WRITE_REQUEST_CODE)
-
+                registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+                    if (result.resultCode == Activity.RESULT_OK) {
+                        lifecycleScope.launch {
+                            withContext(Dispatchers.IO) {
+                                // Thread.sleep(1_000)
+                                val studentsWithPhoneNumbers: List<Student> =
+                                    MusicLessonsApplication.db.studentDao.findAllWithPhoneNumbers()
+                                withContext(Dispatchers.Main) {
+                                    progressBar.visibility = View.GONE
+                                    result.data?.data?.also { uri ->
+                                        onFindAllWithPhoneNumbersResult(studentsWithPhoneNumbers, uri)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }.launch(intent)
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -124,26 +140,6 @@ class FragmentStudents : Fragment() {
         } else {
             menu.findItem(R.id.action_export_students).isEnabled = true
             menu.findItem(R.id.action_export_students).icon?.alpha = 255
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, resultData: Intent?) {
-        lifecycleScope.launch {
-            withContext(Dispatchers.IO) {
-                // Thread.sleep(1_000)
-                val studentsWithPhoneNumbers: List<Student> =
-                    MusicLessonsApplication.db.studentDao.findAllWithPhoneNumbers()
-
-                withContext(Dispatchers.Main) {
-                    progressBar.visibility = View.GONE
-
-                    if (requestCode == WRITE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-                        resultData?.data?.also { uri ->
-                            onFindAllWithPhoneNumbersResult(studentsWithPhoneNumbers, uri)
-                        }
-                    }
-                }
-            }
         }
     }
 
