@@ -1,6 +1,7 @@
 package com.mstoyanov.musiclessons
 
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -47,6 +48,8 @@ class ActivityMain : AppCompatActivity() {
             val weekday = intent.serializable<Weekday>("WEEKDAY")!!
             viewPager.currentItem = weekday.ordinal
         }
+
+        onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
     }
 
     override fun onSaveInstanceState(savedInstanceState: Bundle) {
@@ -61,9 +64,10 @@ class ActivityMain : AppCompatActivity() {
         selectedSectionIndex = savedInstanceState.getInt("SELECTED_SECTION_INDEX")
     }
 
-    override fun onBackPressed() {
-        if (viewPager.currentItem == 0) super.onBackPressed()
-        else viewPager.currentItem = viewPager.currentItem - 1
+    private val onBackPressedCallback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            if (viewPager.currentItem > 0) viewPager.currentItem -= 1
+        }
     }
 
     private inner class FragmentStateAdapterImpl(fm: FragmentManager) : FragmentStateAdapter(fm, lifecycle) {
