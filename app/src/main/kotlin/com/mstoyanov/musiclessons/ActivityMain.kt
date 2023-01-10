@@ -4,14 +4,14 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentStatePagerAdapter
-import androidx.viewpager.widget.ViewPager
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.mstoyanov.musiclessons.global.Functions.serializable
 import com.mstoyanov.musiclessons.model.Weekday
 
 class ActivityMain : AppCompatActivity() {
-    private lateinit var viewPager: ViewPager
+    private lateinit var viewPager: ViewPager2
     private lateinit var tabLayout: TabLayout
 
     companion object {
@@ -29,12 +29,12 @@ class ActivityMain : AppCompatActivity() {
         setSupportActionBar(findViewById(R.id.toolbar))
 
         viewPager = findViewById(R.id.view_pager)
-        viewPager.adapter = MyAdapter(supportFragmentManager)
-        viewPager.addOnPageChangeListener(MyOnPageChangeListener())
+        viewPager.adapter = FragmentStateAdapterImpl(supportFragmentManager)
+        viewPager.registerOnPageChangeCallback(OnPageChangeCallbackImpl())
 
         tabLayout = findViewById(R.id.tab_layout)
         tabLayout.getTabAt(1)!!.icon!!.alpha = 128
-        tabLayout.addOnTabSelectedListener(MyOnTabSelectedListener())
+        tabLayout.addOnTabSelectedListener(OnTabSelectedListenerImpl())
 
         if (intent.getLongExtra("ADDED_STUDENT_ID", 0) > 0 ||
             intent.getLongExtra("UPDATED_STUDENT_ID", 0) > 0 ||
@@ -66,23 +66,18 @@ class ActivityMain : AppCompatActivity() {
         else viewPager.currentItem = viewPager.currentItem - 1
     }
 
-    private class MyAdapter(fm: FragmentManager) :
-        FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
-        override fun getItem(position: Int): Fragment {
+    private inner class FragmentStateAdapterImpl(fm: FragmentManager) : FragmentStateAdapter(fm, lifecycle) {
+        override fun createFragment(position: Int): Fragment {
             return if (position == sectionTitles.size - 1) FragmentStudents.create(position)
             else FragmentSchedule.create(position)
         }
 
-        override fun getItemPosition(item: Any): Int {
-            return (item as Fragment).requireArguments().getInt("POSITION")
-        }
-
-        override fun getCount(): Int {
+        override fun getItemCount(): Int {
             return sectionTitles.size
         }
     }
 
-    private inner class MyOnTabSelectedListener : TabLayout.OnTabSelectedListener {
+    private inner class OnTabSelectedListenerImpl : TabLayout.OnTabSelectedListener {
         override fun onTabSelected(tab: TabLayout.Tab) {
             // synchronize the ViewPager with the TabLayout:
             if (tab.position == 0) {
@@ -106,12 +101,8 @@ class ActivityMain : AppCompatActivity() {
         }
     }
 
-    private inner class MyOnPageChangeListener : ViewPager.OnPageChangeListener {
-        override fun onPageScrolled(
-            position: Int,
-            positionOffset: Float,
-            positionOffsetPixels: Int
-        ) {
+    private inner class OnPageChangeCallbackImpl : ViewPager2.OnPageChangeCallback() {
+        override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
             // do nothing
         }
 
