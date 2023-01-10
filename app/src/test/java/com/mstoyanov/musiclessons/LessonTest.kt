@@ -1,22 +1,14 @@
 package com.mstoyanov.musiclessons
 
+import com.mstoyanov.musiclessons.global.Functions.formatter
 import com.mstoyanov.musiclessons.model.Lesson
 import com.mstoyanov.musiclessons.model.Student
 import com.mstoyanov.musiclessons.model.Weekday
 import org.junit.Assert
-import org.junit.Before
 import org.junit.Test
 import java.time.LocalTime
-import java.time.format.DateTimeFormatter
 
 class LessonTest {
-    private lateinit var formatter: DateTimeFormatter
-
-    @Before
-    fun setUp() {
-        formatter = DateTimeFormatter.ofPattern("HH:mm")
-    }
-
     @Test
     fun compare_lessons_by_time_from() {
         val timeFrom1: LocalTime = LocalTime.parse("16:00", formatter)

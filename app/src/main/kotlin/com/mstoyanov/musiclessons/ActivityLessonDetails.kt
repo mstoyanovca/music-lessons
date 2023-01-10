@@ -22,12 +22,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.mstoyanov.musiclessons.ActivityStudentDetails.Companion.PERMISSION_REQUEST_CALL_PHONE
+import com.mstoyanov.musiclessons.global.Functions.formatter
 import com.mstoyanov.musiclessons.global.Functions.serializable
 import com.mstoyanov.musiclessons.model.Lesson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.time.format.DateTimeFormatter
 
 class ActivityLessonDetails : AppCompatActivity() {
     private lateinit var phoneNumbers: RecyclerView
@@ -72,7 +72,6 @@ class ActivityLessonDetails : AppCompatActivity() {
         weekday.text = lesson.weekday.displayValue()
 
         val time = findViewById<TextView>(R.id.time)
-        val formatter = DateTimeFormatter.ofPattern("HH:mm")
         val timeFrom = formatter.format(lesson.timeFrom)
         val timeTo = formatter.format(lesson.timeTo)
         time.text = StringBuilder().append(timeFrom).append(getString(R.string.dash)).append(timeTo).toString()
