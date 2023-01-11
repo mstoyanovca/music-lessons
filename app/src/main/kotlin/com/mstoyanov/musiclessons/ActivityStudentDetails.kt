@@ -96,7 +96,7 @@ class ActivityStudentDetails : AppCompatActivity() {
                     NavUtils.navigateUpFromSameTask(this)
                 } else {
                     val intent = Intent(this@ActivityStudentDetails, ActivityMain::class.java)
-                    intent.putExtra("UPDATED_STUDENT_ID", updatedStudentId)
+                    intent.putExtra(resources.getString(R.string.updated_student_id), updatedStudentId)
                     startActivity(intent)
                 }
                 return true

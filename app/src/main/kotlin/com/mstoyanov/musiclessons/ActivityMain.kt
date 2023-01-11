@@ -37,10 +37,10 @@ class ActivityMain : AppCompatActivity() {
         tabLayout.getTabAt(1)!!.icon!!.alpha = 128
         tabLayout.addOnTabSelectedListener(OnTabSelectedListenerImpl())
 
-        if (intent.getLongExtra("ADDED_STUDENT_ID", 0) > 0 ||
-            intent.getLongExtra("UPDATED_STUDENT_ID", 0) > 0 ||
-            intent.getLongExtra("DELETED_STUDENT_ID", 0) > 0 ||
-            intent.getBooleanExtra("EXPORTED_STUDENTS", false)
+        if (intent.getLongExtra(resources.getString(R.string.added_student_id), 0) > 0 ||
+            intent.getLongExtra(resources.getString(R.string.updated_student_id), 0) > 0 ||
+            intent.getLongExtra(resources.getString(R.string.deleted_student_id), 0) > 0 ||
+            intent.getBooleanExtra(resources.getString(R.string.export_students), false)
         ) {
             tabLayout.getTabAt(1)!!.select()
         } else if (intent.serializable<Weekday>("WEEKDAY") != null) {

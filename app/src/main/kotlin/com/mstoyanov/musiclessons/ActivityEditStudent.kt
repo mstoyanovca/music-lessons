@@ -191,7 +191,7 @@ class ActivityEditStudent : AppCompatActivity() {
             withContext(Dispatchers.Main) {
                 progressBar.visibility = View.GONE
 
-                intent.putExtra("DELETED_STUDENT_ID", student.studentId)
+                intent.putExtra(resources.getString(R.string.deleted_student_id), student.studentId)
                 startActivity(intent)
             }
         }

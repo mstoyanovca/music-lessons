@@ -172,7 +172,7 @@ class FragmentStudents : Fragment() {
             Toast.makeText(activity, "Exported student list", Toast.LENGTH_LONG).show()
 
             val intent = Intent(activity, ActivityMain::class.java)
-            intent.putExtra("EXPORTED_STUDENTS", true)
+            intent.putExtra(resources.getString(R.string.export_students), true)
             requireActivity().startActivity(intent)
         } else {
             Toast.makeText(activity, "External storage is not writable.", Toast.LENGTH_LONG).show()

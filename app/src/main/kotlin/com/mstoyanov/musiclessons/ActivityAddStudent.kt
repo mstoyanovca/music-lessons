@@ -139,7 +139,7 @@ class ActivityAddStudent : AppCompatActivity() {
                 withContext(Dispatchers.Main) {
                     progressBar.visibility = View.GONE
 
-                    intent.putExtra("ADDED_STUDENT_ID", student.studentId)
+                    intent.putExtra(resources.getString(R.string.added_student_id), student.studentId)
                     startActivity(intent)
                 }
             }
