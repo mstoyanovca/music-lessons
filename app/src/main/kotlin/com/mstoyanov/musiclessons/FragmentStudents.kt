@@ -11,8 +11,6 @@ import android.view.*
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -35,11 +33,7 @@ class FragmentStudents : Fragment() {
     private lateinit var adapter: AdapterStudents
     private lateinit var students: MutableList<Student>
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_students, container, false)
         setHasOptionsMenu(true)
 
@@ -76,14 +70,7 @@ class FragmentStudents : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(activity)
 
         val button: FloatingActionButton = rootView.findViewById(R.id.add_student)
-        button.setOnClickListener {
-            startActivity(
-                Intent(
-                    activity,
-                    ActivityAddStudent::class.java
-                )
-            )
-        }
+        button.setOnClickListener { startActivity(Intent(activity, ActivityAddStudent::class.java)) }
 
         return rootView
     }
@@ -106,19 +93,15 @@ class FragmentStudents : Fragment() {
                 val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
                     addCategory(Intent.CATEGORY_OPENABLE)
                     type = "text/plain"
-                    putExtra(
-                        Intent.EXTRA_TITLE,
-                        "student_list_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd-HH_mm_ss")) + ".txt"
-                    )
+                    putExtra(Intent.EXTRA_TITLE, "student_list_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd-HH_mm_ss")) + ".txt")
                     putExtra(DocumentsContract.EXTRA_INITIAL_URI, Environment.DIRECTORY_DOWNLOADS)
                 }
-                registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+                /*registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
                     if (result.resultCode == Activity.RESULT_OK) {
                         lifecycleScope.launch {
                             withContext(Dispatchers.IO) {
                                 // Thread.sleep(1_000)
-                                val studentsWithPhoneNumbers: List<Student> =
-                                    MusicLessonsApplication.db.studentDao.findAllWithPhoneNumbers()
+                                val studentsWithPhoneNumbers: List<Student> = MusicLessonsApplication.db.studentDao.findAllWithPhoneNumbers()
                                 withContext(Dispatchers.Main) {
                                     progressBar.visibility = View.GONE
                                     result.data?.data?.also { uri ->
@@ -128,7 +111,8 @@ class FragmentStudents : Fragment() {
                             }
                         }
                     }
-                }.launch(intent)
+                }.launch(intent)*/
+                startActivityForResult(intent, WRITE_REQUEST_CODE)
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -142,6 +126,25 @@ class FragmentStudents : Fragment() {
         } else {
             menu.findItem(R.id.action_export_students).isEnabled = true
             menu.findItem(R.id.action_export_students).icon?.alpha = 255
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, resultData: Intent?) {
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                // Thread.sleep(1_000)
+                val studentsWithPhoneNumbers: List<Student> = MusicLessonsApplication.db.studentDao.findAllWithPhoneNumbers()
+
+                withContext(Dispatchers.Main) {
+                    progressBar.visibility = View.GONE
+
+                    if (requestCode == WRITE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+                        resultData?.data?.also { uri ->
+                            onFindAllWithPhoneNumbersResult(studentsWithPhoneNumbers, uri)
+                        }
+                    }
+                }
+            }
         }
     }
 

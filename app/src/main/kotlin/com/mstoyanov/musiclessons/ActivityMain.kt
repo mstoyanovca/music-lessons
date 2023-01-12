@@ -72,8 +72,15 @@ class ActivityMain : AppCompatActivity() {
 
     private inner class FragmentStateAdapterImpl(fm: FragmentManager) : FragmentStateAdapter(fm, lifecycle) {
         override fun createFragment(position: Int): Fragment {
-            return if (position == sectionTitles.size - 1) FragmentStudents.create(position)
-            else FragmentSchedule.create(position)
+            return if (position == sectionTitles.size - 1)
+                FragmentStudents.create(position)
+            else
+                FragmentSchedule.create(position)
+        }
+
+        // TODO: remove this method:
+        fun getItemPosition(item: Any): Int {
+            return (item as Fragment).requireArguments().getInt("POSITION")
         }
 
         override fun getItemCount(): Int {

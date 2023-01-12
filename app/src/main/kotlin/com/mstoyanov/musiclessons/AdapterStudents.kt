@@ -34,7 +34,7 @@ class AdapterStudents(private val students: List<Student>, private val fragment:
 
         override fun onClick(view: View) {
             fragment.startProgressBar()
-            val student = students[bindingAdapterPosition]
+            val student = students[adapterPosition]
             fragment.lifecycleScope.launch {
                 withContext(Dispatchers.IO) {
                     // Thread.sleep(1_000)

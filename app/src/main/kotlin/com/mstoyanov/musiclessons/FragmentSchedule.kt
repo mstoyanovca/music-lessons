@@ -46,8 +46,7 @@ class FragmentSchedule : Fragment() {
             lifecycleScope.launch {
                 withContext(Dispatchers.IO) {
                     // Thread.sleep(1_000)
-                    val result: List<LessonWithStudent> =
-                        MusicLessonsApplication.db.lessonDao.findWithStudentByWeekday(ActivityMain.sectionTitles[position])
+                    val result: List<LessonWithStudent> = MusicLessonsApplication.db.lessonDao.findWithStudentByWeekday(ActivityMain.sectionTitles[position])
                     withContext(Dispatchers.Main) {
                         result.forEach { it.lesson.student = it.student }
                         val lessonList: MutableList<Lesson> = result.map { it.lesson }.toMutableList()

@@ -54,7 +54,7 @@ class AdapterLessons(private val lessons: List<Lesson>) : RecyclerView.Adapter<A
 
         override fun onClick(v: View) {
             val intent = Intent(v.context, ActivityLessonDetails::class.java)
-            intent.putExtra("LESSON", lessons[bindingAdapterPosition])
+            intent.putExtra("LESSON", lessons[adapterPosition])
             v.context.startActivity(intent)
         }
     }
