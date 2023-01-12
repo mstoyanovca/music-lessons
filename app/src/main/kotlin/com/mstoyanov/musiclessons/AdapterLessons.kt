@@ -20,20 +20,12 @@ class AdapterLessons(private val lessons: List<Lesson>) : RecyclerView.Adapter<A
         val timeFrom = formatter.format(lessons[position].timeFrom)
         val timeTo = formatter.format(lessons[position].timeTo)
 
-        holder.time.text = StringBuilder()
-            .append(timeFrom)
-            .append(holder.context.getString(R.string.dash))
-            .append(timeTo)
-            .toString()
+        holder.time.text = StringBuilder().append(timeFrom).append(holder.context.getString(R.string.dash)).append(timeTo).toString()
 
         val firstName = lessons[position].student.firstName
         val lastName = lessons[position].student.lastName
 
-        holder.name.text = StringBuilder()
-            .append(firstName)
-            .append(holder.context.getString(R.string.space))
-            .append(lastName)
-            .toString()
+        holder.name.text = StringBuilder().append(firstName).append(holder.context.getString(R.string.space)).append(lastName).toString()
     }
 
     override fun getItemCount(): Int {
@@ -54,7 +46,7 @@ class AdapterLessons(private val lessons: List<Lesson>) : RecyclerView.Adapter<A
 
         override fun onClick(v: View) {
             val intent = Intent(v.context, ActivityLessonDetails::class.java)
-            intent.putExtra("LESSON", lessons[adapterPosition])
+            intent.putExtra("LESSON", lessons[bindingAdapterPosition])
             v.context.startActivity(intent)
         }
     }
