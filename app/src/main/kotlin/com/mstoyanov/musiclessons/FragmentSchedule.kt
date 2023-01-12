@@ -1,5 +1,6 @@
 package com.mstoyanov.musiclessons
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -26,6 +27,7 @@ class FragmentSchedule : Fragment() {
     private lateinit var lessons: MutableList<Lesson>
     private lateinit var adapter: AdapterLessons
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_schedule, container, false)
 

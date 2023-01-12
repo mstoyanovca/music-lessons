@@ -1,5 +1,6 @@
 package com.mstoyanov.musiclessons
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
@@ -28,6 +29,7 @@ import java.io.Serializable
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
+@SuppressLint("NotifyDataSetChanged")
 class FragmentStudents : Fragment() {
     private lateinit var progressBar: ProgressBar
     private lateinit var adapter: AdapterStudents

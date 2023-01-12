@@ -29,8 +29,11 @@ class AdapterLessons(private val lessons: List<Lesson>) : RecyclerView.Adapter<A
         val firstName = lessons[position].student.firstName
         val lastName = lessons[position].student.lastName
 
-        holder.name.text =
-            StringBuilder().append(firstName).append(holder.context.getString(R.string.space)).append(lastName).toString()
+        holder.name.text = StringBuilder()
+            .append(firstName)
+            .append(holder.context.getString(R.string.space))
+            .append(lastName)
+            .toString()
     }
 
     override fun getItemCount(): Int {
