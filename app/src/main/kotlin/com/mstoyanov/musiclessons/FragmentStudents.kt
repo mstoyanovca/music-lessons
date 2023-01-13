@@ -11,6 +11,8 @@ import android.view.*
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -32,6 +34,7 @@ class FragmentStudents : Fragment() {
     private lateinit var progressBar: ProgressBar
     private lateinit var adapter: AdapterStudents
     private lateinit var students: MutableList<Student>
+    private lateinit var resultLauncher: ActivityResultLauncher<Intent>
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_students, container, false)
@@ -72,6 +75,8 @@ class FragmentStudents : Fragment() {
         val button: FloatingActionButton = rootView.findViewById(R.id.add_student)
         button.setOnClickListener { startActivity(Intent(activity, ActivityAddStudent::class.java)) }
 
+        initResultLauncher()
+
         return rootView
     }
 
@@ -89,30 +94,13 @@ class FragmentStudents : Fragment() {
         return when (item.itemId) {
             R.id.action_export_students -> {
                 progressBar.visibility = View.VISIBLE
-
                 val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
                     addCategory(Intent.CATEGORY_OPENABLE)
                     type = "text/plain"
                     putExtra(Intent.EXTRA_TITLE, "student_list_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd-HH_mm_ss")) + ".txt")
                     putExtra(DocumentsContract.EXTRA_INITIAL_URI, Environment.DIRECTORY_DOWNLOADS)
                 }
-                /*registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
-                    if (result.resultCode == Activity.RESULT_OK) {
-                        lifecycleScope.launch {
-                            withContext(Dispatchers.IO) {
-                                // Thread.sleep(1_000)
-                                val studentsWithPhoneNumbers: List<Student> = MusicLessonsApplication.db.studentDao.findAllWithPhoneNumbers()
-                                withContext(Dispatchers.Main) {
-                                    progressBar.visibility = View.GONE
-                                    result.data?.data?.also { uri ->
-                                        onFindAllWithPhoneNumbersResult(studentsWithPhoneNumbers, uri)
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }.launch(intent)*/
-                startActivityForResult(intent, WRITE_REQUEST_CODE)
+                resultLauncher.launch(intent)
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -129,18 +117,17 @@ class FragmentStudents : Fragment() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, resultData: Intent?) {
-        lifecycleScope.launch {
-            withContext(Dispatchers.IO) {
-                // Thread.sleep(1_000)
-                val studentsWithPhoneNumbers: List<Student> = MusicLessonsApplication.db.studentDao.findAllWithPhoneNumbers()
-
-                withContext(Dispatchers.Main) {
-                    progressBar.visibility = View.GONE
-
-                    if (requestCode == WRITE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-                        resultData?.data?.also { uri ->
-                            onFindAllWithPhoneNumbersResult(studentsWithPhoneNumbers, uri)
+    private fun initResultLauncher() {
+        resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                lifecycleScope.launch {
+                    withContext(Dispatchers.IO) {
+                        val studentsWithPhoneNumbers: List<Student> = MusicLessonsApplication.db.studentDao.findAllWithPhoneNumbers()
+                        withContext(Dispatchers.Main) {
+                            progressBar.visibility = View.GONE
+                            result.data?.data?.also { uri ->
+                                onFindAllWithPhoneNumbersResult(studentsWithPhoneNumbers, uri)
+                            }
                         }
                     }
                 }
@@ -193,8 +180,6 @@ class FragmentStudents : Fragment() {
     }
 
     companion object {
-        const val WRITE_REQUEST_CODE = 101
-
         fun create(position: Int): FragmentStudents {
             val fragment = FragmentStudents()
             val args = Bundle()
