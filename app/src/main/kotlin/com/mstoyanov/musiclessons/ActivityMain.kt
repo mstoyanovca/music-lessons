@@ -78,11 +78,6 @@ class ActivityMain : AppCompatActivity() {
                 FragmentSchedule.create(position)
         }
 
-        // TODO: remove this method:
-        fun getItemPosition(item: Any): Int {
-            return (item as Fragment).requireArguments().getInt("POSITION")
-        }
-
         override fun getItemCount(): Int {
             return sectionTitles.size
         }
