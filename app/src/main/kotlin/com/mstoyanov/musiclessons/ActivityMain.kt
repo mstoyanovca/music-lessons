@@ -54,19 +54,19 @@ class ActivityMain : AppCompatActivity() {
 
     override fun onSaveInstanceState(savedInstanceState: Bundle) {
         super.onSaveInstanceState(savedInstanceState)
-        savedInstanceState.putInt("SELECTED_WEEKDAY_INDEX", selectedWeekdayIndex)
         savedInstanceState.putInt("SELECTED_SECTION_INDEX", selectedSectionIndex)
+        savedInstanceState.putInt("SELECTED_WEEKDAY_INDEX", selectedWeekdayIndex)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        selectedWeekdayIndex = savedInstanceState.getInt("SELECTED_WEEKDAY_INDEX")
         selectedSectionIndex = savedInstanceState.getInt("SELECTED_SECTION_INDEX")
+        selectedWeekdayIndex = savedInstanceState.getInt("SELECTED_WEEKDAY_INDEX")
     }
 
     private val onBackPressedCallback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
-            if (viewPager.currentItem > 0) viewPager.currentItem -= 1
+            if (viewPager.currentItem > 0) viewPager.currentItem = viewPager.currentItem - 1
         }
     }
 
@@ -78,9 +78,7 @@ class ActivityMain : AppCompatActivity() {
                 FragmentSchedule.create(position)
         }
 
-        override fun getItemCount(): Int {
-            return sectionTitles.size
-        }
+        override fun getItemCount(): Int = sectionTitles.size
     }
 
     private inner class OnTabSelectedListenerImpl : TabLayout.OnTabSelectedListener {
@@ -89,12 +87,13 @@ class ActivityMain : AppCompatActivity() {
             if (tab.position == 0) {
                 tabLayout.getTabAt(0)!!.icon!!.alpha = 255
                 tabLayout.getTabAt(1)!!.icon!!.alpha = 127
+                selectedSectionIndex = selectedWeekdayIndex
                 viewPager.currentItem = selectedWeekdayIndex
             } else if (tab.position == 1) {
                 tabLayout.getTabAt(0)!!.icon!!.alpha = 127
                 tabLayout.getTabAt(1)!!.icon!!.alpha = 255
-                viewPager.currentItem = sectionTitles.size - 1
                 selectedSectionIndex = sectionTitles.size - 1
+                viewPager.currentItem = sectionTitles.size - 1
             }
         }
 
@@ -103,15 +102,15 @@ class ActivityMain : AppCompatActivity() {
         }
 
         override fun onTabReselected(tab: TabLayout.Tab) {
-            if (tab.position == 0) viewPager.currentItem = 0
+            if (tab.position == 0) {
+                selectedSectionIndex = 0
+                selectedWeekdayIndex = 0
+                viewPager.currentItem = 0
+            }
         }
     }
 
     private inner class OnPageChangeCallbackImpl : ViewPager2.OnPageChangeCallback() {
-        override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-            // do nothing
-        }
-
         override fun onPageSelected(position: Int) {
             // synchronize the TabLayout with the ViewPager:
             selectedSectionIndex = position
@@ -121,10 +120,6 @@ class ActivityMain : AppCompatActivity() {
             } else if (position == sectionTitles.size - 1) {
                 if (!tabLayout.getTabAt(1)!!.isSelected) tabLayout.getTabAt(1)!!.select()
             }
-        }
-
-        override fun onPageScrollStateChanged(state: Int) {
-            // do nothing
         }
     }
 }
