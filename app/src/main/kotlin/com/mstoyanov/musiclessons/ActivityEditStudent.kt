@@ -140,7 +140,6 @@ class ActivityEditStudent : AppCompatActivity() {
 
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
-                // Thread.sleep(1_000)
                 student = MusicLessonsApplication.db.studentDao.updateStudentWithPhoneNumbers(
                     student,
                     phoneNumbersBeforeEditing

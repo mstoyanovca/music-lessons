@@ -146,7 +146,6 @@ class ActivityLessonDetails : AppCompatActivity() {
 
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
-                // Thread.sleep(1_000)
                 val phoneNumberList = MusicLessonsApplication.db.phoneNumberDao.findByStudentId(lesson.studentId)
 
                 withContext(Dispatchers.Main) {

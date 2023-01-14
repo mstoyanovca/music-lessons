@@ -45,7 +45,6 @@ class FragmentSchedule : Fragment() {
         if (savedInstanceState == null) {
             lifecycleScope.launch {
                 withContext(Dispatchers.IO) {
-                    // Thread.sleep(1_000)
                     val result: List<LessonWithStudent> = MusicLessonsApplication.db.lessonDao.findWithStudentByWeekday(ActivityMain.sectionTitles[position])
                     withContext(Dispatchers.Main) {
                         result.forEach { it.lesson.student = it.student }

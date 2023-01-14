@@ -344,7 +344,6 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
     private fun loadStudents() {
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
-                // Thread.sleep(1_000)
                 val result = MusicLessonsApplication.db.studentDao.findAll()
 
                 withContext(Dispatchers.Main) {
@@ -369,7 +368,6 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
 
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
-                // Thread.sleep(1_000)
                 MusicLessonsApplication.db.lessonDao.update(lesson)
 
                 withContext(Dispatchers.Main) {
@@ -387,7 +385,6 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
 
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
-                // Thread.sleep(1_000)
                 MusicLessonsApplication.db.lessonDao.delete(lesson)
 
                 withContext(Dispatchers.Main) {

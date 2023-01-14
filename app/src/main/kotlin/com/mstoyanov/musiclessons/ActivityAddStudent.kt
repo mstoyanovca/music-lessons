@@ -133,7 +133,6 @@ class ActivityAddStudent : AppCompatActivity() {
 
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
-                // Thread.sleep(1_000)
                 MusicLessonsApplication.db.studentDao.insertWithPhoneNumbers(student)
 
                 withContext(Dispatchers.Main) {
