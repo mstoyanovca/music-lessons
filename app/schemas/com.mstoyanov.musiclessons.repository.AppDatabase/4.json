@@ -40,10 +40,10 @@
           }
         ],
         "primaryKey": {
+          "autoGenerate": true,
           "columnNames": [
             "student_id"
-          ],
-          "autoGenerate": true
+          ]
         },
         "indices": [],
         "foreignKeys": []
@@ -78,10 +78,10 @@
           }
         ],
         "primaryKey": {
+          "autoGenerate": true,
           "columnNames": [
             "phone_number_id"
-          ],
-          "autoGenerate": true
+          ]
         },
         "indices": [
           {
@@ -90,6 +90,7 @@
             "columnNames": [
               "student_owner_id"
             ],
+            "orders": [],
             "createSql": "CREATE INDEX IF NOT EXISTS `index_phone_number_student_owner_id` ON `${TABLE_NAME}` (`student_owner_id`)"
           }
         ],
@@ -143,10 +144,10 @@
           }
         ],
         "primaryKey": {
+          "autoGenerate": true,
           "columnNames": [
             "lesson_id"
-          ],
-          "autoGenerate": true
+          ]
         },
         "indices": [
           {
@@ -155,6 +156,7 @@
             "columnNames": [
               "student_owner_id"
             ],
+            "orders": [],
             "createSql": "CREATE INDEX IF NOT EXISTS `index_lesson_student_owner_id` ON `${TABLE_NAME}` (`student_owner_id`)"
           }
         ],

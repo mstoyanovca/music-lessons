@@ -1,7 +1,7 @@
 package com.mstoyanov.musiclessons.model
 
 import androidx.room.*
-import androidx.room.ForeignKey.CASCADE
+import androidx.room.ForeignKey.Companion.CASCADE
 import java.io.Serializable
 
 @Entity(

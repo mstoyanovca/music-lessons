@@ -1,7 +1,7 @@
 package com.mstoyanov.musiclessons.model
 
 import androidx.room.*
-import androidx.room.ForeignKey.CASCADE
+import androidx.room.ForeignKey.Companion.CASCADE
 import com.mstoyanov.musiclessons.global.Functions.formatter
 import java.io.Serializable
 import java.time.LocalTime

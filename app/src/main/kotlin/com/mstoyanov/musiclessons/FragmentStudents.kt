@@ -53,7 +53,7 @@ class FragmentStudents : Fragment() {
         if (savedInstanceState == null) {
             lifecycleScope.launch {
                 withContext(Dispatchers.IO) {
-                    Thread.sleep(1_000)
+                    // Thread.sleep(1_000)
                     students.addAll(MusicLessonsApplication.db.studentDao.findAll())
                     withContext(Dispatchers.Main) {
                         students.sort()
