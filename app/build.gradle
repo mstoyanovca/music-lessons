@@ -38,23 +38,25 @@ android {
     dependencies {
         def appcompat_version = "1.6.0"
         def test_version = "1.5.2"
-        def room_version = "2.4.3"
+        def room_version = "2.5.0"
         def espresso_version = "3.5.1"
 
         implementation fileTree(dir: 'libs', include: ['*.jar'])
 
         implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-        implementation "com.google.android.material:material:1.7.0"
         implementation "androidx.appcompat:appcompat:$appcompat_version"
+        implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.6.0-alpha04"
+
+        implementation "com.google.android.material:material:1.7.0"
         implementation "androidx.viewpager2:viewpager2:1.0.0"
         implementation "androidx.recyclerview:recyclerview:1.2.1"
-        implementation "androidx.constraintlayout:constraintlayout:2.1.4"
+        implementation "androidx.constraintlayout:constraintlayout:2.2.0-alpha05"
+        implementation("androidx.constraintlayout:constraintlayout-compose:1.1.0-alpha05")
 
         implementation "androidx.room:room-runtime:$room_version"
         kapt "androidx.room:room-compiler:$room_version"
         implementation "androidx.room:room-ktx:$room_version"
-        implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.6.0-alpha03"
 
         // unit tests:
         testImplementation "junit:junit:4.13.2"
