@@ -34,10 +34,9 @@ class AdapterStudents(private val students: List<Student>, private val fragment:
 
         override fun onClick(view: View) {
             fragment.startProgressBar()
-            val student = students[adapterPosition]
+            val student = students[bindingAdapterPosition]
             fragment.lifecycleScope.launch {
                 withContext(Dispatchers.IO) {
-                    // Thread.sleep(1_000)
                     val phoneNumbers: MutableList<PhoneNumber> = MusicLessonsApplication.db.phoneNumberDao.findByStudentId(student.studentId)
                     withContext(Dispatchers.Main) {
                         fragment.stopProgressBar()

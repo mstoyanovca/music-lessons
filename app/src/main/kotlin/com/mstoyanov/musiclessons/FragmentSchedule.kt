@@ -1,5 +1,6 @@
 package com.mstoyanov.musiclessons
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.mstoyanov.musiclessons.global.Functions.serializable
 import com.mstoyanov.musiclessons.model.Lesson
 import com.mstoyanov.musiclessons.model.LessonWithStudent
 import com.mstoyanov.musiclessons.model.Weekday
@@ -25,11 +27,12 @@ class FragmentSchedule : Fragment() {
     private lateinit var lessons: MutableList<Lesson>
     private lateinit var adapter: AdapterLessons
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_schedule, container, false)
 
         val title = rootView.findViewById<TextView>(R.id.weekday)
-        val position = arguments!!.getInt("POSITION")
+        val position = requireArguments().getInt("POSITION")
         title.text = ActivityMain.sectionTitles[position]
 
         lessons = mutableListOf()
@@ -42,7 +45,6 @@ class FragmentSchedule : Fragment() {
         if (savedInstanceState == null) {
             lifecycleScope.launch {
                 withContext(Dispatchers.IO) {
-                    // Thread.sleep(1_000)
                     val result: List<LessonWithStudent> = MusicLessonsApplication.db.lessonDao.findWithStudentByWeekday(ActivityMain.sectionTitles[position])
                     withContext(Dispatchers.Main) {
                         result.forEach { it.lesson.student = it.student }
@@ -56,8 +58,7 @@ class FragmentSchedule : Fragment() {
                 }
             }
         } else {
-            @Suppress("UNCHECKED_CAST")
-            lessons.addAll(savedInstanceState.getSerializable("LESSONS") as MutableList<Lesson>)
+            lessons.addAll(savedInstanceState.serializable("LESSONS")!!)
             progressBar.visibility = View.GONE
         }
 

@@ -22,11 +22,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.mstoyanov.musiclessons.ActivityStudentDetails.Companion.PERMISSION_REQUEST_CALL_PHONE
+import com.mstoyanov.musiclessons.global.Functions.formatter
+import com.mstoyanov.musiclessons.global.Functions.serializable
 import com.mstoyanov.musiclessons.model.Lesson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.time.format.DateTimeFormatter
 
 class ActivityLessonDetails : AppCompatActivity() {
     private lateinit var phoneNumbers: RecyclerView
@@ -51,18 +52,18 @@ class ActivityLessonDetails : AppCompatActivity() {
         val divider = DividerItemDecoration(phoneNumbers.context, layoutManager.orientation)
         phoneNumbers.addItemDecoration(divider)
 
-        if (savedInstanceState == null && intent.getSerializableExtra("LESSON") != null) {
+        if (savedInstanceState == null && intent.serializable<Lesson>("LESSON") != null) {
             // coming from AdapterLessons:
-            lesson = intent.getSerializableExtra("LESSON") as Lesson
+            lesson = intent.serializable("LESSON")!!
             findPhoneNumbersByStudentId()
-        } else if (savedInstanceState == null && intent.getSerializableExtra("UPDATED_LESSON") != null) {
+        } else if (savedInstanceState == null && intent.serializable<Lesson>("UPDATED_LESSON") != null) {
             // coming from ActivityEditLesson:
-            lesson = intent.getSerializableExtra("UPDATED_LESSON") as Lesson
+            lesson = intent.serializable("UPDATED_LESSON")!!
             findPhoneNumbersByStudentId()
         } else if (savedInstanceState != null) {
             // after screen rotation:
             progressBar.visibility = View.GONE
-            lesson = savedInstanceState.getSerializable("SAVED_LESSON") as Lesson
+            lesson = savedInstanceState.serializable("SAVED_LESSON")!!
             val adapter = AdapterLessonDetails(lesson.student.phoneNumbers, this)
             phoneNumbers.adapter = adapter
         }
@@ -71,13 +72,16 @@ class ActivityLessonDetails : AppCompatActivity() {
         weekday.text = lesson.weekday.displayValue()
 
         val time = findViewById<TextView>(R.id.time)
-        val formatter = DateTimeFormatter.ofPattern("HH:mm")
         val timeFrom = formatter.format(lesson.timeFrom)
         val timeTo = formatter.format(lesson.timeTo)
         time.text = StringBuilder().append(timeFrom).append(getString(R.string.dash)).append(timeTo).toString()
 
         val name = findViewById<TextView>(R.id.name)
-        name.text = StringBuilder().append(lesson.student.firstName).append(getString(R.string.space)).append(lesson.student.lastName).toString()
+        name.text = StringBuilder()
+            .append(lesson.student.firstName)
+            .append(getString(R.string.space))
+            .append(lesson.student.lastName)
+            .toString()
 
         val email = findViewById<TextView>(R.id.email)
         if (lesson.student.email.isNotEmpty()) {
@@ -142,7 +146,6 @@ class ActivityLessonDetails : AppCompatActivity() {
 
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
-                // Thread.sleep(1_000)
                 val phoneNumberList = MusicLessonsApplication.db.phoneNumberDao.findByStudentId(lesson.studentId)
 
                 withContext(Dispatchers.Main) {
@@ -160,7 +163,13 @@ class ActivityLessonDetails : AppCompatActivity() {
         val hasPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE)
         if (hasPermission != PackageManager.PERMISSION_GRANTED) {
             if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CALL_PHONE)) {
-                showMessageOKCancel { _, _ -> ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CALL_PHONE), PERMISSION_REQUEST_CALL_PHONE) }
+                showMessageOKCancel { _, _ ->
+                    ActivityCompat.requestPermissions(
+                        this,
+                        arrayOf(Manifest.permission.CALL_PHONE),
+                        PERMISSION_REQUEST_CALL_PHONE
+                    )
+                }
                 return
             }
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CALL_PHONE), PERMISSION_REQUEST_CALL_PHONE)
@@ -172,10 +181,10 @@ class ActivityLessonDetails : AppCompatActivity() {
 
     private fun showMessageOKCancel(okListener: DialogInterface.OnClickListener) {
         AlertDialog.Builder(this@ActivityLessonDetails)
-                .setMessage("You need to provide CALL_PHONE permission")
-                .setPositiveButton("OK", okListener)
-                .setNegativeButton("Cancel", null)
-                .create()
-                .show()
+            .setMessage("You need to provide CALL_PHONE permission")
+            .setPositiveButton("OK", okListener)
+            .setNegativeButton("Cancel", null)
+            .create()
+            .show()
     }
 }

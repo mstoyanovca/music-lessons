@@ -48,7 +48,7 @@ class AdapterAddStudent(var phoneNumbers: MutableList<PhoneNumber>) : RecyclerVi
             type.adapter = adapter
             type.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                    phoneNumbers[adapterPosition].type = PhoneNumberType.values()[position]
+                    phoneNumbers[bindingAdapterPosition].type = PhoneNumberType.values()[position]
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>) {
@@ -73,12 +73,12 @@ class AdapterAddStudent(var phoneNumbers: MutableList<PhoneNumber>) : RecyclerVi
                     context.invokeFirstNameTextWatcher()
                 }
                 if (s.toString().trim().isNotEmpty()) {
-                    phoneNumbers[adapterPosition].number = s.toString().trim()
-                    phoneNumbers[adapterPosition].isValid = true
+                    phoneNumbers[bindingAdapterPosition].number = s.toString().trim()
+                    phoneNumbers[bindingAdapterPosition].isValid = true
                     number.error = null
                 } else {
-                    phoneNumbers[adapterPosition].number = ""
-                    phoneNumbers[adapterPosition].isValid = false
+                    phoneNumbers[bindingAdapterPosition].number = ""
+                    phoneNumbers[bindingAdapterPosition].isValid = false
                     if (!context.pristine) number.error = context.getResources().getString(R.string.phone_number_error)
                 }
                 context.invalidateOptionsMenu()

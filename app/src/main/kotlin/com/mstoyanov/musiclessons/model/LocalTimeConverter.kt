@@ -1,12 +1,10 @@
 package com.mstoyanov.musiclessons.model
 
 import androidx.room.TypeConverter
+import com.mstoyanov.musiclessons.global.Functions.formatter
 import java.time.LocalTime
-import java.time.format.DateTimeFormatter
 
 class LocalTimeConverter {
-    private val formatter = DateTimeFormatter.ofPattern("HH:mm")
-
     @TypeConverter
     fun fromString(string: String): LocalTime {
         return LocalTime.parse(string, formatter)

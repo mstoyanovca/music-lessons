@@ -10,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.NavUtils
 import androidx.lifecycle.lifecycleScope
+import com.mstoyanov.musiclessons.global.Functions.formatter
+import com.mstoyanov.musiclessons.global.Functions.serializable
 import com.mstoyanov.musiclessons.model.Lesson
 import com.mstoyanov.musiclessons.model.Student
 import com.mstoyanov.musiclessons.model.Weekday
@@ -50,11 +52,17 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
         progressBar.visibility = View.VISIBLE
 
         val weekday = findViewById<Spinner>(R.id.weekday)
-        val arrayAdapter = ArrayAdapter.createFromResource(this, R.array.weekdays, R.layout.weekday_item)
+        val arrayAdapter =
+            ArrayAdapter.createFromResource(this, R.array.weekdays, R.layout.weekday_item)
         arrayAdapter.setDropDownViewResource(R.layout.phone_type_dropdown_item)
         weekday.adapter = arrayAdapter
         weekday.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+            override fun onItemSelected(
+                parent: AdapterView<*>,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
                 lesson.weekday = Weekday.values()[position]
             }
 
@@ -94,7 +102,7 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
 
         if (savedInstanceState == null) {
             // coming from LessonDetails:
-            lesson = intent.getSerializableExtra("LESSON") as Lesson
+            lesson = intent.serializable("LESSON")!!
             initializeTime()
             studentListIsEmpty = true
             loadStudents()
@@ -102,9 +110,8 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
             // after screen rotation:
             progressBar.visibility = View.GONE
 
-            lesson = savedInstanceState.getSerializable("LESSON") as Lesson
-            @Suppress("UNCHECKED_CAST")
-            studentList = savedInstanceState.getSerializable("STUDENTS") as MutableList<Student>
+            lesson = savedInstanceState.serializable("LESSON")!!
+            studentList = savedInstanceState.serializable("STUDENTS")!!
             studentListIsEmpty = studentList.isEmpty()
             adapter.addAll(studentList)
             students.setSelection(studentList.indexOf(studentList.filter { it.studentId == lesson.student.studentId }[0]))
@@ -161,14 +168,14 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         if (studentListIsEmpty) {
             menu.findItem(R.id.action_update).isEnabled = false
-            menu.findItem(R.id.action_update).icon.alpha = 127
+            menu.findItem(R.id.action_update).icon?.alpha = 127
             menu.findItem(R.id.action_delete).isEnabled = false
-            menu.findItem(R.id.action_delete).icon.alpha = 127
+            menu.findItem(R.id.action_delete).icon?.alpha = 127
         } else {
             menu.findItem(R.id.action_update).isEnabled = true
-            menu.findItem(R.id.action_update).icon.alpha = 255
+            menu.findItem(R.id.action_update).icon?.alpha = 255
             menu.findItem(R.id.action_delete).isEnabled = true
-            menu.findItem(R.id.action_delete).icon.alpha = 255
+            menu.findItem(R.id.action_delete).icon?.alpha = 255
         }
         return true
     }
@@ -182,40 +189,44 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
         // do nothing
     }
 
-    private val hourFromOnValueChangedListener = NumberPicker.OnValueChangeListener { _, _, newValue ->
-        // 21:30 is maximum value:
-        if (newValue == 21 && minuteFrom.value == 3) minuteFrom.value = 2
-        synchronizeTimeToWithTimeFrom()
-    }
+    private val hourFromOnValueChangedListener =
+        NumberPicker.OnValueChangeListener { _, _, newValue ->
+            // 21:30 is maximum value:
+            if (newValue == 21 && minuteFrom.value == 3) minuteFrom.value = 2
+            synchronizeTimeToWithTimeFrom()
+        }
 
-    private val minuteFromOnValueChangedListener = NumberPicker.OnValueChangeListener { _, oldValue, newValue ->
-        // overflow:
-        if (oldValue == 3 && newValue == 0) hourFrom.value = hourFrom.value + 1
-        if (oldValue == 0 && newValue == 3) hourFrom.value = hourFrom.value - 1
-        // max value:
-        if (newValue == 3 && hourFrom.value == 21) minuteFrom.value = 2
-        synchronizeTimeToWithTimeFrom()
-    }
+    private val minuteFromOnValueChangedListener =
+        NumberPicker.OnValueChangeListener { _, oldValue, newValue ->
+            // overflow:
+            if (oldValue == 3 && newValue == 0) hourFrom.value = hourFrom.value + 1
+            if (oldValue == 0 && newValue == 3) hourFrom.value = hourFrom.value - 1
+            // max value:
+            if (newValue == 3 && hourFrom.value == 21) minuteFrom.value = 2
+            synchronizeTimeToWithTimeFrom()
+        }
 
-    private val hourToOnValueChangedListener = NumberPicker.OnValueChangeListener { _, _, newValue ->
-        // 8:30 is minimum value:
-        if (newValue == 8 && (minuteTo.value == 0 || minuteTo.value == 1))
-            minuteTo.value = 2
-        // 22:00 is maximum value:
-        if (newValue == 22 && minuteTo.value != 0) minuteTo.value = 0
-        synchronizeTimeFromWithTimeTo()
-    }
+    private val hourToOnValueChangedListener =
+        NumberPicker.OnValueChangeListener { _, _, newValue ->
+            // 8:30 is minimum value:
+            if (newValue == 8 && (minuteTo.value == 0 || minuteTo.value == 1))
+                minuteTo.value = 2
+            // 22:00 is maximum value:
+            if (newValue == 22 && minuteTo.value != 0) minuteTo.value = 0
+            synchronizeTimeFromWithTimeTo()
+        }
 
-    private val minuteToOnValueChangedListener = NumberPicker.OnValueChangeListener { _, oldValue, newValue ->
-        // overflow:
-        if (oldValue == 3 && newValue == 0) hourTo.value = hourTo.value + 1
-        if (oldValue == 0 && newValue == 3) hourTo.value = hourTo.value - 1
-        // 8:30 is minimum value:
-        if (hourTo.value == 8 && (newValue == 0 || newValue == 1)) minuteTo.value = 2
-        // 22:00 is maximum value:
-        if (hourTo.value == 22) minuteTo.value = 0
-        synchronizeTimeFromWithTimeTo()
-    }
+    private val minuteToOnValueChangedListener =
+        NumberPicker.OnValueChangeListener { _, oldValue, newValue ->
+            // overflow:
+            if (oldValue == 3 && newValue == 0) hourTo.value = hourTo.value + 1
+            if (oldValue == 0 && newValue == 3) hourTo.value = hourTo.value - 1
+            // 8:30 is minimum value:
+            if (hourTo.value == 8 && (newValue == 0 || newValue == 1)) minuteTo.value = 2
+            // 22:00 is maximum value:
+            if (hourTo.value == 22) minuteTo.value = 0
+            synchronizeTimeFromWithTimeTo()
+        }
 
     private fun initializeTime() {
         var formatter = DateTimeFormatter.ofPattern("HH")
@@ -262,24 +273,31 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
         val timeFromString = hourFrom.value.toString() + ":" + minutes[minuteFrom.value]
         val timeToString = hourTo.value.toString() + ":" + minutes[minuteTo.value]
 
-        val formatter = DateTimeFormatter.ofPattern("HH:mm")
+        val timeFrom = LocalTime.parse(timeFromString, formatter)
+        val timeTo = LocalTime.parse(timeToString, formatter)
 
-        val dateFrom = LocalTime.parse(timeFromString, formatter)
-        val dateTo = LocalTime.parse(timeToString, formatter)
-
-        lesson.timeFrom = dateFrom
-        lesson.timeTo = dateTo
+        lesson.timeFrom = timeFrom
+        lesson.timeTo = timeTo
     }
 
     private fun createAlertDialog() {
         val builder = AlertDialog.Builder(this)
-        val message = if (lesson.student.firstName.trim().isEmpty() && lesson.student.lastName.trim().isNotEmpty()) {
-            "Delete lesson with " + lesson.student.lastName + "?"
-        } else if (lesson.student.firstName.trim().isNotEmpty() && lesson.student.lastName.trim().isEmpty()) {
-            "Delete lesson with " + lesson.student.firstName + "?"
-        } else {
-            "Delete lesson with " + getString(R.string.full_name, lesson.student.firstName, lesson.student.lastName) + "?"
-        }
+        val message =
+            if (lesson.student.firstName.trim().isEmpty() && lesson.student.lastName.trim()
+                    .isNotEmpty()
+            ) {
+                "Delete lesson with " + lesson.student.lastName + "?"
+            } else if (lesson.student.firstName.trim()
+                    .isNotEmpty() && lesson.student.lastName.trim().isEmpty()
+            ) {
+                "Delete lesson with " + lesson.student.firstName + "?"
+            } else {
+                "Delete lesson with " + getString(
+                    R.string.full_name,
+                    lesson.student.firstName,
+                    lesson.student.lastName
+                ) + "?"
+            }
         builder.setMessage(message)
         builder.setPositiveButton("OK") { _, _ -> delete() }
         builder.setNegativeButton("Cancel") { _, _ ->
@@ -294,7 +312,8 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
         deleteLesson()
     }
 
-    private class StudentsAdapter(context: Context, studentList: List<Student>) : ArrayAdapter<Student>(context, 0, studentList) {
+    private class StudentsAdapter(context: Context, studentList: List<Student>) :
+        ArrayAdapter<Student>(context, 0, studentList) {
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
             var view = convertView
@@ -303,7 +322,8 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
                 view = LayoutInflater.from(context).inflate(R.layout.student_item, parent, false)
             }
             val name = view!!.findViewById<TextView>(R.id.name)
-            name.text = StringBuilder().append(student!!.firstName).append(view.context.getString(R.string.space)).append(student.lastName).toString()
+            name.text = StringBuilder().append(student!!.firstName)
+                .append(view.context.getString(R.string.space)).append(student.lastName).toString()
             return view
         }
 
@@ -311,10 +331,12 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
             var view = convertView
             val student = getItem(position)
             if (view == null) {
-                view = LayoutInflater.from(context).inflate(R.layout.student_dropdown_item, parent, false)
+                view = LayoutInflater.from(context)
+                    .inflate(R.layout.student_dropdown_item, parent, false)
             }
             val dropDownName = view!!.findViewById<TextView>(R.id.name)
-            dropDownName.text = StringBuilder().append(student!!.firstName).append(view.context.getString(R.string.space)).append(student.lastName).toString()
+            dropDownName.text = StringBuilder().append(student!!.firstName)
+                .append(view.context.getString(R.string.space)).append(student.lastName).toString()
             return view
         }
     }
@@ -322,7 +344,6 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
     private fun loadStudents() {
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
-                // Thread.sleep(1_000)
                 val result = MusicLessonsApplication.db.studentDao.findAll()
 
                 withContext(Dispatchers.Main) {
@@ -347,7 +368,6 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
 
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
-                // Thread.sleep(1_000)
                 MusicLessonsApplication.db.lessonDao.update(lesson)
 
                 withContext(Dispatchers.Main) {
@@ -365,7 +385,6 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
 
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
-                // Thread.sleep(1_000)
                 MusicLessonsApplication.db.lessonDao.delete(lesson)
 
                 withContext(Dispatchers.Main) {

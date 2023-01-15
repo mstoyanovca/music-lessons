@@ -9,6 +9,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.NavUtils
 import androidx.lifecycle.lifecycleScope
+import com.mstoyanov.musiclessons.global.Functions.formatter
+import com.mstoyanov.musiclessons.global.Functions.serializable
 import com.mstoyanov.musiclessons.model.Lesson
 import com.mstoyanov.musiclessons.model.Student
 import com.mstoyanov.musiclessons.model.Weekday
@@ -39,7 +41,7 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_lesson)
 
-        weekday = intent.getSerializableExtra("WEEKDAY") as Weekday
+        weekday = intent.serializable("WEEKDAY")!!
         lesson = Lesson()
         studentList = mutableListOf()
 
@@ -87,7 +89,6 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
 
             lifecycleScope.launch {
                 withContext(Dispatchers.IO) {
-                    // Thread.sleep(1_000)
                     val result: MutableList<Student> = MusicLessonsApplication.db.studentDao.findAll()
                     result.sort()
                     withContext(Dispatchers.Main) {
@@ -105,10 +106,9 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
             // after screen rotation:
             progressBar.visibility = View.GONE
 
-            lesson = savedInstanceState.getSerializable("LESSON") as Lesson
+            lesson = savedInstanceState.serializable("LESSON")!!
 
-            @Suppress("UNCHECKED_CAST")
-            studentList = savedInstanceState.getSerializable("STUDENTS") as MutableList<Student>
+            studentList = savedInstanceState.serializable("STUDENTS")!!
             studentListIsEmpty = studentList.isEmpty()
 
             hourFrom.value = savedInstanceState.getInt("HOUR_FROM")
@@ -172,10 +172,10 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         if (studentListIsEmpty) {
             menu.findItem(R.id.action_insert).isEnabled = false
-            menu.findItem(R.id.action_insert).icon.alpha = 127
+            menu.findItem(R.id.action_insert).icon?.alpha = 127
         } else {
             menu.findItem(R.id.action_insert).isEnabled = true
-            menu.findItem(R.id.action_insert).icon.alpha = 255
+            menu.findItem(R.id.action_insert).icon?.alpha = 255
         }
         return true
     }
@@ -225,8 +225,8 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
 
     private fun initializeTime() {
         if (weekday == Weekday.SATURDAY || weekday == Weekday.SUNDAY) {
-            hourFrom.value = 8
-            hourTo.value = 8
+            hourFrom.value = 9
+            hourTo.value = 9
         } else {
             hourFrom.value = 16
             hourTo.value = 16
@@ -265,13 +265,11 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
         val timeFromString = hourFrom.value.toString() + ":" + minutes[minuteFrom.value]
         val timeToString = hourTo.value.toString() + ":" + minutes[minuteTo.value]
 
-        val formatter = DateTimeFormatter.ofPattern("HH:mm")
+        val timeFrom = LocalTime.parse(timeFromString, formatter)
+        val timeTo = LocalTime.parse(timeToString, formatter)
 
-        val dateFrom = LocalTime.parse(timeFromString, formatter)
-        val dateTo = LocalTime.parse(timeToString, formatter)
-
-        lesson.timeFrom = dateFrom
-        lesson.timeTo = dateTo
+        lesson.timeFrom = timeFrom
+        lesson.timeTo = timeTo
     }
 
     private class StudentsAdapter(context: Context, studentList: List<Student>) : ArrayAdapter<Student>(context, 0, studentList) {
@@ -282,7 +280,8 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
                 view = LayoutInflater.from(context).inflate(R.layout.student_item, parent, false)
             }
             val name = view!!.findViewById<TextView>(R.id.name)
-            name.text = StringBuilder().append(student!!.firstName).append(view.context.getString(R.string.space)).append(student.lastName).toString()
+            name.text = StringBuilder().append(student!!.firstName)
+                .append(view.context.getString(R.string.space)).append(student.lastName).toString()
             return view
         }
 
@@ -290,10 +289,12 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
             var view = convertView
             val student = getItem(position)
             if (view == null) {
-                view = LayoutInflater.from(context).inflate(R.layout.student_dropdown_item, parent, false)
+                view = LayoutInflater.from(context)
+                    .inflate(R.layout.student_dropdown_item, parent, false)
             }
             val dropDownName = view!!.findViewById<TextView>(R.id.name)
-            dropDownName.text = StringBuilder().append(student!!.firstName).append(view.context.getString(R.string.space)).append(student.lastName).toString()
+            dropDownName.text = StringBuilder().append(student!!.firstName)
+                .append(view.context.getString(R.string.space)).append(student.lastName).toString()
             return view
         }
     }

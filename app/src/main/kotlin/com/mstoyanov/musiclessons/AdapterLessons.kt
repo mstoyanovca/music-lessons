@@ -7,8 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.mstoyanov.musiclessons.global.Functions.formatter
 import com.mstoyanov.musiclessons.model.Lesson
-import java.time.format.DateTimeFormatter
 
 class AdapterLessons(private val lessons: List<Lesson>) : RecyclerView.Adapter<AdapterLessons.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -17,8 +17,6 @@ class AdapterLessons(private val lessons: List<Lesson>) : RecyclerView.Adapter<A
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val formatter = DateTimeFormatter.ofPattern("HH:mm")
-
         val timeFrom = formatter.format(lessons[position].timeFrom)
         val timeTo = formatter.format(lessons[position].timeTo)
 
@@ -34,7 +32,7 @@ class AdapterLessons(private val lessons: List<Lesson>) : RecyclerView.Adapter<A
         return lessons.size
     }
 
-    class ViewHolder(view: View, private val lessons: List<Lesson>) : RecyclerView.ViewHolder(view), View.OnClickListener {
+    inner class ViewHolder(view: View, private val lessons: List<Lesson>) : RecyclerView.ViewHolder(view), View.OnClickListener {
         val time: TextView
         val name: TextView
         val context: Context
@@ -48,7 +46,7 @@ class AdapterLessons(private val lessons: List<Lesson>) : RecyclerView.Adapter<A
 
         override fun onClick(v: View) {
             val intent = Intent(v.context, ActivityLessonDetails::class.java)
-            intent.putExtra("LESSON", lessons[adapterPosition])
+            intent.putExtra("LESSON", lessons[bindingAdapterPosition])
             v.context.startActivity(intent)
         }
     }

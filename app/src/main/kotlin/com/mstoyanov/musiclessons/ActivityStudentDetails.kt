@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.mstoyanov.musiclessons.global.Functions.serializable
 import com.mstoyanov.musiclessons.model.Student
 
 class ActivityStudentDetails : AppCompatActivity() {
@@ -35,13 +36,13 @@ class ActivityStudentDetails : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_student_details)
 
-        if (intent.getSerializableExtra("STUDENT") != null) {
+        if (intent.serializable<Student>("STUDENT") != null) {
             // coming from AdapterStudents:
-            student = intent.getSerializableExtra("STUDENT") as Student
+            student = intent.serializable("STUDENT")!!
             updatedStudentId = 0L
-        } else if (intent.getSerializableExtra("UPDATED_STUDENT") != null) {
+        } else if (intent.serializable<Student>("UPDATED_STUDENT") != null) {
             // coming from ActivityEditStudent:
-            student = intent.getSerializableExtra("UPDATED_STUDENT") as Student
+            student = intent.serializable("UPDATED_STUDENT")!!
             updatedStudentId = student.studentId
         }
 
@@ -95,7 +96,7 @@ class ActivityStudentDetails : AppCompatActivity() {
                     NavUtils.navigateUpFromSameTask(this)
                 } else {
                     val intent = Intent(this@ActivityStudentDetails, ActivityMain::class.java)
-                    intent.putExtra("UPDATED_STUDENT_ID", updatedStudentId)
+                    intent.putExtra(resources.getString(R.string.updated_student_id), updatedStudentId)
                     startActivity(intent)
                 }
                 return true
@@ -121,7 +122,11 @@ class ActivityStudentDetails : AppCompatActivity() {
         if (hasPermission != PackageManager.PERMISSION_GRANTED) {
             if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CALL_PHONE)) {
                 showMessageOKCancel { _, _ ->
-                    ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CALL_PHONE), PERMISSION_REQUEST_CALL_PHONE)
+                    ActivityCompat.requestPermissions(
+                        this,
+                        arrayOf(Manifest.permission.CALL_PHONE),
+                        PERMISSION_REQUEST_CALL_PHONE
+                    )
                 }
                 return
             }
@@ -134,10 +139,10 @@ class ActivityStudentDetails : AppCompatActivity() {
 
     private fun showMessageOKCancel(okListener: DialogInterface.OnClickListener) {
         AlertDialog.Builder(this)
-                .setMessage("You need to provide CALL_PHONE permission.")
-                .setPositiveButton("OK", okListener)
-                .setNegativeButton("Cancel", null)
-                .create()
-                .show()
+            .setMessage("You need to provide CALL_PHONE permission.")
+            .setPositiveButton("OK", okListener)
+            .setNegativeButton("Cancel", null)
+            .create()
+            .show()
     }
 }

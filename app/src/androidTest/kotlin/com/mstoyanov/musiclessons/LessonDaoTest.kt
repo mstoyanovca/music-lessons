@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.mstoyanov.musiclessons.global.Functions.formatter
 import com.mstoyanov.musiclessons.model.Lesson
 import com.mstoyanov.musiclessons.model.LessonWithStudent
 import com.mstoyanov.musiclessons.model.Student
@@ -17,19 +18,15 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.IOException
 import java.time.LocalTime
-import java.time.format.DateTimeFormatter
 
 @RunWith(AndroidJUnit4::class)
 class LessonDaoTest {
-    private lateinit var formatter: DateTimeFormatter
     private lateinit var db: AppDatabase
     private lateinit var student: Student
     private lateinit var lesson: Lesson
 
     @Before
     fun createDb() {
-        formatter = DateTimeFormatter.ofPattern("HH:mm")
-
         val context = ApplicationProvider.getApplicationContext<Context>()
         db = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java).build()
 

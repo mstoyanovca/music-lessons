@@ -1,16 +1,18 @@
 package com.mstoyanov.musiclessons
 
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentStatePagerAdapter
-import androidx.viewpager.widget.ViewPager
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
+import com.mstoyanov.musiclessons.global.Functions.serializable
 import com.mstoyanov.musiclessons.model.Weekday
 
 class ActivityMain : AppCompatActivity() {
-    private lateinit var viewPager: ViewPager
+    private lateinit var viewPager: ViewPager2
     private lateinit var tabLayout: TabLayout
 
     companion object {
@@ -28,69 +30,70 @@ class ActivityMain : AppCompatActivity() {
         setSupportActionBar(findViewById(R.id.toolbar))
 
         viewPager = findViewById(R.id.view_pager)
-        viewPager.adapter = MyAdapter(supportFragmentManager)
-        viewPager.addOnPageChangeListener(MyOnPageChangeListener())
+        viewPager.adapter = FragmentStateAdapterImpl(supportFragmentManager)
+        viewPager.registerOnPageChangeCallback(OnPageChangeCallbackImpl())
 
         tabLayout = findViewById(R.id.tab_layout)
         tabLayout.getTabAt(1)!!.icon!!.alpha = 128
-        tabLayout.addOnTabSelectedListener(MyOnTabSelectedListener())
+        tabLayout.addOnTabSelectedListener(OnTabSelectedListenerImpl())
 
-        if (intent.getLongExtra("ADDED_STUDENT_ID", 0) > 0 ||
-                intent.getLongExtra("UPDATED_STUDENT_ID", 0) > 0 ||
-                intent.getLongExtra("DELETED_STUDENT_ID", 0) > 0 ||
-                intent.getBooleanExtra("EXPORTED_STUDENTS", false)) {
+        if (intent.getLongExtra(resources.getString(R.string.added_student_id), 0) > 0 ||
+            intent.getLongExtra(resources.getString(R.string.updated_student_id), 0) > 0 ||
+            intent.getLongExtra(resources.getString(R.string.deleted_student_id), 0) > 0 ||
+            intent.getBooleanExtra(resources.getString(R.string.export_students), false)
+        ) {
             tabLayout.getTabAt(1)!!.select()
-        } else if (intent.getSerializableExtra("WEEKDAY") != null) {
+        } else if (intent.serializable<Weekday>("WEEKDAY") != null) {
             // returning from ActivityAddLesson, ActivityLessonDetails or ActivityEditLesson after deleting a lesson:
-            val weekday = intent.getSerializableExtra("WEEKDAY") as Weekday
+            val weekday = intent.serializable<Weekday>("WEEKDAY")!!
             viewPager.currentItem = weekday.ordinal
         }
+
+        onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
     }
 
     override fun onSaveInstanceState(savedInstanceState: Bundle) {
         super.onSaveInstanceState(savedInstanceState)
-        savedInstanceState.putInt("SELECTED_WEEKDAY_INDEX", selectedWeekdayIndex)
         savedInstanceState.putInt("SELECTED_SECTION_INDEX", selectedSectionIndex)
+        savedInstanceState.putInt("SELECTED_WEEKDAY_INDEX", selectedWeekdayIndex)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        selectedWeekdayIndex = savedInstanceState.getInt("SELECTED_WEEKDAY_INDEX")
         selectedSectionIndex = savedInstanceState.getInt("SELECTED_SECTION_INDEX")
+        selectedWeekdayIndex = savedInstanceState.getInt("SELECTED_WEEKDAY_INDEX")
     }
 
-    override fun onBackPressed() {
-        if (viewPager.currentItem == 0) super.onBackPressed()
-        else viewPager.currentItem = viewPager.currentItem - 1
-    }
-
-    private class MyAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
-        override fun getItem(position: Int): Fragment {
-            return if (position == sectionTitles.size - 1) FragmentStudents.create(position)
-            else FragmentSchedule.create(position)
-        }
-
-        override fun getItemPosition(item: Any): Int {
-            return (item as Fragment).arguments!!.getInt("POSITION")
-        }
-
-        override fun getCount(): Int {
-            return sectionTitles.size
+    private val onBackPressedCallback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            if (viewPager.currentItem > 0) viewPager.currentItem = viewPager.currentItem - 1
         }
     }
 
-    private inner class MyOnTabSelectedListener : TabLayout.OnTabSelectedListener {
+    private inner class FragmentStateAdapterImpl(fm: FragmentManager) : FragmentStateAdapter(fm, lifecycle) {
+        override fun createFragment(position: Int): Fragment {
+            return if (position == sectionTitles.size - 1)
+                FragmentStudents.create(position)
+            else
+                FragmentSchedule.create(position)
+        }
+
+        override fun getItemCount(): Int = sectionTitles.size
+    }
+
+    private inner class OnTabSelectedListenerImpl : TabLayout.OnTabSelectedListener {
         override fun onTabSelected(tab: TabLayout.Tab) {
             // synchronize the ViewPager with the TabLayout:
             if (tab.position == 0) {
                 tabLayout.getTabAt(0)!!.icon!!.alpha = 255
                 tabLayout.getTabAt(1)!!.icon!!.alpha = 127
+                selectedSectionIndex = selectedWeekdayIndex
                 viewPager.currentItem = selectedWeekdayIndex
             } else if (tab.position == 1) {
                 tabLayout.getTabAt(0)!!.icon!!.alpha = 127
                 tabLayout.getTabAt(1)!!.icon!!.alpha = 255
-                viewPager.currentItem = sectionTitles.size - 1
                 selectedSectionIndex = sectionTitles.size - 1
+                viewPager.currentItem = sectionTitles.size - 1
             }
         }
 
@@ -99,15 +102,15 @@ class ActivityMain : AppCompatActivity() {
         }
 
         override fun onTabReselected(tab: TabLayout.Tab) {
-            if (tab.position == 0) viewPager.currentItem = 0
+            if (tab.position == 0) {
+                selectedSectionIndex = 0
+                selectedWeekdayIndex = 0
+                viewPager.currentItem = 0
+            }
         }
     }
 
-    private inner class MyOnPageChangeListener : ViewPager.OnPageChangeListener {
-        override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-            // do nothing
-        }
-
+    private inner class OnPageChangeCallbackImpl : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
             // synchronize the TabLayout with the ViewPager:
             selectedSectionIndex = position
@@ -117,10 +120,6 @@ class ActivityMain : AppCompatActivity() {
             } else if (position == sectionTitles.size - 1) {
                 if (!tabLayout.getTabAt(1)!!.isSelected) tabLayout.getTabAt(1)!!.select()
             }
-        }
-
-        override fun onPageScrollStateChanged(state: Int) {
-            // do nothing
         }
     }
 }

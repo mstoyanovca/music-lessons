@@ -18,6 +18,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.mstoyanov.musiclessons.global.Functions.serializable
 import com.mstoyanov.musiclessons.model.PhoneNumber
 import com.mstoyanov.musiclessons.model.Student
 import kotlinx.coroutines.Dispatchers
@@ -38,7 +39,7 @@ class ActivityEditStudent : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_student)
 
-        student = intent.getSerializableExtra("STUDENT") as Student
+        student = intent.serializable("STUDENT")!!
         phoneNumbersBeforeEditing = student.phoneNumbers.toList()
 
         setSupportActionBar(findViewById<View>(R.id.toolbar) as Toolbar)
@@ -101,10 +102,10 @@ class ActivityEditStudent : AppCompatActivity() {
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         if (studentIsValid()) {
             menu.findItem(R.id.action_update).isEnabled = true
-            menu.findItem(R.id.action_update).icon.alpha = 255
+            menu.findItem(R.id.action_update).icon?.alpha = 255
         } else {
             menu.findItem(R.id.action_update).isEnabled = false
-            menu.findItem(R.id.action_update).icon.alpha = 127
+            menu.findItem(R.id.action_update).icon?.alpha = 127
         }
         return true
     }
@@ -139,8 +140,10 @@ class ActivityEditStudent : AppCompatActivity() {
 
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
-                // Thread.sleep(1_000)
-                student = MusicLessonsApplication.db.studentDao.updateStudentWithPhoneNumbers(student, phoneNumbersBeforeEditing)
+                student = MusicLessonsApplication.db.studentDao.updateStudentWithPhoneNumbers(
+                    student,
+                    phoneNumbersBeforeEditing
+                )
 
             }
             withContext(Dispatchers.Main) {
@@ -154,13 +157,18 @@ class ActivityEditStudent : AppCompatActivity() {
 
     private fun createAlertDialog() {
         val builder = AlertDialog.Builder(this)
-        val message: String = if (student.firstName.trim().isNotEmpty() && student.lastName.trim().isEmpty()) {
-            "Delete student " + student.firstName.trim() + "?"
-        } else if (student.firstName.trim().isEmpty() && student.lastName.trim().isNotEmpty()) {
-            "Delete student " + student.lastName.trim() + "?"
-        } else {
-            "Delete student " + getString(R.string.full_name, student.firstName.trim(), student.lastName.trim()) + "?"
-        }
+        val message: String =
+            if (student.firstName.trim().isNotEmpty() && student.lastName.trim().isEmpty()) {
+                "Delete student " + student.firstName.trim() + "?"
+            } else if (student.firstName.trim().isEmpty() && student.lastName.trim().isNotEmpty()) {
+                "Delete student " + student.lastName.trim() + "?"
+            } else {
+                "Delete student " + getString(
+                    R.string.full_name,
+                    student.firstName.trim(),
+                    student.lastName.trim()
+                ) + "?"
+            }
         builder.setMessage(message)
         builder.setPositiveButton("OK") { _, _ -> deleteStudent() }
         builder.setNegativeButton("Cancel") { _, _ ->
@@ -182,7 +190,7 @@ class ActivityEditStudent : AppCompatActivity() {
             withContext(Dispatchers.Main) {
                 progressBar.visibility = View.GONE
 
-                intent.putExtra("DELETED_STUDENT_ID", student.studentId)
+                intent.putExtra(resources.getString(R.string.deleted_student_id), student.studentId)
                 startActivity(intent)
             }
         }
@@ -195,6 +203,7 @@ class ActivityEditStudent : AppCompatActivity() {
     }
 
     private fun nameIsValid(): Boolean {
-        return firstName.text.toString().trim().isNotEmpty() || lastName.text.toString().trim().isNotEmpty()
+        return firstName.text.toString().trim().isNotEmpty() || lastName.text.toString().trim()
+            .isNotEmpty()
     }
 }

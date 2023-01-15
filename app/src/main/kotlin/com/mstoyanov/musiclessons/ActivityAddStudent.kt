@@ -17,6 +17,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.mstoyanov.musiclessons.global.Functions.serializable
 import com.mstoyanov.musiclessons.model.PhoneNumber
 import com.mstoyanov.musiclessons.model.Student
 import kotlinx.coroutines.Dispatchers
@@ -40,8 +41,8 @@ class ActivityAddStudent : AppCompatActivity() {
             student = Student()
             student.phoneNumbers.add(PhoneNumber())
         } else {
-            student = savedInstanceState.getSerializable("STUDENT") as Student
-            pristine = savedInstanceState.get("PRISTINE") as Boolean
+            student = savedInstanceState.serializable("STUDENT")!!
+            pristine = savedInstanceState.getBoolean("PRISTINE")
         }
 
         setSupportActionBar(findViewById<View>(R.id.toolbar) as Toolbar)
@@ -99,10 +100,10 @@ class ActivityAddStudent : AppCompatActivity() {
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         if (studentIsValid()) {
             menu.findItem(R.id.action_insert).isEnabled = true
-            menu.findItem(R.id.action_insert).icon.alpha = 255
+            menu.findItem(R.id.action_insert).icon?.alpha = 255
         } else {
             menu.findItem(R.id.action_insert).isEnabled = false
-            menu.findItem(R.id.action_insert).icon.alpha = 127
+            menu.findItem(R.id.action_insert).icon?.alpha = 127
         }
         return true
     }
@@ -132,13 +133,12 @@ class ActivityAddStudent : AppCompatActivity() {
 
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
-                // Thread.sleep(1_000)
                 MusicLessonsApplication.db.studentDao.insertWithPhoneNumbers(student)
 
                 withContext(Dispatchers.Main) {
                     progressBar.visibility = View.GONE
 
-                    intent.putExtra("ADDED_STUDENT_ID", student.studentId)
+                    intent.putExtra(resources.getString(R.string.added_student_id), student.studentId)
                     startActivity(intent)
                 }
             }
