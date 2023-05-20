@@ -119,7 +119,9 @@ class ActivityStudentDetails : AppCompatActivity() {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CALL_PHONE), PERMISSION_REQUEST_CALL_PHONE)
             return
         }
-        val intent = Intent(Intent.ACTION_CALL, Uri.parse("tel:$number"))
+        val intent = Intent(Intent.ACTION_CALL).apply {
+            data = Uri.parse("tel:$number")
+        }
         startActivity(intent)
     }
 

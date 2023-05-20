@@ -3,8 +3,17 @@ package com.mstoyanov.musiclessons
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.*
-import android.widget.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.NumberPicker
+import android.widget.ProgressBar
+import android.widget.Spinner
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.NavUtils
@@ -19,7 +28,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.Serializable
 import java.time.LocalTime
-import java.time.format.DateTimeFormatter
 
 class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private lateinit var hourFrom: NumberPicker
@@ -146,6 +154,7 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
                 NavUtils.navigateUpFromSameTask(this)
                 true
             }
+
             R.id.action_insert -> {
                 setTime()
                 progressBar.visibility = View.VISIBLE
@@ -165,6 +174,7 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
 
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
     }

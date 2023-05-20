@@ -8,6 +8,9 @@
     android:xlargeScreens="true"
     tools:ignore="GoogleAppIndexingWarning">
 
+    <uses-feature
+        android:name="android.hardware.telephony"
+        android:required="false" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
 
     <application
@@ -37,9 +40,16 @@
             android:parentActivityName=".ActivityMain" />
         <activity
             android:name=".ActivityStudentDetails"
+            android:exported="true"
             android:label="@string/student_details"
             android:launchMode="singleTop"
-            android:parentActivityName=".ActivityMain" />
+            android:parentActivityName=".ActivityMain">
+            <intent-filter>
+                <action android:name="android.intent.action.SENDTO" />
+                <data android:mimeType="text/plain" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".ActivityEditStudent"
             android:label="@string/edit_student"
@@ -52,19 +62,20 @@
             android:parentActivityName=".ActivityMain" />
         <activity
             android:name=".ActivityLessonDetails"
+            android:exported="true"
             android:label="@string/lesson_details"
             android:launchMode="singleTop"
-            android:parentActivityName=".ActivityMain" />
+            android:parentActivityName=".ActivityMain">
+            <intent-filter>
+                <action android:name="android.intent.action.SENDTO" />
+                <data android:mimeType="text/plain" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".ActivityEditLesson"
             android:label="@string/edit_lesson"
             android:launchMode="singleTop"
             android:parentActivityName=".ActivityLessonDetails" />
     </application>
-
-    <queries>
-        <intent>
-            <action android:name="android.media.action.ACTION_SENDTO" />
-        </intent>
-    </queries>
 </manifest>
