@@ -1,16 +1,16 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 3,
-    "identityHash": "08a959c3c5861f2b39f4d02912e9c5e7",
+    "version": 5,
+    "identityHash": "946876164db6e7a2c673f0b6aa382719",
     "entities": [
       {
         "tableName": "student",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`s_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `first_name` TEXT NOT NULL, `last_name` TEXT NOT NULL, `email` TEXT NOT NULL, `notes` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`student_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `first_name` TEXT NOT NULL, `last_name` TEXT NOT NULL, `notes` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "studentId",
-            "columnName": "s_id",
+            "columnName": "student_id",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -27,12 +27,6 @@
             "notNull": true
           },
           {
-            "fieldPath": "email",
-            "columnName": "email",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
             "fieldPath": "notes",
             "columnName": "notes",
             "affinity": "TEXT",
@@ -40,17 +34,17 @@
           }
         ],
         "primaryKey": {
+          "autoGenerate": true,
           "columnNames": [
-            "s_id"
-          ],
-          "autoGenerate": true
+            "student_id"
+          ]
         },
         "indices": [],
         "foreignKeys": []
       },
       {
         "tableName": "phone_number",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`phone_number_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `number` TEXT NOT NULL, `type` TEXT NOT NULL, `student_id` INTEGER NOT NULL, FOREIGN KEY(`student_id`) REFERENCES `student`(`s_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`phone_number_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `number` TEXT NOT NULL, `type` TEXT NOT NULL, `student_owner_id` INTEGER NOT NULL, FOREIGN KEY(`student_owner_id`) REFERENCES `student`(`student_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "phoneNumberId",
@@ -72,25 +66,26 @@
           },
           {
             "fieldPath": "studentId",
-            "columnName": "student_id",
+            "columnName": "student_owner_id",
             "affinity": "INTEGER",
             "notNull": true
           }
         ],
         "primaryKey": {
+          "autoGenerate": true,
           "columnNames": [
             "phone_number_id"
-          ],
-          "autoGenerate": true
+          ]
         },
         "indices": [
           {
-            "name": "index_phone_number_student_id",
+            "name": "index_phone_number_student_owner_id",
             "unique": false,
             "columnNames": [
-              "student_id"
+              "student_owner_id"
             ],
-            "createSql": "CREATE  INDEX `index_phone_number_student_id` ON `${TABLE_NAME}` (`student_id`)"
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_phone_number_student_owner_id` ON `${TABLE_NAME}` (`student_owner_id`)"
           }
         ],
         "foreignKeys": [
@@ -99,17 +94,17 @@
             "onDelete": "CASCADE",
             "onUpdate": "NO ACTION",
             "columns": [
-              "student_id"
+              "student_owner_id"
             ],
             "referencedColumns": [
-              "s_id"
+              "student_id"
             ]
           }
         ]
       },
       {
         "tableName": "lesson",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`lesson_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `weekday` TEXT NOT NULL, `time_from` INTEGER NOT NULL, `time_to` INTEGER NOT NULL, `student_id` INTEGER NOT NULL, FOREIGN KEY(`student_id`) REFERENCES `student`(`s_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`lesson_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `weekday` TEXT NOT NULL, `time_from` TEXT NOT NULL, `time_to` TEXT NOT NULL, `student_owner_id` INTEGER NOT NULL, FOREIGN KEY(`student_owner_id`) REFERENCES `student`(`student_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "lessonId",
@@ -126,36 +121,37 @@
           {
             "fieldPath": "timeFrom",
             "columnName": "time_from",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
             "fieldPath": "timeTo",
             "columnName": "time_to",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
             "fieldPath": "studentId",
-            "columnName": "student_id",
+            "columnName": "student_owner_id",
             "affinity": "INTEGER",
             "notNull": true
           }
         ],
         "primaryKey": {
+          "autoGenerate": true,
           "columnNames": [
             "lesson_id"
-          ],
-          "autoGenerate": true
+          ]
         },
         "indices": [
           {
-            "name": "index_lesson_student_id",
+            "name": "index_lesson_student_owner_id",
             "unique": false,
             "columnNames": [
-              "student_id"
+              "student_owner_id"
             ],
-            "createSql": "CREATE  INDEX `index_lesson_student_id` ON `${TABLE_NAME}` (`student_id`)"
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_lesson_student_owner_id` ON `${TABLE_NAME}` (`student_owner_id`)"
           }
         ],
         "foreignKeys": [
@@ -164,18 +160,19 @@
             "onDelete": "CASCADE",
             "onUpdate": "NO ACTION",
             "columns": [
-              "student_id"
+              "student_owner_id"
             ],
             "referencedColumns": [
-              "s_id"
+              "student_id"
             ]
           }
         ]
       }
     ],
+    "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"08a959c3c5861f2b39f4d02912e9c5e7\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '946876164db6e7a2c673f0b6aa382719')"
     ]
   }
 }

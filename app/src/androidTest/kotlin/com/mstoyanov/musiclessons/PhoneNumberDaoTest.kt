@@ -30,7 +30,7 @@ class PhoneNumberDaoTest {
         phoneNumber = PhoneNumber(2L, "333-456-9900", PhoneNumberType.CELL, 1L, false)
         phoneNumbers.add(phoneNumber)
 
-        val student = Student(1L, "John", "Smith", "jsmith@google.com", "Test student", phoneNumbers)
+        val student = Student(1L, "John", "Smith", "Test student", phoneNumbers)
         runBlocking { db.studentDao.insert(student) }
     }
 

@@ -89,10 +89,12 @@ class ActivityAddStudent : AppCompatActivity() {
                 NavUtils.navigateUpFromSameTask(this)
                 true
             }
+
             R.id.action_insert -> {
                 insertStudent()
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -121,9 +123,6 @@ class ActivityAddStudent : AppCompatActivity() {
     private fun insertStudent() {
         student.firstName = firstName.text.toString().trim()
         student.lastName = lastName.text.toString().trim()
-
-        val email = findViewById<EditText>(R.id.email)
-        student.email = email.text.toString().trim()
 
         val notes = findViewById<EditText>(R.id.notes)
         student.notes = notes.text.toString().trim()

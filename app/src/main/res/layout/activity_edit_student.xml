@@ -53,24 +53,10 @@
                 android:textSize="@dimen/text_size" />
 
             <EditText
-                android:id="@+id/email"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/add_phone_number"
-                android:autofillHints="AUTOFILL_HINT_EMAIL_ADDRESS"
-                android:drawableLeft="@drawable/ic_email_black_24dp"
-                android:drawablePadding="@dimen/drawable_padding"
-                android:hint="@string/email"
-                android:inputType="textEmailAddress"
-                android:maxLength="128"
-                android:singleLine="true"
-                android:textSize="@dimen/text_size" />
-
-            <EditText
                 android:id="@+id/notes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/email"
+                android:layout_below="@id/last_name"
                 android:layout_alignParentBottom="true"
                 android:autofillHints="no"
                 android:drawableLeft="@drawable/ic_message_black_24dp"

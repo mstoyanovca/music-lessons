@@ -2,7 +2,7 @@ Music Lessons Android app privacy policy
 
 This is an open source application, shared on GitHib under the MIT license, and available on Google Play for free.
 
-The app allows users to enter name, phone numbers, email and lesson time of students. It allows the user to call students, send SMS or email directly from the app. It doesn't require login and it doesn't collect any data of the user itself.
+The app allows users to enter name, phone numbers and lesson time of students. It allows the user to call students or send SMS from the app. It doesn't require login and it doesn't collect any data of the user itself.
 
 Data is stored in a database on the device where the app is installed, it is not shared over internet or by any other means to other devices or servers.
 
