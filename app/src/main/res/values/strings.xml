@@ -91,5 +91,4 @@
     <string name="added_student_id">ADDED_STUDENT_ID</string>
     <string name="updated_student_id">UPDATED_STUDENT_ID</string>
     <string name="deleted_student_id">DELETED_STUDENT_ID</string>
-    <string name="exported_students">EXPORTED_STUDENTS</string>
 </resources>
