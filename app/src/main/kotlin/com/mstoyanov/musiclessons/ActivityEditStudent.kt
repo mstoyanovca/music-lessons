@@ -28,7 +28,6 @@ import kotlinx.coroutines.withContext
 class ActivityEditStudent : AppCompatActivity() {
     private lateinit var firstName: EditText
     private lateinit var lastName: EditText
-    private lateinit var email: EditText
     private lateinit var notes: EditText
     private lateinit var progressBar: ProgressBar
     private lateinit var adapter: AdapterEditStudent
@@ -52,9 +51,6 @@ class ActivityEditStudent : AppCompatActivity() {
         lastName = findViewById(R.id.last_name)
         lastName.setText(student.lastName)
         lastName.addTextChangedListener(EditStudentTextWatcher(this))
-
-        email = findViewById(R.id.email)
-        email.setText(student.email)
 
         notes = findViewById(R.id.notes)
         notes.setText(student.notes)
@@ -87,14 +83,17 @@ class ActivityEditStudent : AppCompatActivity() {
                 NavUtils.navigateUpFromSameTask(this)
                 true
             }
+
             R.id.action_update -> {
                 updateStudent()
                 true
             }
+
             R.id.action_delete -> {
                 createAlertDialog()
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -132,7 +131,6 @@ class ActivityEditStudent : AppCompatActivity() {
     private fun updateStudent() {
         student.firstName = firstName.text.toString().trim()
         student.lastName = lastName.text.toString().trim()
-        student.email = email.text.toString().trim()
         student.notes = notes.text.toString().trim()
 
         val intent = Intent(this, ActivityStudentDetails::class.java)

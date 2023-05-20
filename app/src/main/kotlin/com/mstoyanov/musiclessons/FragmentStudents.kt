@@ -102,6 +102,7 @@ class FragmentStudents : Fragment() {
                 resultLauncher.launch(intent)
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -144,10 +145,6 @@ class FragmentStudents : Fragment() {
                 bufferedWriter.newLine()
                 s.phoneNumbers.map { pn ->
                     bufferedWriter.write(pn.number + " " + pn.type.displayValue())
-                    bufferedWriter.newLine()
-                }
-                if (s.email.isNotEmpty()) {
-                    bufferedWriter.write(s.email)
                     bufferedWriter.newLine()
                 }
                 if (s.notes.isNotEmpty()) {

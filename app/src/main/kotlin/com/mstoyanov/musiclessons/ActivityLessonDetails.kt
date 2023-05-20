@@ -83,21 +83,6 @@ class ActivityLessonDetails : AppCompatActivity() {
             .append(lesson.student.lastName)
             .toString()
 
-        val email = findViewById<TextView>(R.id.email)
-        if (lesson.student.email.isNotEmpty()) {
-            email.text = lesson.student.email
-            email.setOnClickListener {
-                val intent = Intent(Intent.ACTION_SENDTO)
-                intent.data = Uri.parse("mailto:" + email.text.toString())
-                intent.putExtra(Intent.EXTRA_SUBJECT, "Music Lessons")
-                if (intent.resolveActivity(packageManager) != null) {
-                    startActivity(intent)
-                }
-            }
-        } else {
-            email.visibility = View.GONE
-        }
-
         val notes = findViewById<TextView>(R.id.notes)
         if (lesson.student.notes.isNotEmpty()) {
             notes.text = lesson.student.notes
@@ -137,6 +122,7 @@ class ActivityLessonDetails : AppCompatActivity() {
             } else {
                 Toast.makeText(this@ActivityLessonDetails, "Permission CALL_PHONE denied", Toast.LENGTH_SHORT).show()
             }
+
             else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }
     }
