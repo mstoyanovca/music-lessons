@@ -24,7 +24,6 @@
         <activity
             android:name=".ActivityMain"
             android:exported="true"
-            android:label="@string/app_label"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -35,32 +34,32 @@
             android:name=".ActivityAddStudent"
             android:label="@string/add_student"
             android:launchMode="singleTop"
-            android:parentActivityName=".ActivityMain"></activity>
+            android:parentActivityName=".ActivityMain" />
         <activity
             android:name=".ActivityStudentDetails"
             android:label="@string/student_details"
             android:launchMode="singleTop"
-            android:parentActivityName=".ActivityMain"></activity>
+            android:parentActivityName=".ActivityMain" />
         <activity
             android:name=".ActivityEditStudent"
             android:label="@string/edit_student"
             android:launchMode="singleTop"
-            android:parentActivityName=".ActivityStudentDetails"></activity>
+            android:parentActivityName=".ActivityStudentDetails" />
         <activity
             android:name=".ActivityAddLesson"
             android:label="@string/add_lesson"
             android:launchMode="singleTop"
-            android:parentActivityName=".ActivityMain"></activity>
+            android:parentActivityName=".ActivityMain" />
         <activity
             android:name=".ActivityLessonDetails"
             android:label="@string/lesson_details"
             android:launchMode="singleTop"
-            android:parentActivityName=".ActivityMain"></activity>
+            android:parentActivityName=".ActivityMain" />
         <activity
             android:name=".ActivityEditLesson"
             android:label="@string/edit_lesson"
             android:launchMode="singleTop"
-            android:parentActivityName=".ActivityLessonDetails"></activity>
+            android:parentActivityName=".ActivityLessonDetails" />
     </application>
 
     <queries>
