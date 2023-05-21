@@ -5,3 +5,4 @@ The latest updates include:
 
 - updated dependencies version;
 - removed email field;
+- improved security
