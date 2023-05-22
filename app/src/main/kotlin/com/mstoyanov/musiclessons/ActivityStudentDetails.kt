@@ -59,21 +59,6 @@ class ActivityStudentDetails : AppCompatActivity() {
         val divider = DividerItemDecoration(phoneNumbers.context, LinearLayoutManager(this).orientation)
         phoneNumbers.addItemDecoration(divider)
 
-        val email = findViewById<TextView>(R.id.email)
-        if (student.email.isNotEmpty()) {
-            email.text = student.email
-            email.setOnClickListener {
-                val intent = Intent(Intent.ACTION_SENDTO)
-                intent.data = Uri.parse("mailto:" + email.text.toString())
-                intent.putExtra(Intent.EXTRA_SUBJECT, "Music Lessons")
-                if (intent.resolveActivity(packageManager) != null) {
-                    startActivity(intent)
-                }
-            }
-        } else {
-            email.visibility = View.GONE
-        }
-
         val notes = findViewById<TextView>(R.id.notes)
         if (student.notes.isNotEmpty()) {
             notes.text = student.notes
@@ -112,6 +97,7 @@ class ActivityStudentDetails : AppCompatActivity() {
             } else {
                 Toast.makeText(this, "Permission CALL_PHONE denied.", Toast.LENGTH_SHORT).show()
             }
+
             else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }
     }
@@ -133,7 +119,9 @@ class ActivityStudentDetails : AppCompatActivity() {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CALL_PHONE), PERMISSION_REQUEST_CALL_PHONE)
             return
         }
-        val intent = Intent(Intent.ACTION_CALL, Uri.parse("tel:$number"))
+        val intent = Intent(Intent.ACTION_CALL).apply {
+            data = Uri.parse("tel:$number")
+        }
         startActivity(intent)
     }
 

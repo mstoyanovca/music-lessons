@@ -46,7 +46,10 @@ class AdapterLessonDetails(private val phoneNumbers: List<PhoneNumber>, private 
         init {
             number.setOnClickListener { (view.context as ActivityLessonDetails).dial(number.text.toString()) }
             sms.setOnClickListener {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("sms:" + number.text.toString()))
+                val intent = Intent(Intent.ACTION_SENDTO).apply {
+                    data = Uri.parse("smsto:" + number.text.toString())
+                    putExtra("type", "text/plain")
+                }
                 view.context.startActivity(intent)
             }
         }

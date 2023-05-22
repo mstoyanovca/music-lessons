@@ -30,7 +30,7 @@ class LessonDaoTest {
         val context = ApplicationProvider.getApplicationContext<Context>()
         db = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java).build()
 
-        student = Student(1L, "John", "Smith", "jsmith@google.com", "Test student", mutableListOf())
+        student = Student(1L, "John", "Smith", "Test student", mutableListOf())
         runBlocking { db.studentDao.insert(student) }
 
         val timeFrom: LocalTime = LocalTime.parse("16:00", formatter)

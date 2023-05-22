@@ -28,7 +28,7 @@ class StudentDaoTest {
         db = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java).build()
 
         phoneNumbers = mutableListOf(PhoneNumber(1L, "123-456-7890", PhoneNumberType.HOME, 1L, isValid = false))
-        student = Student(1L, "John", "Smith", "jsmith@google.com", "Test student", phoneNumbers as MutableList<PhoneNumber>)
+        student = Student(1L, "John", "Smith", "Test student", phoneNumbers as MutableList<PhoneNumber>)
 
         runBlocking {
             db.studentDao.insert(student)

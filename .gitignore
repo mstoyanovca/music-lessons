@@ -1,11 +1,12 @@
 .gradle/
 .idea/
 app/build/
-app/app.iml
+app/release/
+app/*.iml
 build/
 gradle/
 gradlew
 gradlew.bat
 local.properties
-music-lessons.iml
-app/release
+*.iml
+*.hprof

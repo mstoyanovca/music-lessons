@@ -50,21 +50,6 @@
                 android:layout_marginRight="@dimen/margin_padding_left_right" />
 
             <TextView
-                android:id="@+id/email"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/margin_padding_left_right"
-                android:layout_marginRight="@dimen/margin_padding_left_right"
-                android:drawablePadding="@dimen/drawable_padding"
-                android:ellipsize="end"
-                android:gravity="center_vertical"
-                android:paddingTop="@dimen/padding_top_bottom"
-                android:paddingBottom="@dimen/padding_top_bottom"
-                android:singleLine="true"
-                android:textSize="@dimen/text_size"
-                app:drawableLeftCompat="@drawable/ic_email_black_24dp" />
-
-            <TextView
                 android:id="@+id/notes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

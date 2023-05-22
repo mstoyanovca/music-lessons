@@ -17,9 +17,10 @@ class AdapterStudentDetails(private val phoneNumbers: List<PhoneNumber>, private
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val phoneNumberItem = LayoutInflater.from(parent.context).inflate(
-                R.layout.phone_item_st_details,
-                parent,
-                false)
+            R.layout.phone_item_st_details,
+            parent,
+            false
+        )
         return ViewHolder(phoneNumberItem)
     }
 
@@ -51,8 +52,11 @@ class AdapterStudentDetails(private val phoneNumbers: List<PhoneNumber>, private
         init {
             number.setOnClickListener { (context as ActivityStudentDetails).dial(number.text.toString()) }
             sms.setOnClickListener {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("sms:" + number.text.toString()))
-                context.startActivity(intent)
+                val intent = Intent(Intent.ACTION_SENDTO).apply {
+                    data = Uri.parse("smsto:" + number.text.toString())
+                    putExtra("type", "text/plain")
+                }
+                view.context.startActivity(intent)
             }
         }
     }
