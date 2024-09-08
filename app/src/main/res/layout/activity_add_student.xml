@@ -31,11 +31,13 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:autofillHints="	AUTOFILL_HINT_PERSON_NAME_GIVEN"
+                android:background="@color/white"
                 android:drawableStart="@drawable/ic_person_black_24dp"
                 android:drawablePadding="@dimen/drawable_padding"
                 android:hint="@string/first_name"
                 android:inputType="textCapWords"
                 android:maxLength="24"
+                android:minHeight="48dp"
                 android:singleLine="true"
                 android:textSize="@dimen/text_size" />
 
@@ -45,9 +47,11 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/first_name"
                 android:autofillHints="AUTOFILL_HINT_PERSON_NAME_FAMILY"
+                android:background="@color/white"
                 android:hint="@string/last_name"
                 android:inputType="textCapWords"
                 android:maxLength="24"
+                android:minHeight="48dp"
                 android:paddingLeft="44dp"
                 android:singleLine="true"
                 android:textSize="@dimen/text_size" />
@@ -70,7 +74,7 @@
                 android:src="@drawable/ic_phone_plus_black_24dp"
                 app:elevation="@dimen/fab_elevation"
                 app:fabSize="mini"
-                app:rippleColor="@color/ripple_color" />
+                app:rippleColor="@color/white" />
 
             <EditText
                 android:id="@+id/notes"
@@ -84,6 +88,7 @@
                 android:hint="@string/notes"
                 android:inputType="textMultiLine"
                 android:maxLength="128"
+                android:minHeight="48dp"
                 android:textSize="@dimen/text_size" />
 
             <ProgressBar
