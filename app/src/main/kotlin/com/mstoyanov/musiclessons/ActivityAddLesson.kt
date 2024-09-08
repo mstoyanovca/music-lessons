@@ -130,16 +130,16 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
         invalidateOptionsMenu()
     }
 
-    override fun onSaveInstanceState(state: Bundle) {
-        super.onSaveInstanceState(state)
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
 
-        state.putSerializable("LESSON", lesson as Serializable)
-        state.putSerializable("STUDENTS", studentList as Serializable)
+        outState.putSerializable("LESSON", lesson as Serializable)
+        outState.putSerializable("STUDENTS", studentList as Serializable)
 
-        state.putInt("HOUR_FROM", hourFrom.value)
-        state.putInt("MINUTE_FROM", minuteFrom.value)
-        state.putInt("HOUR_TO", hourTo.value)
-        state.putInt("MINUTE_TO", minuteTo.value)
+        outState.putInt("HOUR_FROM", hourFrom.value)
+        outState.putInt("MINUTE_FROM", minuteFrom.value)
+        outState.putInt("HOUR_TO", hourTo.value)
+        outState.putInt("MINUTE_TO", minuteTo.value)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -206,8 +206,8 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
 
     private val minuteFromOnValueChangedListener = NumberPicker.OnValueChangeListener { _, oldValue, newValue ->
         // overflow:
-        if (oldValue == 3 && newValue == 0) hourFrom.value = hourFrom.value + 1
-        if (oldValue == 0 && newValue == 3) hourFrom.value = hourFrom.value - 1
+        if (oldValue == 3 && newValue == 0) hourFrom.value += 1
+        if (oldValue == 0 && newValue == 3) hourFrom.value -= 1
         // max value:
         if (newValue == 3 && hourFrom.value == 21) minuteFrom.value = 2
         synchronizeTimeToWithTimeFrom()
@@ -224,8 +224,8 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
 
     private val minuteToOnValueChangedListener = NumberPicker.OnValueChangeListener { _, oldValue, newValue ->
         // overflow:
-        if (oldValue == 3 && newValue == 0) hourTo.value = hourTo.value + 1
-        if (oldValue == 0 && newValue == 3) hourTo.value = hourTo.value - 1
+        if (oldValue == 3 && newValue == 0) hourTo.value += 1
+        if (oldValue == 0 && newValue == 3) hourTo.value -= 1
         // 8:30 is the minimum value:
         if (hourTo.value == 8 && (newValue == 0 || newValue == 1)) minuteTo.value = 2
         // 22:00 is the maximum value:
