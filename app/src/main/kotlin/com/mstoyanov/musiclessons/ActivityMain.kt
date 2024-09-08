@@ -52,10 +52,10 @@ class ActivityMain : AppCompatActivity() {
         onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
     }
 
-    override fun onSaveInstanceState(savedInstanceState: Bundle) {
-        super.onSaveInstanceState(savedInstanceState)
-        savedInstanceState.putInt("SELECTED_SECTION_INDEX", selectedSectionIndex)
-        savedInstanceState.putInt("SELECTED_WEEKDAY_INDEX", selectedWeekdayIndex)
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt("SELECTED_SECTION_INDEX", selectedSectionIndex)
+        outState.putInt("SELECTED_WEEKDAY_INDEX", selectedWeekdayIndex)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
@@ -66,7 +66,7 @@ class ActivityMain : AppCompatActivity() {
 
     private val onBackPressedCallback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
-            if (viewPager.currentItem > 0) viewPager.currentItem = viewPager.currentItem - 1
+            if (viewPager.currentItem > 0) viewPager.currentItem -= 1
         }
     }
 

@@ -1,13 +1,17 @@
 package com.mstoyanov.musiclessons
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.DocumentsContract
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
@@ -29,7 +33,6 @@ import java.io.Serializable
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-@SuppressLint("NotifyDataSetChanged")
 class FragmentStudents : Fragment() {
     private lateinit var progressBar: ProgressBar
     private lateinit var adapter: AdapterStudents

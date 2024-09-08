@@ -7,7 +7,11 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.EditText
+import android.widget.ImageButton
+import android.widget.Spinner
 import androidx.recyclerview.widget.RecyclerView
 import com.mstoyanov.musiclessons.model.PhoneNumber
 import com.mstoyanov.musiclessons.model.PhoneNumberType
@@ -44,14 +48,15 @@ class AdapterEditStudent(var phoneNumbers: MutableList<PhoneNumber>) : RecyclerV
             number.addTextChangedListener(NumberTextWatcher())
 
             val adapter = ArrayAdapter.createFromResource(
-                    view.context,
-                    R.array.phone_types,
-                    R.layout.phone_type_item)
+                view.context,
+                R.array.phone_types,
+                R.layout.phone_type_item
+            )
             adapter.setDropDownViewResource(R.layout.phone_type_dropdown_item)
             type.adapter = adapter
             type.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                    phoneNumbers[bindingAdapterPosition].type = PhoneNumberType.values()[position]
+                    phoneNumbers[bindingAdapterPosition].type = PhoneNumberType.entries.toTypedArray()[position]
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>) {
