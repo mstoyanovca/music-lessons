@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <resources>
-    <color name="colorTitleBackground">#2222FF</color>
+    <color name="title_background">#2222FF</color>
     <color name="light_gray">#d3d3d3</color>
-    <color name="ripple_color">#ffffff</color>
+    <color name="white">#ffffff</color>
 </resources>
