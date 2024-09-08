@@ -67,7 +67,7 @@ class ActivityAddStudent : AppCompatActivity() {
         val button = findViewById<FloatingActionButton>(R.id.add_phone_number)
         button.setOnClickListener {
             student.phoneNumbers.add(PhoneNumber())
-            adapter.notifyDataSetChanged()
+            adapter.notifyItemInserted(student.phoneNumbers.size - 1)
         }
     }
 
@@ -160,7 +160,7 @@ class ActivityAddStudent : AppCompatActivity() {
         override fun afterTextChanged(s: Editable) {
             if (pristine && s.toString().isNotEmpty()) {
                 pristine = false
-                if (student.phoneNumbers.size > 0) adapter.notifyDataSetChanged()
+                if (student.phoneNumbers.size > 0) adapter.notifyItemRangeChanged(0, student.phoneNumbers.size)
             }
             if (nameIsValid()) {
                 firstName.error = null

@@ -51,7 +51,7 @@ class FragmentSchedule : Fragment() {
                         progressBar.visibility = View.GONE
 
                         lessons.addAll(lessonList)
-                        adapter.notifyDataSetChanged()
+                        adapter.notifyItemRangeInserted(0, lessonList.size)
                     }
                 }
             }
@@ -67,7 +67,7 @@ class FragmentSchedule : Fragment() {
         val button = rootView.findViewById<FloatingActionButton>(R.id.add_lesson)
         button.setOnClickListener {
             val intent = Intent(activity, ActivityAddLesson::class.java)
-            intent.putExtra("WEEKDAY", Weekday.values()[position])
+            intent.putExtra("WEEKDAY", Weekday.entries[position])
             startActivity(intent)
         }
 

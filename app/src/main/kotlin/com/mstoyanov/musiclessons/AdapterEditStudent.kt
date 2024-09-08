@@ -28,7 +28,7 @@ class AdapterEditStudent(var phoneNumbers: MutableList<PhoneNumber>) : RecyclerV
         holder.type.setSelection(phoneNumbers[position].type.ordinal)
         holder.delete.setOnClickListener {
             phoneNumbers.remove(phoneNumbers[position])
-            notifyDataSetChanged()
+            notifyItemRemoved(position)
             if (phoneNumbers.size == 0) (holder.context as ActivityEditStudent).invalidateOptionsMenu()
         }
     }

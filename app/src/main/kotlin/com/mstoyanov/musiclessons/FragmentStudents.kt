@@ -60,7 +60,7 @@ class FragmentStudents : Fragment() {
                     withContext(Dispatchers.Main) {
                         students.sort()
                         progressBar.visibility = View.GONE
-                        adapter.notifyDataSetChanged()
+                        adapter.notifyItemRangeChanged(0, students.size)
                         requireActivity().invalidateOptionsMenu()
                     }
                 }
