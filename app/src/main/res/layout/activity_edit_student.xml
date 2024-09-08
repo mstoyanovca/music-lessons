@@ -52,28 +52,6 @@
                 android:singleLine="true"
                 android:textSize="@dimen/text_size" />
 
-            <EditText
-                android:id="@+id/notes"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/last_name"
-                android:layout_alignParentBottom="true"
-                android:autofillHints="no"
-                android:drawableLeft="@drawable/ic_message_black_24dp"
-                android:drawablePadding="@dimen/drawable_padding"
-                android:hint="@string/notes"
-                android:inputType="textMultiLine"
-                android:maxLength="128"
-                android:textSize="@dimen/text_size" />
-
-            <ProgressBar
-                android:id="@+id/progress_bar"
-                style="?android:attr/progressBarStyleLarge"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true" />
-
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/phone_numbers_list"
                 android:layout_width="match_parent"
@@ -92,7 +70,29 @@
                 android:src="@drawable/ic_phone_plus_black_24dp"
                 app:elevation="@dimen/fab_elevation"
                 app:fabSize="mini"
-                app:rippleColor="#ffffff" />
+                app:rippleColor="@color/ripple_color" />
+
+            <EditText
+                android:id="@+id/notes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/add_phone_number"
+                android:layout_alignParentBottom="true"
+                android:autofillHints="no"
+                android:drawableLeft="@drawable/ic_message_black_24dp"
+                android:drawablePadding="@dimen/drawable_padding"
+                android:hint="@string/notes"
+                android:inputType="textMultiLine"
+                android:maxLength="128"
+                android:textSize="@dimen/text_size" />
+
+            <ProgressBar
+                android:id="@+id/progress_bar"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true" />
         </RelativeLayout>
     </androidx.core.widget.NestedScrollView>
 </LinearLayout>

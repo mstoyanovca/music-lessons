@@ -52,11 +52,31 @@
                 android:singleLine="true"
                 android:textSize="@dimen/text_size" />
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/phone_numbers_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/last_name"
+                android:scrollbars="vertical" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/add_phone_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/phone_numbers_list"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="@dimen/fab_margin"
+                android:contentDescription="@string/add_fab"
+                android:src="@drawable/ic_phone_plus_black_24dp"
+                app:elevation="@dimen/fab_elevation"
+                app:fabSize="mini"
+                app:rippleColor="@color/ripple_color" />
+
             <EditText
                 android:id="@+id/notes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/last_name"
+                android:layout_below="@id/add_phone_number"
                 android:layout_alignParentBottom="true"
                 android:autofillHints="no"
                 android:drawableLeft="@drawable/ic_message_black_24dp"
@@ -73,26 +93,6 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/phone_numbers_list"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/last_name"
-                android:scrollbars="vertical" />
-
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/add_phone_number"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/phone_numbers_list"
-                android:layout_alignParentRight="true"
-                android:layout_marginTop="@dimen/text_size"
-                android:contentDescription="@string/add_fab"
-                android:src="@drawable/ic_phone_plus_black_24dp"
-                app:elevation="@dimen/fab_elevation"
-                app:fabSize="mini"
-                app:rippleColor="@color/ripple_color" />
         </RelativeLayout>
     </androidx.core.widget.NestedScrollView>
 </LinearLayout>
