@@ -63,6 +63,7 @@ android {
         // instrumentation tests:
         androidTestImplementation "androidx.test:runner:$test_version"
         androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
+        androidTestImplementation 'androidx.test.espresso:espresso-intents:3.6.1'
         // Room persistence:
         testImplementation "androidx.room:room-testing:$room_version"
     }
