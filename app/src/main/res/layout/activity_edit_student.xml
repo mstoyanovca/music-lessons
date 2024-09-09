@@ -52,7 +52,7 @@
                 android:inputType="textCapWords"
                 android:maxLength="24"
                 android:minHeight="48dp"
-                android:paddingLeft="44dp"
+                android:paddingLeft="42dp"
                 android:singleLine="true"
                 android:textSize="@dimen/text_size" />
 

@@ -27,7 +27,7 @@
 
             <EditText
                 android:id="@+id/first_name"
-                android:layout_width="match_parent"
+                android:layout_width="488dp"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:autofillHints="	AUTOFILL_HINT_PERSON_NAME_GIVEN"
@@ -43,7 +43,7 @@
 
             <EditText
                 android:id="@+id/last_name"
-                android:layout_width="match_parent"
+                android:layout_width="488dp"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/first_name"
                 android:autofillHints="AUTOFILL_HINT_PERSON_NAME_FAMILY"
@@ -52,7 +52,7 @@
                 android:inputType="textCapWords"
                 android:maxLength="24"
                 android:minHeight="48dp"
-                android:paddingLeft="42dp"
+                android:paddingLeft="48dp"
                 android:singleLine="true"
                 android:textSize="@dimen/text_size" />
 
@@ -68,7 +68,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/phone_numbers_list"
-                android:layout_alignParentRight="true"
+                android:layout_alignParentLeft="true"
                 android:layout_marginTop="@dimen/fab_margin"
                 android:contentDescription="@string/add_fab"
                 android:src="@drawable/ic_phone_plus_black_24dp"
@@ -78,7 +78,7 @@
 
             <EditText
                 android:id="@+id/notes"
-                android:layout_width="match_parent"
+                android:layout_width="488dp"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/add_phone_number"
                 android:layout_alignParentBottom="true"
