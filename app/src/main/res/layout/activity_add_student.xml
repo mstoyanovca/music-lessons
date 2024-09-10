@@ -69,7 +69,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/phone_numbers_list"
                 android:layout_alignParentRight="true"
-                android:layout_marginTop="@dimen/fab_margin"
+                android:layout_marginVertical="@dimen/fab_margin"
                 android:contentDescription="@string/add_fab"
                 android:src="@drawable/ic_phone_plus_black_24dp"
                 app:elevation="@dimen/fab_elevation"
