@@ -37,6 +37,14 @@ class AdapterAddStudent(var phoneNumbers: MutableList<PhoneNumber>) : RecyclerVi
         return phoneNumbers.size
     }
 
+    override fun getItemViewType(position: Int): Int {
+        return position
+    }
+
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
+
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val number: EditText = view.findViewById(R.id.phone_number)
         val type: Spinner = view.findViewById(R.id.phone_number_type)
