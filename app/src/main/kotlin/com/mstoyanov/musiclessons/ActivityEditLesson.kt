@@ -3,8 +3,17 @@ package com.mstoyanov.musiclessons
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.*
-import android.widget.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.NumberPicker
+import android.widget.ProgressBar
+import android.widget.Spinner
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -21,7 +30,7 @@ import kotlinx.coroutines.withContext
 import java.io.Serializable
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
-import java.util.*
+import java.util.Arrays
 
 class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private lateinit var hourFrom: NumberPicker
@@ -128,8 +137,6 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-
         outState.putSerializable("LESSON", lesson)
         outState.putSerializable("STUDENTS", studentList as Serializable)
 
@@ -137,6 +144,8 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
         outState.putInt("MINUTE_FROM", minuteFrom.value)
         outState.putInt("HOUR_TO", hourTo.value)
         outState.putInt("MINUTE_TO", minuteTo.value)
+
+        super.onSaveInstanceState(outState)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -151,16 +160,19 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
                 NavUtils.navigateUpFromSameTask(this)
                 true
             }
+
             R.id.action_update -> {
                 setTime()
                 progressBar.visibility = View.VISIBLE
                 updateLesson()
                 true
             }
+
             R.id.action_delete -> {
                 createAlertDialog()
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
     }

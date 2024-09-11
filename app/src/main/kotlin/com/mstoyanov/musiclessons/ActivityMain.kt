@@ -53,9 +53,9 @@ class ActivityMain : AppCompatActivity() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
         outState.putInt("SELECTED_SECTION_INDEX", selectedSectionIndex)
         outState.putInt("SELECTED_WEEKDAY_INDEX", selectedWeekdayIndex)
+        super.onSaveInstanceState(outState)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {

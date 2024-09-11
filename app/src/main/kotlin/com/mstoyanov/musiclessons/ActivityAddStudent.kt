@@ -72,9 +72,9 @@ class ActivityAddStudent : AppCompatActivity() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
         outState.putSerializable("STUDENT", student)
         outState.putBoolean("PRISTINE", pristine)
+        super.onSaveInstanceState(outState)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

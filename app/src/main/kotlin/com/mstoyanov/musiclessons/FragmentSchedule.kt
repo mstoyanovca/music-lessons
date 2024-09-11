@@ -74,9 +74,9 @@ class FragmentSchedule : Fragment() {
         return rootView
     }
 
-    override fun onSaveInstanceState(state: Bundle) {
-        super.onSaveInstanceState(state)
-        state.putSerializable("LESSONS", lessons as Serializable)
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putSerializable("LESSONS", lessons as Serializable)
+        super.onSaveInstanceState(outState)
     }
 
     companion object {

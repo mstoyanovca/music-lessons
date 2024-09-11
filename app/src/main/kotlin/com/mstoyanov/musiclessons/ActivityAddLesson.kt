@@ -131,8 +131,6 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-
         outState.putSerializable("LESSON", lesson as Serializable)
         outState.putSerializable("STUDENTS", studentList as Serializable)
 
@@ -140,6 +138,8 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
         outState.putInt("MINUTE_FROM", minuteFrom.value)
         outState.putInt("HOUR_TO", hourTo.value)
         outState.putInt("MINUTE_TO", minuteTo.value)
+
+        super.onSaveInstanceState(outState)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

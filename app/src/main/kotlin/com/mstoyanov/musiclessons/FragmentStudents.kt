@@ -87,9 +87,9 @@ class FragmentStudents : Fragment(), MenuProvider {
         return rootView
     }
 
-    override fun onSaveInstanceState(state: Bundle) {
-        super.onSaveInstanceState(state)
-        state.putSerializable("STUDENTS", students as Serializable)
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putSerializable("STUDENTS", students as Serializable)
+        super.onSaveInstanceState(outState)
     }
 
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
