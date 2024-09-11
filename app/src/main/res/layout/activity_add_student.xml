@@ -83,6 +83,7 @@
                 android:layout_below="@id/add_phone_number"
                 android:layout_alignParentBottom="true"
                 android:autofillHints="no"
+                android:background="@color/white"
                 android:drawableLeft="@drawable/ic_message_black_24dp"
                 android:drawablePadding="@dimen/drawable_padding"
                 android:hint="@string/notes"
