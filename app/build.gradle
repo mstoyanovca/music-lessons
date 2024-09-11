@@ -9,8 +9,8 @@ android {
         applicationId "com.mstoyanov.music_lessons"
         minSdk = 26
         targetSdk = 34
-        versionCode = 20
-        versionName = "3.9"
+        versionCode = 22
+        versionName = "3.11"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         ksp {
