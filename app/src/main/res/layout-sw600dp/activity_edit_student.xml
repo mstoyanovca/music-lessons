@@ -19,7 +19,7 @@
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/margin_padding_left_right">
+        android:padding="16dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -27,7 +27,7 @@
 
             <EditText
                 android:id="@+id/first_name"
-                android:layout_width="match_parent"
+                android:layout_width="488dp"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:autofillHints="	AUTOFILL_HINT_PERSON_NAME_GIVEN"
@@ -43,7 +43,7 @@
 
             <EditText
                 android:id="@+id/last_name"
-                android:layout_width="match_parent"
+                android:layout_width="488dp"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/first_name"
                 android:autofillHints="AUTOFILL_HINT_PERSON_NAME_FAMILY"
@@ -68,9 +68,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/phone_numbers_list"
-                android:layout_alignParentRight="true"
+                android:layout_alignParentLeft="true"
                 android:layout_marginVertical="@dimen/fab_margin"
-                android:contentDescription="@string/add_fab"
+                android:layout_marginLeft="4dp"
+                android:contentDescription="@string/edit_fab"
                 android:src="@drawable/ic_phone_plus_black_24dp"
                 app:elevation="@dimen/fab_elevation"
                 app:fabSize="mini"
@@ -78,7 +79,7 @@
 
             <EditText
                 android:id="@+id/notes"
-                android:layout_width="match_parent"
+                android:layout_width="488dp"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/add_phone_number"
                 android:layout_alignParentBottom="true"

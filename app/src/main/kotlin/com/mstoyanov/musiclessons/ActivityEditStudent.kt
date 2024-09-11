@@ -67,7 +67,7 @@ class ActivityEditStudent : AppCompatActivity() {
         val button = findViewById<FloatingActionButton>(R.id.add_phone_number)
         button.setOnClickListener {
             student.phoneNumbers.add(PhoneNumber().copy(studentId = student.studentId))
-            adapter.notifyDataSetChanged()
+            adapter.notifyItemInserted(student.phoneNumbers.size - 1)
         }
     }
 

@@ -3,6 +3,7 @@ package com.mstoyanov.musiclessons.model
 import androidx.room.TypeConverter
 
 class PhoneNumberTypeConverter {
+    // do not delete this method, IntelliJ doesn't see it being used, but it is:
     @TypeConverter
     fun toPhoneNumberType(value: String): PhoneNumberType? {
         return when (value) {

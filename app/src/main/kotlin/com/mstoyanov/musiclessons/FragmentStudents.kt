@@ -1,19 +1,26 @@
 package com.mstoyanov.musiclessons
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.DocumentsContract
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -29,8 +36,7 @@ import java.io.Serializable
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-@SuppressLint("NotifyDataSetChanged")
-class FragmentStudents : Fragment() {
+class FragmentStudents : Fragment(), MenuProvider {
     private lateinit var progressBar: ProgressBar
     private lateinit var adapter: AdapterStudents
     private lateinit var students: MutableList<Student>
@@ -38,7 +44,9 @@ class FragmentStudents : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_students, container, false)
-        setHasOptionsMenu(true)
+
+        val menuHost: MenuHost = requireActivity()
+        menuHost.addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
         val title = rootView.findViewById<TextView>(R.id.heading)
         title.setText(R.string.students_label)
@@ -57,7 +65,7 @@ class FragmentStudents : Fragment() {
                     withContext(Dispatchers.Main) {
                         students.sort()
                         progressBar.visibility = View.GONE
-                        adapter.notifyDataSetChanged()
+                        adapter.notifyItemRangeChanged(0, students.size)
                         requireActivity().invalidateOptionsMenu()
                     }
                 }
@@ -79,17 +87,23 @@ class FragmentStudents : Fragment() {
         return rootView
     }
 
-    override fun onSaveInstanceState(state: Bundle) {
-        super.onSaveInstanceState(state)
-        state.putSerializable("STUDENTS", students as Serializable)
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putSerializable("STUDENTS", students as Serializable)
+        super.onSaveInstanceState(outState)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {
+    override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
         menuInflater.inflate(R.menu.menu_export_students, menu)
-        super.onCreateOptionsMenu(menu, menuInflater)
+        if (students.isEmpty()) {
+            menu.findItem(R.id.action_export_students).isEnabled = false
+            menu.findItem(R.id.action_export_students).icon?.alpha = 127
+        } else {
+            menu.findItem(R.id.action_export_students).isEnabled = true
+            menu.findItem(R.id.action_export_students).icon?.alpha = 255
+        }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    override fun onMenuItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_export_students -> {
                 progressBar.visibility = View.VISIBLE
@@ -103,17 +117,7 @@ class FragmentStudents : Fragment() {
                 true
             }
 
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
-    override fun onPrepareOptionsMenu(menu: Menu) {
-        if (students.isEmpty()) {
-            menu.findItem(R.id.action_export_students).isEnabled = false
-            menu.findItem(R.id.action_export_students).icon?.alpha = 127
-        } else {
-            menu.findItem(R.id.action_export_students).isEnabled = true
-            menu.findItem(R.id.action_export_students).icon?.alpha = 255
+            else -> false
         }
     }
 

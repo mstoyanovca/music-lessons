@@ -2,7 +2,7 @@ package com.mstoyanov.musiclessons.model
 
 import java.io.Serializable
 
-enum class Weekday constructor(internal var value: String) : Serializable {
+enum class Weekday(private var value: String) : Serializable {
     MONDAY("Monday"),
     TUESDAY("Tuesday"),
     WEDNESDAY("Wednesday"),

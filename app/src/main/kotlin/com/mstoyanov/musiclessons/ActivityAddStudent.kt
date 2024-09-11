@@ -67,14 +67,14 @@ class ActivityAddStudent : AppCompatActivity() {
         val button = findViewById<FloatingActionButton>(R.id.add_phone_number)
         button.setOnClickListener {
             student.phoneNumbers.add(PhoneNumber())
-            adapter.notifyDataSetChanged()
+            adapter.notifyItemInserted(student.phoneNumbers.size - 1)
         }
     }
 
-    override fun onSaveInstanceState(state: Bundle) {
-        super.onSaveInstanceState(state)
-        state.putSerializable("STUDENT", student)
-        state.putBoolean("PRISTINE", pristine)
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putSerializable("STUDENT", student)
+        outState.putBoolean("PRISTINE", pristine)
+        super.onSaveInstanceState(outState)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -160,7 +160,7 @@ class ActivityAddStudent : AppCompatActivity() {
         override fun afterTextChanged(s: Editable) {
             if (pristine && s.toString().isNotEmpty()) {
                 pristine = false
-                if (student.phoneNumbers.size > 0) adapter.notifyDataSetChanged()
+                if (student.phoneNumbers.size > 0) adapter.notifyItemRangeChanged(0, student.phoneNumbers.size)
             }
             if (nameIsValid()) {
                 firstName.error = null

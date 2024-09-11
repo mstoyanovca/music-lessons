@@ -1,6 +1,5 @@
 package com.mstoyanov.musiclessons
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -27,7 +26,6 @@ class FragmentSchedule : Fragment() {
     private lateinit var lessons: MutableList<Lesson>
     private lateinit var adapter: AdapterLessons
 
-    @SuppressLint("NotifyDataSetChanged")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_schedule, container, false)
 
@@ -53,7 +51,7 @@ class FragmentSchedule : Fragment() {
                         progressBar.visibility = View.GONE
 
                         lessons.addAll(lessonList)
-                        adapter.notifyDataSetChanged()
+                        adapter.notifyItemRangeInserted(0, lessonList.size)
                     }
                 }
             }
@@ -69,16 +67,16 @@ class FragmentSchedule : Fragment() {
         val button = rootView.findViewById<FloatingActionButton>(R.id.add_lesson)
         button.setOnClickListener {
             val intent = Intent(activity, ActivityAddLesson::class.java)
-            intent.putExtra("WEEKDAY", Weekday.values()[position])
+            intent.putExtra("WEEKDAY", Weekday.entries[position])
             startActivity(intent)
         }
 
         return rootView
     }
 
-    override fun onSaveInstanceState(state: Bundle) {
-        super.onSaveInstanceState(state)
-        state.putSerializable("LESSONS", lessons as Serializable)
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putSerializable("LESSONS", lessons as Serializable)
+        super.onSaveInstanceState(outState)
     }
 
     companion object {
