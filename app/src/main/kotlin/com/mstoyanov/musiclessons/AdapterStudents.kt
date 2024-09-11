@@ -27,6 +27,14 @@ class AdapterStudents(private val students: List<Student>, private val fragment:
         return students.size
     }
 
+    override fun getItemViewType(position: Int): Int {
+        return position
+    }
+
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
+
     inner class ViewHolder(val name: TextView, private val fragment: FragmentStudents) : RecyclerView.ViewHolder(name), View.OnClickListener {
         init {
             name.setOnClickListener(this)
