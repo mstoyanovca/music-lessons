@@ -98,9 +98,9 @@ class ActivityLessonDetails : AppCompatActivity() {
         }
     }
 
-    override fun onSaveInstanceState(state: Bundle) {
-        super.onSaveInstanceState(state)
-        state.putSerializable("SAVED_LESSON", lesson)
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putSerializable("SAVED_LESSON", lesson)
+        super.onSaveInstanceState(outState)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

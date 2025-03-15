@@ -45,6 +45,6 @@
             android:contentDescription="@string/edit_fab"
             android:src="@drawable/ic_add_black_24dp"
             app:elevation="@dimen/fab_elevation"
-            app:rippleColor="@color/ripple_color" />
+            app:rippleColor="@color/white" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </RelativeLayout>

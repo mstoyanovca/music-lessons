@@ -31,11 +31,13 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:autofillHints="	AUTOFILL_HINT_PERSON_NAME_GIVEN"
+                android:background="@color/white"
                 android:drawableStart="@drawable/ic_person_black_24dp"
                 android:drawablePadding="@dimen/drawable_padding"
                 android:hint="@string/first_name"
                 android:inputType="textCapWords"
                 android:maxLength="24"
+                android:minHeight="48dp"
                 android:singleLine="true"
                 android:textSize="@dimen/text_size" />
 
@@ -45,13 +47,16 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/first_name"
                 android:autofillHints="AUTOFILL_HINT_PERSON_NAME_FAMILY"
+                android:background="@color/white"
                 android:hint="@string/last_name"
                 android:inputType="textCapWords"
                 android:maxLength="24"
-                android:paddingLeft="44dp"
+                android:minHeight="48dp"
+                android:paddingLeft="42dp"
                 android:singleLine="true"
                 android:textSize="@dimen/text_size" />
 
+<<<<<<< HEAD
             <EditText
                 android:id="@+id/notes"
                 android:layout_width="match_parent"
@@ -74,6 +79,8 @@
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true" />
 
+=======
+>>>>>>> 0219f81ef221ae85f96a6329dc8c1358f75dccb8
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/phone_numbers_list"
                 android:layout_width="match_parent"
@@ -87,12 +94,36 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/phone_numbers_list"
                 android:layout_alignParentRight="true"
-                android:layout_marginTop="@dimen/fab_margin"
+                android:layout_marginVertical="@dimen/fab_margin"
                 android:contentDescription="@string/edit_fab"
                 android:src="@drawable/ic_phone_plus_black_24dp"
                 app:elevation="@dimen/fab_elevation"
                 app:fabSize="mini"
-                app:rippleColor="#ffffff" />
+                app:rippleColor="@color/white" />
+
+            <EditText
+                android:id="@+id/notes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/add_phone_number"
+                android:layout_alignParentBottom="true"
+                android:autofillHints="no"
+                android:background="@color/white"
+                android:drawableLeft="@drawable/ic_message_black_24dp"
+                android:drawablePadding="@dimen/drawable_padding"
+                android:hint="@string/notes"
+                android:inputType="textMultiLine"
+                android:maxLength="128"
+                android:minHeight="48dp"
+                android:textSize="@dimen/text_size" />
+
+            <ProgressBar
+                android:id="@+id/progress_bar"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true" />
         </RelativeLayout>
     </androidx.core.widget.NestedScrollView>
 </LinearLayout>

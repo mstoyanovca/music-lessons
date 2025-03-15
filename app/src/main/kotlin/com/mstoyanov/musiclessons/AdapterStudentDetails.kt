@@ -37,6 +37,14 @@ class AdapterStudentDetails(private val phoneNumbers: List<PhoneNumber>, private
         return phoneNumbers.size
     }
 
+    override fun getItemViewType(position: Int): Int {
+        return position
+    }
+
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
+
     private fun dpToPx(): Int {
         val dp = 16
         val displayMetrics = context.resources.displayMetrics

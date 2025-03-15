@@ -3,8 +3,17 @@ package com.mstoyanov.musiclessons
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.*
-import android.widget.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.NumberPicker
+import android.widget.ProgressBar
+import android.widget.Spinner
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -21,7 +30,7 @@ import kotlinx.coroutines.withContext
 import java.io.Serializable
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
-import java.util.*
+import java.util.Arrays
 
 class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private lateinit var hourFrom: NumberPicker
@@ -63,7 +72,7 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
                 position: Int,
                 id: Long
             ) {
-                lesson.weekday = Weekday.values()[position]
+                lesson.weekday = Weekday.entries.toTypedArray()[position]
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {
@@ -127,16 +136,16 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
         weekday.setSelection(lesson.weekday.ordinal)
     }
 
-    override fun onSaveInstanceState(state: Bundle) {
-        super.onSaveInstanceState(state)
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putSerializable("LESSON", lesson)
+        outState.putSerializable("STUDENTS", studentList as Serializable)
 
-        state.putSerializable("LESSON", lesson)
-        state.putSerializable("STUDENTS", studentList as Serializable)
+        outState.putInt("HOUR_FROM", hourFrom.value)
+        outState.putInt("MINUTE_FROM", minuteFrom.value)
+        outState.putInt("HOUR_TO", hourTo.value)
+        outState.putInt("MINUTE_TO", minuteTo.value)
 
-        state.putInt("HOUR_FROM", hourFrom.value)
-        state.putInt("MINUTE_FROM", minuteFrom.value)
-        state.putInt("HOUR_TO", hourTo.value)
-        state.putInt("MINUTE_TO", minuteTo.value)
+        super.onSaveInstanceState(outState)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -151,16 +160,19 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
                 NavUtils.navigateUpFromSameTask(this)
                 true
             }
+
             R.id.action_update -> {
                 setTime()
                 progressBar.visibility = View.VISIBLE
                 updateLesson()
                 true
             }
+
             R.id.action_delete -> {
                 createAlertDialog()
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -199,8 +211,8 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
     private val minuteFromOnValueChangedListener =
         NumberPicker.OnValueChangeListener { _, oldValue, newValue ->
             // overflow:
-            if (oldValue == 3 && newValue == 0) hourFrom.value = hourFrom.value + 1
-            if (oldValue == 0 && newValue == 3) hourFrom.value = hourFrom.value - 1
+            if (oldValue == 3 && newValue == 0) hourFrom.value += 1
+            if (oldValue == 0 && newValue == 3) hourFrom.value -= 1
             // max value:
             if (newValue == 3 && hourFrom.value == 21) minuteFrom.value = 2
             synchronizeTimeToWithTimeFrom()
@@ -219,8 +231,8 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
     private val minuteToOnValueChangedListener =
         NumberPicker.OnValueChangeListener { _, oldValue, newValue ->
             // overflow:
-            if (oldValue == 3 && newValue == 0) hourTo.value = hourTo.value + 1
-            if (oldValue == 0 && newValue == 3) hourTo.value = hourTo.value - 1
+            if (oldValue == 3 && newValue == 0) hourTo.value += 1
+            if (oldValue == 0 && newValue == 3) hourTo.value -= 1
             // 8:30 is minimum value:
             if (hourTo.value == 8 && (newValue == 0 || newValue == 1)) minuteTo.value = 2
             // 22:00 is maximum value:

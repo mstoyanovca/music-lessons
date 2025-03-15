@@ -7,7 +7,11 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.EditText
+import android.widget.ImageButton
+import android.widget.Spinner
 import androidx.recyclerview.widget.RecyclerView
 import com.mstoyanov.musiclessons.model.PhoneNumber
 import com.mstoyanov.musiclessons.model.PhoneNumberType
@@ -24,13 +28,21 @@ class AdapterAddStudent(var phoneNumbers: MutableList<PhoneNumber>) : RecyclerVi
         holder.type.setSelection(phoneNumbers[position].type.ordinal)
         holder.delete.setOnClickListener {
             phoneNumbers.remove(phoneNumbers[position])
-            notifyDataSetChanged()
+            notifyItemRemoved(position)
             if (phoneNumbers.size == 0) (holder.context as ActivityAddStudent).invalidateOptionsMenu()
         }
     }
 
     override fun getItemCount(): Int {
         return phoneNumbers.size
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return position
+    }
+
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
     }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -48,7 +60,7 @@ class AdapterAddStudent(var phoneNumbers: MutableList<PhoneNumber>) : RecyclerVi
             type.adapter = adapter
             type.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                    phoneNumbers[bindingAdapterPosition].type = PhoneNumberType.values()[position]
+                    phoneNumbers[bindingAdapterPosition].type = PhoneNumberType.entries.toTypedArray()[position]
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>) {

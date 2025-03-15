@@ -32,6 +32,14 @@ class AdapterLessons(private val lessons: List<Lesson>) : RecyclerView.Adapter<A
         return lessons.size
     }
 
+    override fun getItemViewType(position: Int): Int {
+        return position
+    }
+
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
+
     inner class ViewHolder(view: View, private val lessons: List<Lesson>) : RecyclerView.ViewHolder(view), View.OnClickListener {
         val time: TextView
         val name: TextView

@@ -112,6 +112,6 @@
             app:fabSize="normal"
             app:layout_anchor="@id/nested_scroll_view"
             app:layout_anchorGravity="bottom|right"
-            app:rippleColor="@color/ripple_color" />
+            app:rippleColor="@color/white" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
