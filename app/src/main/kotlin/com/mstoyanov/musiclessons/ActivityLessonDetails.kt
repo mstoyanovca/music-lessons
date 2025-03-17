@@ -22,8 +22,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.mstoyanov.musiclessons.ActivityStudentDetails.Companion.PERMISSION_REQUEST_CALL_PHONE
-import com.mstoyanov.musiclessons.global.Functions.formatter
-import com.mstoyanov.musiclessons.global.Functions.serializable
+import com.mstoyanov.musiclessons.global.Functions.dateTimeFormatter
 import com.mstoyanov.musiclessons.model.Lesson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -52,18 +51,18 @@ class ActivityLessonDetails : AppCompatActivity() {
         val divider = DividerItemDecoration(phoneNumbers.context, layoutManager.orientation)
         phoneNumbers.addItemDecoration(divider)
 
-        if (savedInstanceState == null && intent.serializable<Lesson>("LESSON") != null) {
+        if (savedInstanceState == null && intent.getSerializableExtra("LESSON", Lesson::class.java) != null) {
             // coming from AdapterLessons:
-            lesson = intent.serializable("LESSON")!!
+            lesson = intent.getSerializableExtra("LESSON", Lesson::class.java)!!
             findPhoneNumbersByStudentId()
-        } else if (savedInstanceState == null && intent.serializable<Lesson>("UPDATED_LESSON") != null) {
+        } else if (savedInstanceState == null && intent.getSerializableExtra("UPDATED_LESSON", Lesson::class.java) != null) {
             // coming from ActivityEditLesson:
-            lesson = intent.serializable("UPDATED_LESSON")!!
+            lesson = intent.getSerializableExtra("UPDATED_LESSON", Lesson::class.java)!!
             findPhoneNumbersByStudentId()
         } else if (savedInstanceState != null) {
             // after screen rotation:
             progressBar.visibility = View.GONE
-            lesson = savedInstanceState.serializable("SAVED_LESSON")!!
+            lesson = savedInstanceState.getSerializable("SAVED_LESSON", Lesson::class.java)!!
             val adapter = AdapterLessonDetails(lesson.student.phoneNumbers, this)
             phoneNumbers.adapter = adapter
         }
@@ -72,8 +71,8 @@ class ActivityLessonDetails : AppCompatActivity() {
         weekday.text = lesson.weekday.displayValue()
 
         val time = findViewById<TextView>(R.id.time)
-        val timeFrom = formatter.format(lesson.timeFrom)
-        val timeTo = formatter.format(lesson.timeTo)
+        val timeFrom = dateTimeFormatter.format(lesson.timeFrom)
+        val timeTo = dateTimeFormatter.format(lesson.timeTo)
         time.text = StringBuilder().append(timeFrom).append(getString(R.string.dash)).append(timeTo).toString()
 
         val name = findViewById<TextView>(R.id.name)

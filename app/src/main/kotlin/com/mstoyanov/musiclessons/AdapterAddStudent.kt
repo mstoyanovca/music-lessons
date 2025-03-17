@@ -12,8 +12,7 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Spinner
 import androidx.recyclerview.widget.RecyclerView
-import com.google.i18n.phonenumbers.AsYouTypeFormatter
-import com.google.i18n.phonenumbers.PhoneNumberUtil
+import com.mstoyanov.musiclessons.global.Functions.formatPhoneNumber
 import com.mstoyanov.musiclessons.model.PhoneNumber
 import com.mstoyanov.musiclessons.model.PhoneNumberType
 
@@ -70,8 +69,7 @@ class AdapterAddStudent(var phoneNumbers: MutableList<PhoneNumber>) : RecyclerVi
         }
 
         private inner class PhoneNumberTextWatcher : TextWatcher {
-            var ignore: Boolean = false
-            val formatter: AsYouTypeFormatter = PhoneNumberUtil.getInstance().getAsYouTypeFormatter("US")
+            private var ignore: Boolean = false
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 // do nothing
@@ -88,20 +86,11 @@ class AdapterAddStudent(var phoneNumbers: MutableList<PhoneNumber>) : RecyclerVi
                     context.invokeFirstNameTextWatcher()
                 }
                 if (s.isNotEmpty()) {
-                    val builder: StringBuilder = StringBuilder()
-                    for (c in s.toString()) if (c.isDigit()) builder.append(c)
-                    val digits = builder.toString()
-                    val trimmed = if (digits.length >= 10) digits.substring(0..9) else digits
-                    var formattedPhoneNumber = ""
-                    formatter.clear()
-                    for (c in trimmed.toCharArray()) {
-                        formattedPhoneNumber = formatter.inputDigit(c)
-                    }
                     ignore = true
-                    s.replace(0, s.length, formattedPhoneNumber)
+                    s.replace(0, s.length, formatPhoneNumber(s))
                     ignore = false
 
-                    phoneNumbers[bindingAdapterPosition].number = s.toString().trim()
+                    phoneNumbers[bindingAdapterPosition].number = s.toString()
                     phoneNumbers[bindingAdapterPosition].isValid = true
                     number.error = null
                 } else {

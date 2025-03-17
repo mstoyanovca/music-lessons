@@ -1,7 +1,6 @@
 package com.mstoyanov.musiclessons
 
 import android.content.Context
-import android.telephony.PhoneNumberFormattingTextWatcher
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -13,6 +12,7 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Spinner
 import androidx.recyclerview.widget.RecyclerView
+import com.mstoyanov.musiclessons.global.Functions.formatPhoneNumber
 import com.mstoyanov.musiclessons.model.PhoneNumber
 import com.mstoyanov.musiclessons.model.PhoneNumberType
 
@@ -52,7 +52,6 @@ class AdapterEditStudent(var phoneNumbers: MutableList<PhoneNumber>) : RecyclerV
         val context: Context = view.context
 
         init {
-            number.addTextChangedListener(PhoneNumberFormattingTextWatcher())
             number.addTextChangedListener(PhoneNumberTextWatcher())
 
             val adapter = ArrayAdapter.createFromResource(
@@ -74,6 +73,7 @@ class AdapterEditStudent(var phoneNumbers: MutableList<PhoneNumber>) : RecyclerV
         }
 
         private inner class PhoneNumberTextWatcher : TextWatcher {
+            private var ignore: Boolean = false
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 // do nothing
@@ -84,8 +84,13 @@ class AdapterEditStudent(var phoneNumbers: MutableList<PhoneNumber>) : RecyclerV
             }
 
             override fun afterTextChanged(s: Editable) {
+                if (ignore) return
                 if (s.isNotEmpty()) {
-                    phoneNumbers[bindingAdapterPosition].number = s.toString().trim()
+                    ignore = true
+                    s.replace(0, s.length, formatPhoneNumber(s))
+                    ignore = false
+
+                    phoneNumbers[bindingAdapterPosition].number = s.toString()
                     phoneNumbers[bindingAdapterPosition].isValid = true
                     number.error = null
                 } else {

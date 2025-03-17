@@ -18,8 +18,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.NavUtils
 import androidx.lifecycle.lifecycleScope
-import com.mstoyanov.musiclessons.global.Functions.formatter
-import com.mstoyanov.musiclessons.global.Functions.serializable
+import com.mstoyanov.musiclessons.global.Functions.dateTimeFormatter
 import com.mstoyanov.musiclessons.model.Lesson
 import com.mstoyanov.musiclessons.model.Student
 import com.mstoyanov.musiclessons.model.Weekday
@@ -49,7 +48,7 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_lesson)
 
-        weekday = intent.serializable("WEEKDAY")!!
+        weekday = intent.getSerializableExtra("WEEKDAY", Weekday::class.java)!!
         lesson = Lesson()
         studentList = mutableListOf()
 
@@ -114,9 +113,9 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
             // after screen rotation:
             progressBar.visibility = View.GONE
 
-            lesson = savedInstanceState.serializable("LESSON")!!
+            lesson = savedInstanceState.getSerializable("LESSON", Lesson::class.java)!!
 
-            studentList = savedInstanceState.serializable("STUDENTS")!!
+            studentList = savedInstanceState.getSerializable("STUDENTS", ArrayList<Student>()::class.java)!!
             studentListIsEmpty = studentList.isEmpty()
 
             hourFrom.value = savedInstanceState.getInt("HOUR_FROM")
@@ -275,8 +274,8 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
         val timeFromString = hourFrom.value.toString() + ":" + minutes[minuteFrom.value]
         val timeToString = hourTo.value.toString() + ":" + minutes[minuteTo.value]
 
-        val timeFrom = LocalTime.parse(timeFromString, formatter)
-        val timeTo = LocalTime.parse(timeToString, formatter)
+        val timeFrom = LocalTime.parse(timeFromString, dateTimeFormatter)
+        val timeTo = LocalTime.parse(timeToString, dateTimeFormatter)
 
         lesson.timeFrom = timeFrom
         lesson.timeTo = timeTo

@@ -20,7 +20,6 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.mstoyanov.musiclessons.global.Functions.serializable
 import com.mstoyanov.musiclessons.model.Student
 
 class ActivityStudentDetails : AppCompatActivity() {
@@ -36,13 +35,13 @@ class ActivityStudentDetails : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_student_details)
 
-        if (intent.serializable<Student>("STUDENT") != null) {
+        if (intent.getSerializableExtra("STUDENT", Student::class.java) != null) {
             // coming from AdapterStudents:
-            student = intent.serializable("STUDENT")!!
+            student = intent.getSerializableExtra("STUDENT", Student::class.java)!!
             updatedStudentId = 0L
-        } else if (intent.serializable<Student>("UPDATED_STUDENT") != null) {
+        } else if (intent.getSerializableExtra("UPDATED_STUDENT", Student::class.java) != null) {
             // coming from ActivityEditStudent:
-            student = intent.serializable("UPDATED_STUDENT")!!
+            student = intent.getSerializableExtra("UPDATED_STUDENT", Student::class.java)!!
             updatedStudentId = student.studentId
         }
 

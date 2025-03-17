@@ -17,7 +17,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.mstoyanov.musiclessons.global.Functions.serializable
 import com.mstoyanov.musiclessons.model.PhoneNumber
 import com.mstoyanov.musiclessons.model.Student
 import kotlinx.coroutines.Dispatchers
@@ -41,7 +40,7 @@ class ActivityAddStudent : AppCompatActivity() {
             student = Student()
             student.phoneNumbers.add(PhoneNumber())
         } else {
-            student = savedInstanceState.serializable("STUDENT")!!
+            student = savedInstanceState.getSerializable("STUDENT", Student::class.java)!!
             pristine = savedInstanceState.getBoolean("PRISTINE")
         }
 
@@ -158,7 +157,7 @@ class ActivityAddStudent : AppCompatActivity() {
         }
 
         override fun afterTextChanged(s: Editable) {
-            if (pristine && s.toString().isNotEmpty()) {
+            if (pristine && s.isNotEmpty()) {
                 pristine = false
                 if (student.phoneNumbers.size > 0) adapter.notifyItemRangeChanged(0, student.phoneNumbers.size)
             }
