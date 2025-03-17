@@ -53,7 +53,7 @@ class AdapterEditStudent(var phoneNumbers: MutableList<PhoneNumber>) : RecyclerV
 
         init {
             number.addTextChangedListener(PhoneNumberFormattingTextWatcher())
-            number.addTextChangedListener(NumberTextWatcher())
+            number.addTextChangedListener(PhoneNumberTextWatcher())
 
             val adapter = ArrayAdapter.createFromResource(
                 view.context,
@@ -73,7 +73,7 @@ class AdapterEditStudent(var phoneNumbers: MutableList<PhoneNumber>) : RecyclerV
             }
         }
 
-        private inner class NumberTextWatcher : TextWatcher {
+        private inner class PhoneNumberTextWatcher : TextWatcher {
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 // do nothing
@@ -84,7 +84,7 @@ class AdapterEditStudent(var phoneNumbers: MutableList<PhoneNumber>) : RecyclerV
             }
 
             override fun afterTextChanged(s: Editable) {
-                if (s.toString().trim().isNotEmpty()) {
+                if (s.isNotEmpty()) {
                     phoneNumbers[bindingAdapterPosition].number = s.toString().trim()
                     phoneNumbers[bindingAdapterPosition].isValid = true
                     number.error = null
