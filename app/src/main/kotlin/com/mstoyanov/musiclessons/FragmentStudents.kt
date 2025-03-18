@@ -25,6 +25,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.mstoyanov.musiclessons.global.Functions.serializable
 import com.mstoyanov.musiclessons.model.Student
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -70,7 +71,7 @@ class FragmentStudents : Fragment(), MenuProvider {
                 }
             }
         } else {
-            students.addAll(savedInstanceState.getSerializable("STUDENTS", ArrayList<Student>()::class.java)!!)
+            students.addAll(savedInstanceState.serializable("STUDENTS")!!)
             progressBar.visibility = View.GONE
         }
 

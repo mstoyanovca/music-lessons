@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.mstoyanov.musiclessons.ActivityStudentDetails.Companion.PERMISSION_REQUEST_CALL_PHONE
 import com.mstoyanov.musiclessons.global.Functions.dateTimeFormatter
+import com.mstoyanov.musiclessons.global.Functions.serializable
 import com.mstoyanov.musiclessons.model.Lesson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -51,18 +52,18 @@ class ActivityLessonDetails : AppCompatActivity() {
         val divider = DividerItemDecoration(phoneNumbers.context, layoutManager.orientation)
         phoneNumbers.addItemDecoration(divider)
 
-        if (savedInstanceState == null && intent.getSerializableExtra("LESSON", Lesson::class.java) != null) {
+        if (savedInstanceState == null && intent.serializable<Lesson>("LESSON") != null) {
             // coming from AdapterLessons:
-            lesson = intent.getSerializableExtra("LESSON", Lesson::class.java)!!
+            lesson = intent.serializable("LESSON")!!
             findPhoneNumbersByStudentId()
-        } else if (savedInstanceState == null && intent.getSerializableExtra("UPDATED_LESSON", Lesson::class.java) != null) {
+        } else if (savedInstanceState == null && intent.serializable<Lesson>("UPDATED_LESSON") != null) {
             // coming from ActivityEditLesson:
-            lesson = intent.getSerializableExtra("UPDATED_LESSON", Lesson::class.java)!!
+            lesson = intent.serializable("UPDATED_LESSON")!!
             findPhoneNumbersByStudentId()
         } else if (savedInstanceState != null) {
             // after screen rotation:
             progressBar.visibility = View.GONE
-            lesson = savedInstanceState.getSerializable("SAVED_LESSON", Lesson::class.java)!!
+            lesson = savedInstanceState.serializable("SAVED_LESSON")!!
             val adapter = AdapterLessonDetails(lesson.student.phoneNumbers, this)
             phoneNumbers.adapter = adapter
         }

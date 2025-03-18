@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.mstoyanov.musiclessons.global.Functions.serializable
 import com.mstoyanov.musiclessons.model.Lesson
 import com.mstoyanov.musiclessons.model.LessonWithStudent
 import com.mstoyanov.musiclessons.model.Weekday
@@ -55,7 +56,7 @@ class FragmentSchedule : Fragment() {
                 }
             }
         } else {
-            lessons.addAll(savedInstanceState.getSerializable("LESSONS", ArrayList<Lesson>()::class.java)!!)
+            lessons.addAll(savedInstanceState.serializable("LESSONS")!!)
             progressBar.visibility = View.GONE
         }
 

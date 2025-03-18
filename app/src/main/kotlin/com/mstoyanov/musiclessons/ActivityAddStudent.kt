@@ -17,6 +17,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.mstoyanov.musiclessons.global.Functions.serializable
 import com.mstoyanov.musiclessons.model.PhoneNumber
 import com.mstoyanov.musiclessons.model.Student
 import kotlinx.coroutines.Dispatchers
@@ -40,7 +41,7 @@ class ActivityAddStudent : AppCompatActivity() {
             student = Student()
             student.phoneNumbers.add(PhoneNumber())
         } else {
-            student = savedInstanceState.getSerializable("STUDENT", Student::class.java)!!
+            student = savedInstanceState.serializable("STUDENT")!!
             pristine = savedInstanceState.getBoolean("PRISTINE")
         }
 

@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
+import com.mstoyanov.musiclessons.global.Functions.serializable
 import com.mstoyanov.musiclessons.model.Weekday
 
 class ActivityMain : AppCompatActivity() {
@@ -42,9 +43,9 @@ class ActivityMain : AppCompatActivity() {
             intent.getBooleanExtra(resources.getString(R.string.export_students), false)
         ) {
             tabLayout.getTabAt(1)!!.select()
-        } else if (intent.getSerializableExtra("WEEKDAY", Weekday::class.java) != null) {
+        } else if (intent.serializable<Weekday>("WEEKDAY") != null) {
             // returning from ActivityAddLesson, ActivityLessonDetails or ActivityEditLesson after deleting a lesson:
-            val weekday = intent.getSerializableExtra("WEEKDAY", Weekday::class.java)!!
+            val weekday = intent.serializable<Weekday>("WEEKDAY")!!
             viewPager.currentItem = weekday.ordinal
         }
 

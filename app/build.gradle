@@ -7,7 +7,7 @@ android {
 
     defaultConfig {
         applicationId "com.mstoyanov.music_lessons"
-        minSdk = 33
+        minSdk = 30
         targetSdk = 35
         versionCode = 24
         versionName = "3.13"

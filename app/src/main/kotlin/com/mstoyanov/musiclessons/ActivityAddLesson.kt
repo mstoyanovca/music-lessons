@@ -19,6 +19,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.app.NavUtils
 import androidx.lifecycle.lifecycleScope
 import com.mstoyanov.musiclessons.global.Functions.dateTimeFormatter
+import com.mstoyanov.musiclessons.global.Functions.serializable
 import com.mstoyanov.musiclessons.model.Lesson
 import com.mstoyanov.musiclessons.model.Student
 import com.mstoyanov.musiclessons.model.Weekday
@@ -48,7 +49,7 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_lesson)
 
-        weekday = intent.getSerializableExtra("WEEKDAY", Weekday::class.java)!!
+        weekday = intent.serializable("WEEKDAY")!!
         lesson = Lesson()
         studentList = mutableListOf()
 
@@ -113,9 +114,9 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
             // after screen rotation:
             progressBar.visibility = View.GONE
 
-            lesson = savedInstanceState.getSerializable("LESSON", Lesson::class.java)!!
+            lesson = savedInstanceState.serializable("LESSON")!!
 
-            studentList = savedInstanceState.getSerializable("STUDENTS", ArrayList<Student>()::class.java)!!
+            studentList = savedInstanceState.serializable("STUDENTS")!!
             studentListIsEmpty = studentList.isEmpty()
 
             hourFrom.value = savedInstanceState.getInt("HOUR_FROM")
