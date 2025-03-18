@@ -22,7 +22,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.mstoyanov.musiclessons.ActivityStudentDetails.Companion.PERMISSION_REQUEST_CALL_PHONE
-import com.mstoyanov.musiclessons.global.Functions.formatter
+import com.mstoyanov.musiclessons.global.Functions.dateTimeFormatter
 import com.mstoyanov.musiclessons.global.Functions.serializable
 import com.mstoyanov.musiclessons.model.Lesson
 import kotlinx.coroutines.Dispatchers
@@ -72,8 +72,8 @@ class ActivityLessonDetails : AppCompatActivity() {
         weekday.text = lesson.weekday.displayValue()
 
         val time = findViewById<TextView>(R.id.time)
-        val timeFrom = formatter.format(lesson.timeFrom)
-        val timeTo = formatter.format(lesson.timeTo)
+        val timeFrom = dateTimeFormatter.format(lesson.timeFrom)
+        val timeTo = dateTimeFormatter.format(lesson.timeTo)
         time.text = StringBuilder().append(timeFrom).append(getString(R.string.dash)).append(timeTo).toString()
 
         val name = findViewById<TextView>(R.id.name)

@@ -158,7 +158,7 @@ class ActivityAddStudent : AppCompatActivity() {
         }
 
         override fun afterTextChanged(s: Editable) {
-            if (pristine && s.toString().isNotEmpty()) {
+            if (pristine && s.isNotEmpty()) {
                 pristine = false
                 if (student.phoneNumbers.size > 0) adapter.notifyItemRangeChanged(0, student.phoneNumbers.size)
             }

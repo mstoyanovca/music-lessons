@@ -19,7 +19,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.NavUtils
 import androidx.lifecycle.lifecycleScope
-import com.mstoyanov.musiclessons.global.Functions.formatter
+import com.mstoyanov.musiclessons.global.Functions.dateTimeFormatter
 import com.mstoyanov.musiclessons.global.Functions.serializable
 import com.mstoyanov.musiclessons.model.Lesson
 import com.mstoyanov.musiclessons.model.Student
@@ -285,8 +285,8 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
         val timeFromString = hourFrom.value.toString() + ":" + minutes[minuteFrom.value]
         val timeToString = hourTo.value.toString() + ":" + minutes[minuteTo.value]
 
-        val timeFrom = LocalTime.parse(timeFromString, formatter)
-        val timeTo = LocalTime.parse(timeToString, formatter)
+        val timeFrom = LocalTime.parse(timeFromString, dateTimeFormatter)
+        val timeTo = LocalTime.parse(timeToString, dateTimeFormatter)
 
         lesson.timeFrom = timeFrom
         lesson.timeTo = timeTo

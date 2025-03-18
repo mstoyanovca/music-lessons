@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.mstoyanov.musiclessons.global.Functions.formatter
+import com.mstoyanov.musiclessons.global.Functions.dateTimeFormatter
 import com.mstoyanov.musiclessons.model.Lesson
 
 class AdapterLessons(private val lessons: List<Lesson>) : RecyclerView.Adapter<AdapterLessons.ViewHolder>() {
@@ -17,8 +17,8 @@ class AdapterLessons(private val lessons: List<Lesson>) : RecyclerView.Adapter<A
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val timeFrom = formatter.format(lessons[position].timeFrom)
-        val timeTo = formatter.format(lessons[position].timeTo)
+        val timeFrom = dateTimeFormatter.format(lessons[position].timeFrom)
+        val timeTo = dateTimeFormatter.format(lessons[position].timeTo)
 
         holder.time.text = StringBuilder().append(timeFrom).append(holder.context.getString(R.string.dash)).append(timeTo).toString()
 

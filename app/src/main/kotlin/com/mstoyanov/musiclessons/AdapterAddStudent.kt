@@ -1,7 +1,6 @@
 package com.mstoyanov.musiclessons
 
 import android.content.Context
-import android.telephony.PhoneNumberFormattingTextWatcher
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -13,6 +12,7 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Spinner
 import androidx.recyclerview.widget.RecyclerView
+import com.mstoyanov.musiclessons.global.Functions.formatPhoneNumber
 import com.mstoyanov.musiclessons.model.PhoneNumber
 import com.mstoyanov.musiclessons.model.PhoneNumberType
 
@@ -52,7 +52,6 @@ class AdapterAddStudent(var phoneNumbers: MutableList<PhoneNumber>) : RecyclerVi
         val context: Context = view.context
 
         init {
-            number.addTextChangedListener(PhoneNumberFormattingTextWatcher())
             number.addTextChangedListener(PhoneNumberTextWatcher())
 
             val adapter = ArrayAdapter.createFromResource(view.context, R.array.phone_types, R.layout.phone_type_item)
@@ -70,6 +69,7 @@ class AdapterAddStudent(var phoneNumbers: MutableList<PhoneNumber>) : RecyclerVi
         }
 
         private inner class PhoneNumberTextWatcher : TextWatcher {
+            private var ignore: Boolean = false
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 // do nothing
@@ -80,12 +80,17 @@ class AdapterAddStudent(var phoneNumbers: MutableList<PhoneNumber>) : RecyclerVi
             }
 
             override fun afterTextChanged(s: Editable) {
-                if ((context as ActivityAddStudent).pristine && s.toString().isNotEmpty()) {
+                if (ignore) return
+                if ((context as ActivityAddStudent).pristine && s.isNotEmpty()) {
                     context.pristine = false
                     context.invokeFirstNameTextWatcher()
                 }
-                if (s.toString().trim().isNotEmpty()) {
-                    phoneNumbers[bindingAdapterPosition].number = s.toString().trim()
+                if (s.isNotEmpty()) {
+                    ignore = true
+                    s.replace(0, s.length, formatPhoneNumber(s))
+                    ignore = false
+
+                    phoneNumbers[bindingAdapterPosition].number = s.toString()
                     phoneNumbers[bindingAdapterPosition].isValid = true
                     number.error = null
                 } else {

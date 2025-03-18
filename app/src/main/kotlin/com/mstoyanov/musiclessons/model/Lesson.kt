@@ -2,7 +2,7 @@ package com.mstoyanov.musiclessons.model
 
 import androidx.room.*
 import androidx.room.ForeignKey.Companion.CASCADE
-import com.mstoyanov.musiclessons.global.Functions.formatter
+import com.mstoyanov.musiclessons.global.Functions.dateTimeFormatter
 import java.io.Serializable
 import java.time.LocalTime
 
@@ -28,8 +28,8 @@ data class Lesson(
     constructor() : this(
         lessonId = 0L,
         weekday = Weekday.MONDAY,
-        timeFrom = LocalTime.parse("16:00", formatter),
-        timeTo = LocalTime.parse("16:30", formatter),
+        timeFrom = LocalTime.parse("16:00", dateTimeFormatter),
+        timeTo = LocalTime.parse("16:30", dateTimeFormatter),
         studentId = 0L,
         student = Student()
     )
