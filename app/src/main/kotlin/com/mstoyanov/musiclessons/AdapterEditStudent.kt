@@ -18,18 +18,18 @@ import com.mstoyanov.musiclessons.model.PhoneNumberType
 
 class AdapterEditStudent(var phoneNumbers: MutableList<PhoneNumber>) : RecyclerView.Adapter<AdapterEditStudent.ViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdapterEditStudent.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val phoneNumberItem = LayoutInflater.from(parent.context).inflate(R.layout.phone_item_add_st, parent, false)
         return ViewHolder(phoneNumberItem)
     }
 
-    override fun onBindViewHolder(holder: AdapterEditStudent.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.number.setText(phoneNumbers[position].number.trim())
         holder.type.setSelection(phoneNumbers[position].type.ordinal)
         holder.delete.setOnClickListener {
             phoneNumbers.remove(phoneNumbers[position])
             notifyItemRemoved(position)
-            if (phoneNumbers.size == 0) (holder.context as ActivityEditStudent).invalidateOptionsMenu()
+            if (phoneNumbers.isEmpty()) (holder.context as ActivityEditStudent).invalidateOptionsMenu()
         }
     }
 

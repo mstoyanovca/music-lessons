@@ -2,13 +2,13 @@ package com.mstoyanov.musiclessons
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.mstoyanov.musiclessons.model.PhoneNumber
 import kotlin.math.roundToInt
@@ -55,7 +55,7 @@ class AdapterLessonDetails(private val phoneNumbers: List<PhoneNumber>, private 
             number.setOnClickListener { (view.context as ActivityLessonDetails).dial(number.text.toString()) }
             sms.setOnClickListener {
                 val intent = Intent(Intent.ACTION_SENDTO).apply {
-                    data = Uri.parse("smsto:" + number.text.toString())
+                    data = ("smsto:" + number.text.toString()).toUri()
                     putExtra("type", "text/plain")
                 }
                 view.context.startActivity(intent)

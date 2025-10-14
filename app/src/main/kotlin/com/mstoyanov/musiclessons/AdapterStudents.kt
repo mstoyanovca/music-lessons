@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class AdapterStudents(private val students: List<Student>, private val fragment: FragmentStudents) : RecyclerView.Adapter<AdapterStudents.ViewHolder>() {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdapterStudents.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val name = LayoutInflater.from(parent.context).inflate(R.layout.student_item, parent, false) as TextView
         return ViewHolder(name, fragment)
     }
