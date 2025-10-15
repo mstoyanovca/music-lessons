@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -16,6 +15,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NavUtils
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -120,7 +120,7 @@ class ActivityStudentDetails : AppCompatActivity() {
             return
         }
         val intent = Intent(Intent.ACTION_CALL).apply {
-            data = Uri.parse("tel:$number")
+            data = "tel:$number".toUri()
         }
         startActivity(intent)
     }

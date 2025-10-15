@@ -160,7 +160,7 @@ class ActivityAddStudent : AppCompatActivity() {
         override fun afterTextChanged(s: Editable) {
             if (pristine && s.isNotEmpty()) {
                 pristine = false
-                if (student.phoneNumbers.size > 0) adapter.notifyItemRangeChanged(0, student.phoneNumbers.size)
+                if (student.phoneNumbers.isNotEmpty()) adapter.notifyItemRangeChanged(0, student.phoneNumbers.size)
             }
             if (nameIsValid()) {
                 firstName.error = null

@@ -9,8 +9,8 @@ android {
         applicationId "com.mstoyanov.music_lessons"
         minSdk = 30
         targetSdk = 35
-        versionCode = 24
-        versionName = "3.13"
+        versionCode = 25
+        versionName = "3.14"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         ksp {
@@ -24,8 +24,8 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8.toString()
+    kotlin {
+        jvmToolchain(17)
     }
     sourceSets {
         androidTest.assets.srcDirs += files("$projectDir/schemas".toString())
@@ -34,17 +34,18 @@ android {
         androidTest.java.srcDirs += 'src/androidTest/kotlin'
     }
     dependencies {
-        def appcompat_version = "1.7.0"
-        def test_version = "1.6.2"
-        def room_version = "2.6.1"
-        def espresso_version = "3.6.1"
+        def kotlin_version = "2.2.0"
+        def appcompat_version = "1.7.1"
+        def test_version = "1.7.0"
+        def room_version = "2.8.2"
+        def espresso_version = "3.7.0"
 
         implementation fileTree(dir: 'libs', include: ['*.jar'])
 
         implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
         implementation "androidx.appcompat:appcompat:$appcompat_version"
-        implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.8.7"
-        implementation "com.google.android.material:material:1.12.0"
+        implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.9.4"
+        implementation "com.google.android.material:material:1.13.0"
         implementation "androidx.viewpager2:viewpager2:1.1.0"
         implementation "androidx.recyclerview:recyclerview:1.4.0"
         implementation "androidx.constraintlayout:constraintlayout:2.2.1"
@@ -53,21 +54,21 @@ android {
         annotationProcessor "androidx.room:room-compiler:$room_version"
         ksp "androidx.room:room-compiler:$room_version"
         implementation "androidx.room:room-ktx:$room_version"
-        implementation "com.googlecode.libphonenumber:libphonenumber:8.13.52"
+        implementation "com.googlecode.libphonenumber:libphonenumber:9.0.16"
 
         // unit tests:
         testImplementation "junit:junit:4.13.2"
-        androidTestImplementation "androidx.test.ext:junit-ktx:1.2.1"
+        androidTestImplementation "androidx.test.ext:junit-ktx:1.3.0"
         // instrumentation tests:
         androidTestImplementation "androidx.test:runner:$test_version"
         androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
-        androidTestImplementation 'androidx.test.espresso:espresso-intents:3.6.1'
+        androidTestImplementation "androidx.test.espresso:espresso-intents:$espresso_version"
         // Room persistence:
         testImplementation "androidx.room:room-testing:$room_version"
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     namespace 'com.mstoyanov.musiclessons'
 }

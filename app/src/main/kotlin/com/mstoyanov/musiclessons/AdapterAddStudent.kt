@@ -18,7 +18,7 @@ import com.mstoyanov.musiclessons.model.PhoneNumberType
 
 class AdapterAddStudent(var phoneNumbers: MutableList<PhoneNumber>) : RecyclerView.Adapter<AdapterAddStudent.ViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdapterAddStudent.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val phoneNumberItem = LayoutInflater.from(parent.context).inflate(R.layout.phone_item_add_st, parent, false)
         return ViewHolder(phoneNumberItem)
     }
@@ -29,7 +29,7 @@ class AdapterAddStudent(var phoneNumbers: MutableList<PhoneNumber>) : RecyclerVi
         holder.delete.setOnClickListener {
             phoneNumbers.remove(phoneNumbers[position])
             notifyItemRemoved(position)
-            if (phoneNumbers.size == 0) (holder.context as ActivityAddStudent).invalidateOptionsMenu()
+            if (phoneNumbers.isEmpty()) (holder.context as ActivityAddStudent).invalidateOptionsMenu()
         }
     }
 
