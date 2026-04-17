@@ -2,12 +2,12 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.devtools.ksp'
 
 android {
-    compileSdk = 35
+    compileSdk = 37
 
     defaultConfig {
         applicationId "com.mstoyanov.music_lessons"
-        minSdk = 30
-        targetSdk = 35
+        minSdk = 33
+        targetSdk = 37
         versionCode = 26
         versionName = "3.15"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
