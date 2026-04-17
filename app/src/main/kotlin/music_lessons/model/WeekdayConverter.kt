@@ -1,0 +1,25 @@
+package music_lessons.model
+
+import androidx.room.TypeConverter
+
+class WeekdayConverter {
+    // do not delete this method, IntelliJ doesn't see it being used, but it is:
+    @TypeConverter
+    fun toWeekdayName(value: String): Weekday? {
+        return when (value) {
+            "Monday" -> Weekday.MONDAY
+            "Tuesday" -> Weekday.TUESDAY
+            "Wednesday" -> Weekday.WEDNESDAY
+            "Thursday" -> Weekday.THURSDAY
+            "Friday" -> Weekday.FRIDAY
+            "Saturday" -> Weekday.SATURDAY
+            "Sunday" -> Weekday.SUNDAY
+            else -> null
+        }
+    }
+
+    @TypeConverter
+    fun toString(weekday: Weekday): String {
+        return weekday.displayValue()
+    }
+}

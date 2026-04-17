@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context="com.mstoyanov.music_lessons.ActivityAddStudent">
+    tools:context="music_lessons.ActivityAddStudent">
 
     <EditText
         android:id="@+id/phone_number"
