@@ -1,10 +1,6 @@
 .gradle/
 .idea/
 .kotlin
-app/build/
-app/release/
-app/*.iml
 build/
+app/build/
 local.properties
-*.iml
-*.hprof
