@@ -5,9 +5,6 @@ app/build/
 app/release/
 app/*.iml
 build/
-gradle/
-gradlew
-gradlew.bat
 local.properties
 *.iml
 *.hprof
