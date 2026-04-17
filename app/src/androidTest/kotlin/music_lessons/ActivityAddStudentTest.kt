@@ -39,7 +39,8 @@ class ActivityAddStudentTest {
         onView(withId(R.id.first_name)).check(matches(isDisplayed()))
 
         onView(withId(R.id.first_name)).perform(clearText(), typeText("John"))
-        onView(withId(R.id.delete)).perform(click())
+        onView(withId(R.id.last_name)).perform(clearText(), typeText("Smith"))
+        onView(withId(R.id.phone_number)).perform(clearText(), typeText("2223334567"))
         onView(withId(R.id.action_insert)).perform(click())
 
         Intents.intended(hasComponent(ActivityMain::class.java.name))
