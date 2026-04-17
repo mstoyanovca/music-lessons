@@ -143,10 +143,10 @@ class FragmentStudents : Fragment(), MenuProvider {
             val outputStream = activity?.contentResolver?.openOutputStream(uri)
             val bufferedWriter = BufferedWriter(OutputStreamWriter(outputStream))
 
-            studentList.map { s ->
+            studentList.forEach { s ->
                 bufferedWriter.write(s.firstName + " " + s.lastName)
                 bufferedWriter.newLine()
-                s.phoneNumbers.map { pn ->
+                s.phoneNumbers.forEach { pn ->
                     bufferedWriter.write(pn.number + " " + pn.type.displayValue())
                     bufferedWriter.newLine()
                 }

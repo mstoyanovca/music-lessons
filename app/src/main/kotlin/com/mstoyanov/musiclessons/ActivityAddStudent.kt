@@ -112,7 +112,7 @@ class ActivityAddStudent : AppCompatActivity() {
 
     private fun studentIsValid(): Boolean {
         if (!nameIsValid()) return false
-        student.phoneNumbers.map { pn -> if (!pn.isValid) return false }
+        student.phoneNumbers.forEach { pn -> if (!pn.isValid) return false }
         return true
     }
 
