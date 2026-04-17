@@ -17,7 +17,7 @@ import java.io.Serializable
 data class PhoneNumber(
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "phone_number_id") var phoneNumberId: Long,
     var number: String,
-    @TypeConverters(PhoneNumberTypeConverter::class) var type: PhoneNumberType,
+    @field:TypeConverters(PhoneNumberTypeConverter::class) var type: PhoneNumberType,
     @ColumnInfo(name = "student_owner_id") var studentId: Long,
     @Ignore var isValid: Boolean
 ) : Serializable {

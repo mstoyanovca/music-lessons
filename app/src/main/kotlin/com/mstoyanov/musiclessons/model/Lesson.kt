@@ -18,9 +18,9 @@ import java.time.LocalTime
 )
 data class Lesson(
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "lesson_id") var lessonId: Long,
-    @TypeConverters(WeekdayConverter::class) var weekday: Weekday,
-    @ColumnInfo(name = "time_from") @TypeConverters(LocalTimeConverter::class) var timeFrom: LocalTime,
-    @ColumnInfo(name = "time_to") @TypeConverters(LocalTimeConverter::class) var timeTo: LocalTime,
+    @field:TypeConverters(WeekdayConverter::class) var weekday: Weekday,
+    @ColumnInfo(name = "time_from") @field:TypeConverters(LocalTimeConverter::class) var timeFrom: LocalTime,
+    @ColumnInfo(name = "time_to") @field:TypeConverters(LocalTimeConverter::class) var timeTo: LocalTime,
     @ColumnInfo(name = "student_owner_id") var studentId: Long,
     @Ignore var student: Student
 ) : Comparable<Lesson>, Serializable {
@@ -42,6 +42,7 @@ data class Lesson(
                 other.student.firstName,
                 ignoreCase = true
             ) != 0 -> student.firstName.compareTo(other.student.firstName, ignoreCase = true)
+
             else -> student.lastName.compareTo(other.student.lastName, ignoreCase = true)
         }
     }
