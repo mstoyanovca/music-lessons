@@ -1,4 +1,10 @@
-An Android application for scheduling music lessons, released in the summer of 2013:
+### Music Lessons Android app
+
+An Android app for scheduling music lessons, released on Google Play in January 2013.
+
+Removed from Google Play in April 2026, to be distributed via APK.
 
 The latest updates include:
-- updated dependencies version;
+
+- updated dependencies version
+  
