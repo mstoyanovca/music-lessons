@@ -7,11 +7,10 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
-import music_lessons.model.PhoneNumber
-import music_lessons.model.Student
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import music_lessons.model.Student
 
 class AdapterStudents(private val students: List<Student>, private val fragment: FragmentStudents) : RecyclerView.Adapter<AdapterStudents.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -41,11 +40,11 @@ class AdapterStudents(private val students: List<Student>, private val fragment:
         }
 
         override fun onClick(view: View) {
-            fragment.startProgressBar()
             val student = students[bindingAdapterPosition]
+            fragment.startProgressBar()
             fragment.lifecycleScope.launch {
                 withContext(Dispatchers.IO) {
-                    val phoneNumbers: MutableList<PhoneNumber> = MusicLessonsApplication.db.phoneNumberDao.findByStudentId(student.studentId)
+                    val phoneNumbers = MusicLessonsApplication.db.phoneNumberDao.findByStudentId(student.studentId)
                     withContext(Dispatchers.Main) {
                         fragment.stopProgressBar()
                         student.phoneNumbers = phoneNumbers

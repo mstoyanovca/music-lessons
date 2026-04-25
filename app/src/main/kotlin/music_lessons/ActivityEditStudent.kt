@@ -18,11 +18,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import music_lessons.model.PhoneNumber
-import music_lessons.model.Student
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import music_lessons.model.PhoneNumber
+import music_lessons.model.Student
 
 class ActivityEditStudent : AppCompatActivity() {
     private lateinit var firstName: EditText
@@ -153,7 +153,7 @@ class ActivityEditStudent : AppCompatActivity() {
 
     private fun createAlertDialog() {
         val builder = AlertDialog.Builder(this)
-        val message: String =
+        val message =
             if (student.firstName.trim().isNotEmpty() && student.lastName.trim().isEmpty()) {
                 "Delete student " + student.firstName.trim() + "?"
             } else if (student.firstName.trim().isEmpty() && student.lastName.trim().isNotEmpty()) {
