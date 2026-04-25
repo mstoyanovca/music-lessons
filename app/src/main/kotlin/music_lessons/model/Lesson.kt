@@ -1,11 +1,13 @@
 package music_lessons.model
 
+import android.os.Parcelable
 import androidx.room.*
 import androidx.room.ForeignKey.Companion.CASCADE
+import kotlinx.parcelize.Parcelize
 import music_lessons.global.Functions
-import java.io.Serializable
 import java.time.LocalTime
 
+@Parcelize
 @Entity(
     tableName = "lesson",
     foreignKeys = [ForeignKey(
@@ -23,7 +25,7 @@ data class Lesson(
     @ColumnInfo(name = "time_to") @field:TypeConverters(LocalTimeConverter::class) var timeTo: LocalTime,
     @ColumnInfo(name = "student_owner_id") var studentId: Long,
     @Ignore var student: Student
-) : Comparable<Lesson>, Serializable {
+) : Comparable<Lesson>, Parcelable {
 
     constructor() : this(
         lessonId = 0L,
@@ -46,4 +48,5 @@ data class Lesson(
             else -> student.lastName.compareTo(other.student.lastName, ignoreCase = true)
         }
     }
+
 }

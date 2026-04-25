@@ -1,9 +1,11 @@
 package music_lessons.model
 
+import android.os.Parcelable
 import androidx.room.*
 import androidx.room.ForeignKey.Companion.CASCADE
-import java.io.Serializable
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 @Entity(
     tableName = "phone_number",
     foreignKeys = [(ForeignKey(
@@ -20,7 +22,7 @@ data class PhoneNumber(
     @field:TypeConverters(PhoneNumberTypeConverter::class) var type: PhoneNumberType,
     @ColumnInfo(name = "student_owner_id") var studentId: Long,
     @Ignore var isValid: Boolean
-) : Serializable {
+) : Parcelable {
 
     constructor() : this(0L, "", PhoneNumberType.CELL, 0L, false)
 
@@ -29,4 +31,5 @@ data class PhoneNumber(
         this.number = number
         this.type = type
     }
+
 }

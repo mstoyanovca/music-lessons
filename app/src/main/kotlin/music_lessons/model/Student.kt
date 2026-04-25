@@ -1,11 +1,13 @@
 package music_lessons.model
 
+import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
-import java.io.Serializable
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 @Entity(tableName = "student")
 data class Student(
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "student_id") var studentId: Long,
@@ -13,7 +15,7 @@ data class Student(
     @ColumnInfo(name = "last_name") var lastName: String,
     var notes: String,
     @Ignore var phoneNumbers: MutableList<PhoneNumber>
-) : Comparable<Student>, Serializable {
+) : Comparable<Student>, Parcelable {
 
     constructor() : this(0L, "", "", "", mutableListOf<PhoneNumber>())
 
@@ -23,4 +25,5 @@ data class Student(
         else
             lastName.compareTo(other.lastName, ignoreCase = true)
     }
+
 }

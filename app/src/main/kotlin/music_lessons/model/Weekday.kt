@@ -1,8 +1,10 @@
 package music_lessons.model
 
-import java.io.Serializable
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 
-enum class Weekday(private var value: String) : Serializable {
+@Parcelize
+enum class Weekday(private var value: String) : Parcelable {
     MONDAY("Monday"),
     TUESDAY("Tuesday"),
     WEDNESDAY("Wednesday"),
@@ -14,4 +16,5 @@ enum class Weekday(private var value: String) : Serializable {
     fun displayValue(): String {
         return value
     }
+
 }

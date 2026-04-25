@@ -2,6 +2,7 @@ package music_lessons
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,17 +13,16 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import music_lessons.model.Lesson
-import music_lessons.model.LessonWithStudent
-import music_lessons.model.Weekday
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.Serializable
+import music_lessons.model.Lesson
+import music_lessons.model.LessonWithStudent
+import music_lessons.model.Weekday
 
 class FragmentSchedule : Fragment() {
     // this field can not be static:
-    private lateinit var lessons: MutableList<Lesson>
+    private lateinit var lessons: ArrayList<Lesson>
     private lateinit var adapter: AdapterLessons
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -32,7 +32,7 @@ class FragmentSchedule : Fragment() {
         val position = requireArguments().getInt("POSITION")
         title.text = ActivityMain.sectionTitles[position]
 
-        lessons = mutableListOf()
+        lessons = ArrayList()
         val recyclerView = rootView.findViewById<RecyclerView>(R.id.lessons)
 
         val progressBar: ProgressBar = rootView.findViewById(R.id.progress_bar)
@@ -55,7 +55,7 @@ class FragmentSchedule : Fragment() {
                 }
             }
         } else {
-            lessons.addAll(savedInstanceState.getParcelable("LESSONS", lessons::class.java)!!)
+            lessons.addAll(savedInstanceState.getParcelableArrayList("LESSONS", Lesson::class.java)!!)
             progressBar.visibility = View.GONE
         }
 
@@ -66,7 +66,7 @@ class FragmentSchedule : Fragment() {
         val button = rootView.findViewById<FloatingActionButton>(R.id.add_lesson)
         button.setOnClickListener {
             val intent = Intent(activity, ActivityAddLesson::class.java)
-            intent.putExtra("WEEKDAY", Weekday.entries[position])
+            intent.putExtra("WEEKDAY", Weekday.entries[position] as Parcelable)
             startActivity(intent)
         }
 
@@ -74,7 +74,7 @@ class FragmentSchedule : Fragment() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putSerializable("LESSONS", lessons as Serializable)
+        outState.putParcelableArrayList("LESSONS", lessons)
         super.onSaveInstanceState(outState)
     }
 

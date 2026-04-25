@@ -7,7 +7,7 @@ import music_lessons.repository.AppDatabase
 class MusicLessonsApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        db = Room.databaseBuilder(applicationContext, AppDatabase::class.java, DB_NAME).fallbackToDestructiveMigration().build()
+        db = Room.databaseBuilder(applicationContext, AppDatabase::class.java, DB_NAME).fallbackToDestructiveMigration(false).build()
     }
 
     companion object {

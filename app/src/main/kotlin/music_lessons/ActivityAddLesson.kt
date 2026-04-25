@@ -3,6 +3,7 @@ package music_lessons
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
@@ -18,14 +19,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.NavUtils
 import androidx.lifecycle.lifecycleScope
-import music_lessons.model.Lesson
-import music_lessons.model.Student
-import music_lessons.model.Weekday
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import music_lessons.global.Functions
-import java.io.Serializable
+import music_lessons.model.Lesson
+import music_lessons.model.Student
+import music_lessons.model.Weekday
 import java.time.LocalTime
 
 class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListener {
@@ -40,7 +40,7 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
 
     private lateinit var weekday: Weekday
     private lateinit var lesson: Lesson
-    private lateinit var studentList: MutableList<Student>
+    private lateinit var studentList: ArrayList<Student>
     private var studentListIsEmpty: Boolean = true
     private val minutes = arrayOf("00", "15", "30", "45")
 
@@ -50,7 +50,7 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
 
         weekday = intent.getParcelableExtra("WEEKDAY", Weekday::class.java)!!
         lesson = Lesson()
-        studentList = mutableListOf()
+        studentList = ArrayList()
 
         setSupportActionBar(findViewById<View>(R.id.toolbar) as Toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
@@ -96,7 +96,7 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
 
             lifecycleScope.launch {
                 withContext(Dispatchers.IO) {
-                    val result: MutableList<Student> = MusicLessonsApplication.db.studentDao.findAll()
+                    val result = ArrayList(MusicLessonsApplication.db.studentDao.findAll())
                     result.sort()
                     withContext(Dispatchers.Main) {
                         progressBar.visibility = View.GONE
@@ -115,7 +115,7 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
 
             lesson = savedInstanceState.getParcelable("LESSON", Lesson::class.java)!!
 
-            studentList = savedInstanceState.getParcelable("STUDENTS", studentList::class.java)!!
+            studentList = savedInstanceState.getParcelableArrayList("STUDENTS", Student::class.java)!!
             studentListIsEmpty = studentList.isEmpty()
 
             hourFrom.value = savedInstanceState.getInt("HOUR_FROM")
@@ -130,8 +130,8 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putSerializable("LESSON", lesson as Serializable)
-        outState.putSerializable("STUDENTS", studentList as Serializable)
+        outState.putParcelable("LESSON", lesson)
+        outState.putParcelableArrayList("STUDENTS", studentList)
 
         outState.putInt("HOUR_FROM", hourFrom.value)
         outState.putInt("MINUTE_FROM", minuteFrom.value)
@@ -165,7 +165,7 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
                             progressBar.visibility = View.GONE
 
                             val intent = Intent(this@ActivityAddLesson, ActivityMain::class.java)
-                            intent.putExtra("WEEKDAY", lesson.weekday)
+                            intent.putExtra("WEEKDAY", lesson.weekday as Parcelable)
                             startActivity(intent)
                         }
                     }

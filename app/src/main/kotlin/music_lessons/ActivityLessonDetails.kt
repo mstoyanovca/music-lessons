@@ -5,6 +5,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.MenuItem
 import android.view.View
 import android.widget.ProgressBar
@@ -21,11 +22,11 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import music_lessons.model.Lesson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import music_lessons.global.Functions
+import music_lessons.model.Lesson
 
 class ActivityLessonDetails : AppCompatActivity() {
     private lateinit var phoneNumbers: RecyclerView
@@ -97,7 +98,7 @@ class ActivityLessonDetails : AppCompatActivity() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putSerializable("SAVED_LESSON", lesson)
+        outState.putParcelable("SAVED_LESSON", lesson)
         super.onSaveInstanceState(outState)
     }
 
@@ -105,7 +106,7 @@ class ActivityLessonDetails : AppCompatActivity() {
         when (item.itemId) {
             R.id.home -> {
                 val intent = Intent(this, ActivityMain::class.java)
-                intent.putExtra("WEEKDAY", lesson.weekday)
+                intent.putExtra("WEEKDAY", lesson.weekday as Parcelable)
                 this.startActivity(intent)
                 return true
             }

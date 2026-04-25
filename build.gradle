@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        gradle_version = '9.1.1'
+        gradle_version = '9.2.0'
         ksp_version = "2.3.6"
     }
     repositories {
@@ -14,6 +14,7 @@ buildscript {
 }
 
 plugins {
+    id 'org.jetbrains.kotlin.plugin.parcelize' version '2.3.21' apply false
     id 'com.google.devtools.ksp' version '2.3.2' apply false
 }
 

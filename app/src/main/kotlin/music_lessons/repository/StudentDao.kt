@@ -1,31 +1,37 @@
 package music_lessons.repository
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.Query
+import androidx.room.Transaction
+import androidx.room.Update
 import music_lessons.MusicLessonsApplication
 import music_lessons.model.PhoneNumber
 import music_lessons.model.Student
 import music_lessons.model.StudentWithPhoneNumbers
 
 @Dao
-abstract class StudentDao {
+interface StudentDao {
     @Query("select * from student")
-    abstract suspend fun findAll(): MutableList<Student>
+    suspend fun findAll(): List<Student>
 
     @Transaction
     @Query("select * from student")
-    abstract suspend fun findAllStudentWithPhoneNumbers(): List<StudentWithPhoneNumbers>
+    suspend fun findAllStudentWithPhoneNumbers(): List<StudentWithPhoneNumbers>
 
-    open suspend fun findAllWithPhoneNumbers(): List<Student> {
+    @Transaction
+    suspend fun findAllWithPhoneNumbers(): List<Student> {
         val studentsWithPhoneNumbers = findAllStudentWithPhoneNumbers()
         studentsWithPhoneNumbers.forEach { it.student.phoneNumbers = it.phoneNumbers.toMutableList() }
         return studentsWithPhoneNumbers.map { it.student }.sorted()
     }
 
     @Insert
-    abstract suspend fun insert(student: Student): Long
+    suspend fun insert(student: Student): Long
 
     @Transaction
-    open suspend fun insertWithPhoneNumbers(student: Student) {
+    suspend fun insertWithPhoneNumbers(student: Student) {
         val id = insert(student)
         student.studentId = id
         student.phoneNumbers.forEach { it.studentId = id }
@@ -33,10 +39,10 @@ abstract class StudentDao {
     }
 
     @Update
-    abstract suspend fun update(student: Student)
+    suspend fun update(student: Student)
 
     @Transaction
-    open suspend fun updateStudentWithPhoneNumbers(student: Student, phoneNumbersBeforeEditing: List<PhoneNumber>): Student {
+    suspend fun updateStudentWithPhoneNumbers(student: Student, phoneNumbersBeforeEditing: List<PhoneNumber>): Student {
         update(student)
         phoneNumbersBeforeEditing.forEach { MusicLessonsApplication.db.phoneNumberDao.delete(it) }
         student.phoneNumbers.forEach { it.phoneNumberId = MusicLessonsApplication.db.phoneNumberDao.insert(it) }
@@ -44,5 +50,5 @@ abstract class StudentDao {
     }
 
     @Delete
-    abstract suspend fun delete(student: Student)
+    suspend fun delete(student: Student)
 }

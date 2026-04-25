@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.devtools.ksp'
+apply plugin: 'org.jetbrains.kotlin.plugin.parcelize'
 
 android {
     compileSdk = 37

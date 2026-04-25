@@ -25,20 +25,19 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import music_lessons.model.Student
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import music_lessons.model.Student
 import java.io.BufferedWriter
 import java.io.OutputStreamWriter
-import java.io.Serializable
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class FragmentStudents : Fragment(), MenuProvider {
     private lateinit var progressBar: ProgressBar
     private lateinit var adapter: AdapterStudents
-    private lateinit var students: MutableList<Student>
+    private lateinit var students: ArrayList<Student>
     private lateinit var resultLauncher: ActivityResultLauncher<Intent>
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -50,7 +49,7 @@ class FragmentStudents : Fragment(), MenuProvider {
         val title = rootView.findViewById<TextView>(R.id.heading)
         title.setText(R.string.students_label)
 
-        students = mutableListOf()
+        students = ArrayList()
         val recyclerView = rootView.findViewById<RecyclerView>(R.id.students_list)
 
         progressBar = rootView.findViewById(R.id.progress_bar)
@@ -70,7 +69,7 @@ class FragmentStudents : Fragment(), MenuProvider {
                 }
             }
         } else {
-            students.addAll(savedInstanceState.getParcelable("STUDENTS", students::class.java)!!)
+            students.addAll(savedInstanceState.getParcelableArrayList("STUDENTS", Student::class.java)!!)
             progressBar.visibility = View.GONE
         }
 
@@ -87,7 +86,7 @@ class FragmentStudents : Fragment(), MenuProvider {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putSerializable("STUDENTS", students as Serializable)
+        outState.putParcelableArrayList("STUDENTS", students)
         super.onSaveInstanceState(outState)
     }
 

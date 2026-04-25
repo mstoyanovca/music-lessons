@@ -17,11 +17,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import music_lessons.model.PhoneNumber
-import music_lessons.model.Student
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import music_lessons.model.PhoneNumber
+import music_lessons.model.Student
 
 class ActivityAddStudent : AppCompatActivity() {
     private lateinit var firstName: EditText
@@ -71,7 +71,7 @@ class ActivityAddStudent : AppCompatActivity() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putSerializable("STUDENT", student)
+        outState.putParcelable("STUDENT", student)
         outState.putBoolean("PRISTINE", pristine)
         super.onSaveInstanceState(outState)
     }
