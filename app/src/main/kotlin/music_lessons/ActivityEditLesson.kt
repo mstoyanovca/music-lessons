@@ -356,11 +356,11 @@ class ActivityEditLesson : AppCompatActivity(), AdapterView.OnItemSelectedListen
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
                 val result = ArrayList(MusicLessonsApplication.db.studentDao.findAll())
+                result.sort()
 
                 withContext(Dispatchers.Main) {
                     progressBar.visibility = View.GONE
 
-                    result.sort()
                     studentList = result
                     studentListIsEmpty = studentList.isEmpty()
                     adapter.addAll(studentList)

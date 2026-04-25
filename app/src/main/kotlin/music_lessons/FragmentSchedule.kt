@@ -43,10 +43,11 @@ class FragmentSchedule : Fragment() {
             lifecycleScope.launch {
                 withContext(Dispatchers.IO) {
                     val result: List<LessonWithStudent> = MusicLessonsApplication.db.lessonDao.findWithStudentByWeekday(ActivityMain.sectionTitles[position])
+                    result.forEach { it.lesson.student = it.student }
+                    val lessonList = result.map { it.lesson }.toMutableList()
+                    lessonList.sort()
+
                     withContext(Dispatchers.Main) {
-                        result.forEach { it.lesson.student = it.student }
-                        val lessonList: MutableList<Lesson> = result.map { it.lesson }.toMutableList()
-                        lessonList.sort()
                         progressBar.visibility = View.GONE
 
                         lessons.addAll(lessonList)

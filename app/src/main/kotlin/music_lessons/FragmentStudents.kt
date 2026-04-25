@@ -60,9 +60,11 @@ class FragmentStudents : Fragment(), MenuProvider {
             lifecycleScope.launch {
                 withContext(Dispatchers.IO) {
                     students.addAll(MusicLessonsApplication.db.studentDao.findAll())
+                    students.sort()
+
                     withContext(Dispatchers.Main) {
-                        students.sort()
                         progressBar.visibility = View.GONE
+
                         adapter.notifyItemRangeChanged(0, students.size)
                         requireActivity().invalidateOptionsMenu()
                     }
@@ -125,8 +127,10 @@ class FragmentStudents : Fragment(), MenuProvider {
                 lifecycleScope.launch {
                     withContext(Dispatchers.IO) {
                         val studentsWithPhoneNumbers: List<Student> = MusicLessonsApplication.db.studentDao.findAllWithPhoneNumbers()
+
                         withContext(Dispatchers.Main) {
                             progressBar.visibility = View.GONE
+
                             result.data?.data?.also { uri ->
                                 onFindAllWithPhoneNumbersResult(studentsWithPhoneNumbers, uri)
                             }

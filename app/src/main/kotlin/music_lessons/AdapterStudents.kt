@@ -42,12 +42,15 @@ class AdapterStudents(private val students: List<Student>, private val fragment:
         override fun onClick(view: View) {
             val student = students[bindingAdapterPosition]
             fragment.startProgressBar()
+
             fragment.lifecycleScope.launch {
                 withContext(Dispatchers.IO) {
                     val phoneNumbers = MusicLessonsApplication.db.phoneNumberDao.findByStudentId(student.studentId)
+                    student.phoneNumbers = phoneNumbers
+
                     withContext(Dispatchers.Main) {
                         fragment.stopProgressBar()
-                        student.phoneNumbers = phoneNumbers
+
                         val intent = Intent(fragment.context, ActivityStudentDetails::class.java)
                         intent.putExtra("STUDENT", student)
                         fragment.startActivity(intent)
