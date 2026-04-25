@@ -4,11 +4,11 @@ import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import kotlinx.coroutines.runBlocking
 import music_lessons.model.PhoneNumber
 import music_lessons.model.PhoneNumberType
 import music_lessons.model.Student
 import music_lessons.repository.AppDatabase
-import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before
@@ -47,7 +47,7 @@ class StudentDaoTest {
     fun find_all_with_phone_numbers() {
         val actualStudentsWithPhoneNumbers: List<Student> = runBlocking { db.studentDao.findAllWithPhoneNumbers() }
 
-        Assert.assertEquals(actualStudentsWithPhoneNumbers.size, 1)
+        Assert.assertEquals(1, actualStudentsWithPhoneNumbers.size)
         Assert.assertEquals(student, actualStudentsWithPhoneNumbers[0])
         Assert.assertEquals(phoneNumbers, actualStudentsWithPhoneNumbers[0].phoneNumbers)
     }
@@ -55,11 +55,10 @@ class StudentDaoTest {
     @Test
     @Throws(Exception::class)
     fun insert_student() {
-        val actualStudents: List<Student>
-        runBlocking { actualStudents = db.studentDao.findAll() }
+        val actualStudents: List<Student> = runBlocking { db.studentDao.findAll() }
         student.phoneNumbers = mutableListOf()
 
-        Assert.assertEquals(actualStudents.size, 1)
+        Assert.assertEquals(1, actualStudents.size)
         Assert.assertEquals(student, actualStudents[0])
     }
 
@@ -67,11 +66,9 @@ class StudentDaoTest {
     @Throws(Exception::class)
     fun update_student() {
         student.firstName = "Joane"
-        val actualStudent: Student
-
-        runBlocking {
+        val actualStudent: Student = runBlocking {
             db.studentDao.update(student)
-            actualStudent = db.studentDao.findAll()[0]
+            db.studentDao.findAll()[0]
         }
 
         Assert.assertEquals("Joane", actualStudent.firstName)
@@ -80,13 +77,11 @@ class StudentDaoTest {
     @Test
     @Throws(Exception::class)
     fun delete_student() {
-        val actualStudents: List<Student>
-
-        runBlocking {
+        val actualStudents: List<Student> = runBlocking {
             db.studentDao.delete(student)
-            actualStudents = db.studentDao.findAll()
+            db.studentDao.findAll()
         }
 
-        Assert.assertEquals(actualStudents.size, 0)
+        Assert.assertEquals(0, actualStudents.size)
     }
 }
