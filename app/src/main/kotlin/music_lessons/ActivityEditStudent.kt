@@ -141,7 +141,6 @@ class ActivityEditStudent : AppCompatActivity() {
                     student,
                     phoneNumbersBeforeEditing
                 )
-
             }
             withContext(Dispatchers.Main) {
                 progressBar.visibility = View.GONE
