@@ -3,11 +3,11 @@ package music_lessons
 import androidx.room.Room
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import kotlinx.coroutines.runBlocking
 import music_lessons.model.PhoneNumber
 import music_lessons.model.PhoneNumberType
 import music_lessons.model.Student
 import music_lessons.repository.AppDatabase
-import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before
@@ -49,7 +49,7 @@ class PhoneNumberDaoTest {
             actualPhoneNumbers = db.phoneNumberDao.findByStudentId(1L)
         }
 
-        Assert.assertEquals(actualPhoneNumbers.size, 2)
+        Assert.assertEquals(2, actualPhoneNumbers.size)
         Assert.assertEquals(phoneNumbers[0], actualPhoneNumbers[0])
         Assert.assertEquals(phoneNumbers[1], actualPhoneNumbers[1])
     }
@@ -63,7 +63,7 @@ class PhoneNumberDaoTest {
             actualPhoneNumbers = db.phoneNumberDao.findByStudentId(1L)
         }
 
-        Assert.assertEquals(actualPhoneNumbers.size, 1)
+        Assert.assertEquals(1, actualPhoneNumbers.size)
         Assert.assertEquals(phoneNumbers[0], actualPhoneNumbers[0])
     }
 
@@ -96,7 +96,7 @@ class PhoneNumberDaoTest {
         }
 
 
-        Assert.assertEquals(actualPhoneNumbers.size, 1)
+        Assert.assertEquals(1, actualPhoneNumbers.size)
         Assert.assertEquals(phoneNumbers[1], actualPhoneNumbers[0])
     }
 }
