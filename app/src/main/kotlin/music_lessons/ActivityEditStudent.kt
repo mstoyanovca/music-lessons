@@ -78,7 +78,7 @@ class ActivityEditStudent : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.home -> {
+            android.R.id.home -> {
                 NavUtils.navigateUpFromSameTask(this)
                 true
             }
@@ -93,7 +93,10 @@ class ActivityEditStudent : AppCompatActivity() {
                 true
             }
 
-            else -> super.onOptionsItemSelected(item)
+            else -> {
+                super.onOptionsItemSelected(item)
+                true
+            }
         }
     }
 

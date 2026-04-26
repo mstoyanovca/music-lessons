@@ -103,15 +103,19 @@ class ActivityLessonDetails : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.home -> {
+        return when (item.itemId) {
+            android.R.id.home -> {
                 val intent = Intent(this, ActivityMain::class.java)
                 intent.putExtra("WEEKDAY", lesson.weekday as Parcelable)
                 this.startActivity(intent)
-                return true
+                true
+            }
+
+            else -> {
+                super.onOptionsItemSelected(item)
+                true
             }
         }
-        return super.onOptionsItemSelected(item)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {

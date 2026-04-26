@@ -149,7 +149,7 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.home -> {
+            android.R.id.home -> {
                 NavUtils.navigateUpFromSameTask(this)
                 true
             }
@@ -161,6 +161,7 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
                 lifecycleScope.launch {
                     withContext(Dispatchers.IO) {
                         MusicLessonsApplication.db.lessonDao.insert(lesson)
+
                         withContext(Dispatchers.Main) {
                             progressBar.visibility = View.GONE
 
@@ -174,7 +175,10 @@ class ActivityAddLesson : AppCompatActivity(), AdapterView.OnItemSelectedListene
                 true
             }
 
-            else -> super.onOptionsItemSelected(item)
+            else -> {
+                super.onOptionsItemSelected(item)
+                true
+            }
         }
     }
 

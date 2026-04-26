@@ -74,8 +74,8 @@ class ActivityStudentDetails : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.home -> {
+        return when (item.itemId) {
+            android.R.id.home -> {
                 if (updatedStudentId == 0L) {
                     NavUtils.navigateUpFromSameTask(this)
                 } else {
@@ -83,10 +83,14 @@ class ActivityStudentDetails : AppCompatActivity() {
                     intent.putExtra(resources.getString(R.string.updated_student_id), updatedStudentId)
                     startActivity(intent)
                 }
-                return true
+                true
+            }
+
+            else -> {
+                super.onOptionsItemSelected(item)
+                true
             }
         }
-        return super.onOptionsItemSelected(item)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
