@@ -1,0 +1,149 @@
+package com.mstoyanov.myapplication.component
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PrimaryScrollableTabRow
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Tab
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
+import com.mstoyanov.myapplication.AddLessonRoute
+import com.mstoyanov.myapplication.AddStudentRoute
+import com.mstoyanov.myapplication.HomeRoute
+import com.mstoyanov.myapplication.R
+import kotlinx.coroutines.launch
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+fun MainScreen() {
+    val navController = rememberNavController()
+
+    NavHost(
+        navController = navController,
+        startDestination = HomeRoute
+    ) {
+        composable<HomeRoute> {
+            MainScreenContent(
+                onAddLessonClick = { navController.navigate(AddLessonRoute(page = it)) },
+                onAddStudentClick = { navController.navigate(AddStudentRoute) })
+        }
+        composable<AddLessonRoute> { backStackEntry ->
+            val addLessonRoute: AddLessonRoute = backStackEntry.toRoute<AddLessonRoute>()
+            AddLesson(
+                page = addLessonRoute.page,
+                navigateBack = {
+                    // avoid freeze after two rapid back icon clicks:
+                    if (navController.currentBackStackEntry?.lifecycle?.currentState == Lifecycle.State.RESUMED) {
+                        navController.popBackStack()
+                    }
+                })
+        }
+        composable<AddStudentRoute> {
+            AddStudent(navigateBack = {
+                // avoid freeze after two rapid back icon clicks:
+                if (navController.currentBackStackEntry?.lifecycle?.currentState == Lifecycle.State.RESUMED) {
+                    navController.popBackStack()
+                }
+            })
+        }
+    }
+}
+
+@Composable
+fun MainScreenContent(
+    onAddLessonClick: (page: Int) -> Unit,
+    onAddStudentClick: () -> Unit
+) {
+    val pagerState = rememberPagerState(pageCount = { 7 })
+
+    Scaffold(
+        topBar = {
+            Column {
+                TopAppBarImpl()
+                PrimaryScrollableTabRowImpl(pagerState)
+            }
+        },
+        floatingActionButton = {
+            FloatingActionButton(onClick = {
+                if (pagerState.currentPage == 6) onAddStudentClick()
+                else onAddLessonClick(pagerState.currentPage)
+            }) {
+                Icon(Icons.Default.Add, contentDescription = null)
+            }
+        })
+    { innerPadding ->
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier.padding(innerPadding),
+            beyondViewportPageCount = 6
+        ) { page ->
+            if (page == 6) Students()
+            else Schedule(page)
+        }
+    }
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun TopAppBarImpl() {
+    TopAppBar(
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+        ),
+        title = { Text("My Application") },
+        navigationIcon = {
+            Image(
+                painter = painterResource(id = R.mipmap.ic_launcher_foreground),
+                contentDescription = null,
+                modifier = Modifier.size(48.dp)
+            )
+        },
+    )
+}
+
+@Composable
+private fun PrimaryScrollableTabRowImpl(pagerState: PagerState) {
+    val titles = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Students")
+    val coroutineScope = rememberCoroutineScope()
+
+    PrimaryScrollableTabRow(
+        selectedTabIndex = pagerState.currentPage,
+        containerColor = MaterialTheme.colorScheme.background,
+        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+    ) {
+        titles.forEachIndexed { index, title ->
+            Tab(
+                selected = pagerState.currentPage == index,
+                onClick = {
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage(index)
+                    }
+                },
+                text = { Text(text = title, style = MaterialTheme.typography.titleLarge) }
+            )
+        }
+    }
+}

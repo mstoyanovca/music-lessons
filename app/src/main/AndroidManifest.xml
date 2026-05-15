@@ -1,80 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:largeScreens="true"
-    android:normalScreens="true"
-    android:smallScreens="true"
-    android:xlargeScreens="true"
-    tools:ignore="GoogleAppIndexingWarning">
-
-    <uses-feature
-        android:name="android.hardware.telephony"
-        android:required="false" />
-    <uses-permission android:name="android.permission.CALL_PHONE" />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <application
-        android:name=".MusicLessonsApplication"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_label"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="false"
-        android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-        android:versionCode="16"
-        android:versionName="3.5"
-        tools:ignore="AllowBackup">
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.MyApplication">
         <activity
-            android:name=".ActivityMain"
+            android:name=".MainActivity"
             android:exported="true"
-            android:launchMode="singleTop">
+            android:theme="@style/Theme.MyApplication">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".ActivityAddStudent"
-            android:label="@string/add_student"
-            android:launchMode="singleTop"
-            android:parentActivityName=".ActivityMain" />
-        <activity
-            android:name=".ActivityStudentDetails"
-            android:exported="true"
-            android:label="@string/student_details"
-            android:launchMode="singleTop"
-            android:parentActivityName=".ActivityMain">
-            <intent-filter>
-                <action android:name="android.intent.action.SENDTO" />
-                <data android:mimeType="text/plain" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".ActivityEditStudent"
-            android:label="@string/edit_student"
-            android:launchMode="singleTop"
-            android:parentActivityName=".ActivityStudentDetails" />
-        <activity
-            android:name=".ActivityAddLesson"
-            android:label="@string/add_lesson"
-            android:launchMode="singleTop"
-            android:parentActivityName=".ActivityMain" />
-        <activity
-            android:name=".ActivityLessonDetails"
-            android:exported="true"
-            android:label="@string/lesson_details"
-            android:launchMode="singleTop"
-            android:parentActivityName=".ActivityMain">
-            <intent-filter>
-                <action android:name="android.intent.action.SENDTO" />
-                <data android:mimeType="text/plain" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".ActivityEditLesson"
-            android:label="@string/edit_lesson"
-            android:launchMode="singleTop"
-            android:parentActivityName=".ActivityLessonDetails" />
     </application>
+
 </manifest>

@@ -1,6 +1,6 @@
-.gradle/
-.idea/
-.kotlin
-build/
-app/build/
+.gradle
+.idea
+/build
+/app/build
 local.properties
+/temp
