@@ -335,7 +335,7 @@ private fun TimePicker(timeFrom: LocalTime, timeTo: LocalTime, onTimeFromSelect:
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TimePickerDialog(
+private fun TimePickerDialog(
     timePickerState: TimePickerState,
     onConfirm: (TimePickerState) -> Unit,
     onDismiss: () -> Unit,

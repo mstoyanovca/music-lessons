@@ -30,4 +30,8 @@ object LessonDao {
     fun save(lesson: Lesson) {
         lessons.add(lesson)
     }
+
+    fun delete(lesson: Lesson) {
+        lessons.remove(lesson)
+    }
 }
