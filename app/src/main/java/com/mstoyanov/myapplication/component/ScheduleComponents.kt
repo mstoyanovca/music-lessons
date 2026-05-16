@@ -45,7 +45,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.mstoyanov.myapplication.LessonViewModel
+import com.mstoyanov.myapplication.dao.LessonViewModel
 import model.Lesson
 import model.PhoneNumber
 import model.PhoneNumberType

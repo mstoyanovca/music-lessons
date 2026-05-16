@@ -1,8 +1,7 @@
-package com.mstoyanov.myapplication
+package com.mstoyanov.myapplication.dao
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mstoyanov.myapplication.dao.LessonDao
 import com.mstoyanov.myapplication.function.weekdayFromPage
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -14,7 +13,7 @@ class LessonViewModel : ViewModel() {
         .lessonsFlowByWeekday(weekdayFromPage(page))
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
+            started = SharingStarted.Companion.WhileSubscribed(5000),
             initialValue = emptyList()
         )
 }
