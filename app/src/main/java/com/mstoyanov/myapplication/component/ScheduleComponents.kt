@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.Icons.Filled
@@ -22,8 +23,6 @@ import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Sms
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.HorizontalDivider
@@ -32,7 +31,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -48,7 +46,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mstoyanov.myapplication.LessonViewModel
-import com.mstoyanov.myapplication.dao.LessonDao
 import model.Lesson
 import model.PhoneNumber
 import model.PhoneNumberType
@@ -66,7 +63,10 @@ fun Schedule(page: Int, viewModel: LessonViewModel = viewModel()) {
             .fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        items(lessons) { lesson ->
+        items(
+            items = lessons,
+            key = { it.lessonId }
+        ) { lesson ->
             CardContent(
                 lesson,
                 expanded,
@@ -79,7 +79,7 @@ fun Schedule(page: Int, viewModel: LessonViewModel = viewModel()) {
 }
 
 @Composable
-private fun CardContent(
+fun LazyItemScope.CardContent(
     lesson: Lesson,
     expanded: Boolean,
     expandedId: Long,
@@ -87,6 +87,7 @@ private fun CardContent(
     onExpandedIdChange: (Long) -> Unit
 ) {
     ElevatedCard(
+        modifier = Modifier.animateItem(),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 6.dp
         ),
@@ -215,35 +216,5 @@ private fun Fabs(lesson: Lesson) {
             Icon(Filled.Delete, contentDescription = null)
         }
     }
-
-    if (showDialog) {
-        AlertDialog(
-            onDismissRequest = { showDialog = false },
-            text = {
-                Text(
-                    text = "Are you sure you want to delete the lesson with ${lesson.student.firstName} ${lesson.student.lastName}?",
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        LessonDao.delete(lesson)
-                        showDialog = false
-                    }
-                ) {
-                    Text("Delete")
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = { showDialog = false }
-                ) {
-                    Text(
-                        text = "Cancel"
-                    )
-                }
-            }
-        )
-    }
+    if (showDialog) DeleteLessonAlertDialog(lesson, showDialog, onShowDialogChange = { showDialog = it })
 }

@@ -27,11 +27,12 @@ object LessonDao {
             flowOf(listOf())
     }
 
-    fun save(lesson: Lesson) {
-        lessons.add(lesson)
+    fun save(lesson: Lesson): Boolean {
+        lesson.lessonId = (lessons.maxOfOrNull { it.lessonId })!! + 1
+        return lessons.add(lesson)
     }
 
-    fun delete(lesson: Lesson) {
-        lessons.remove(lesson)
+    fun delete(lesson: Lesson): Boolean {
+        return lessons.remove(lesson)
     }
 }

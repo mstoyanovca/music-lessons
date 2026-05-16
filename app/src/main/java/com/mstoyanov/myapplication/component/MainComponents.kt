@@ -72,7 +72,7 @@ fun MainScreen() {
 }
 
 @Composable
-fun MainScreenContent(
+private fun MainScreenContent(
     onAddLessonClick: (page: Int) -> Unit,
     onAddStudentClick: () -> Unit
 ) {

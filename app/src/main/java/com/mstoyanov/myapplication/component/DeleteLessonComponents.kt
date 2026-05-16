@@ -1,0 +1,44 @@
+package com.mstoyanov.myapplication.component
+
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import com.mstoyanov.myapplication.dao.LessonDao
+import model.Lesson
+
+@Composable
+fun DeleteLessonAlertDialog(lesson: Lesson, showDialog: Boolean, onShowDialogChange: (Boolean) -> Unit) {
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { onShowDialogChange(false) },
+            text = {
+                Text(
+                    text = "Are you sure you want to delete the lesson with ${lesson.student.firstName} ${lesson.student.lastName}?",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        LessonDao.delete(lesson)
+                        onShowDialogChange(false)
+                    }
+                ) {
+                    Text("Delete")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { onShowDialogChange(false) }
+                ) {
+                    Text(
+                        text = "Cancel"
+                    )
+                }
+            }
+        )
+    }
+}
