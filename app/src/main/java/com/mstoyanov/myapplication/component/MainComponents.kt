@@ -113,7 +113,7 @@ private fun TopAppBarImpl() {
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
         ),
-        title = { Text("My Application") },
+        title = { Text("Music Lessons") },
         navigationIcon = {
             Image(
                 painter = painterResource(id = R.mipmap.ic_launcher_foreground),
