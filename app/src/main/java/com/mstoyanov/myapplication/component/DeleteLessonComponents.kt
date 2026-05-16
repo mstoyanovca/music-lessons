@@ -10,7 +10,12 @@ import com.mstoyanov.myapplication.dao.LessonDao
 import model.Lesson
 
 @Composable
-fun DeleteLessonAlertDialog(lesson: Lesson, showDialog: Boolean, onShowDialogChange: (Boolean) -> Unit) {
+fun DeleteLessonAlertDialog(
+    lesson: Lesson,
+    onExpandedChange: (Boolean) -> Unit,
+    showDialog: Boolean,
+    onShowDialogChange: (Boolean) -> Unit
+) {
     if (showDialog) {
         AlertDialog(
             onDismissRequest = { onShowDialogChange(false) },
@@ -23,6 +28,7 @@ fun DeleteLessonAlertDialog(lesson: Lesson, showDialog: Boolean, onShowDialogCha
             confirmButton = {
                 Button(
                     onClick = {
+                        onExpandedChange(false)
                         LessonDao.delete(lesson)
                         onShowDialogChange(false)
                     }

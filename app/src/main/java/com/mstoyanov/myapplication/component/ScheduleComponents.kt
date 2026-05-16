@@ -106,7 +106,7 @@ fun LazyItemScope.CardContent(
                 ),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            this@ElevatedCard.LessonContent(lesson, expanded, expandedId)
+            this@ElevatedCard.LessonContent(lesson, expanded, expandedId, onExpandedChange)
             IconButton(onClick = {
                 if (expandedId == lesson.lessonId || !expanded) onExpandedChange(!expanded)
                 onExpandedIdChange(lesson.lessonId)
@@ -121,7 +121,12 @@ fun LazyItemScope.CardContent(
 }
 
 @Composable
-private fun ColumnScope.LessonContent(lesson: Lesson, expanded: Boolean, expandedId: Long) {
+private fun ColumnScope.LessonContent(
+    lesson: Lesson,
+    expanded: Boolean,
+    expandedId: Long,
+    onExpandedChange: (Boolean) -> Unit
+) {
     Column(
         Modifier
             .weight(1f)
@@ -130,7 +135,7 @@ private fun ColumnScope.LessonContent(lesson: Lesson, expanded: Boolean, expande
         LessonSummary(lesson)
         if (expanded && expandedId == lesson.lessonId) {
             PhoneNumbers(lesson.student.phoneNumbers)
-            Fabs(lesson)
+            Fabs(lesson, onExpandedChange)
         }
     }
 }
@@ -192,7 +197,7 @@ private fun PhoneNumbers(phoneNumbers: MutableList<PhoneNumber>) {
 }
 
 @Composable
-private fun Fabs(lesson: Lesson) {
+private fun Fabs(lesson: Lesson, onExpandedChange: (Boolean) -> Unit) {
     var showDialog by rememberSaveable { mutableStateOf(false) }
 
     HorizontalDivider(
@@ -216,5 +221,11 @@ private fun Fabs(lesson: Lesson) {
             Icon(Filled.Delete, contentDescription = null)
         }
     }
-    if (showDialog) DeleteLessonAlertDialog(lesson, showDialog, onShowDialogChange = { showDialog = it })
+    if (showDialog) {
+        DeleteLessonAlertDialog(
+            lesson,
+            onExpandedChange,
+            showDialog,
+            onShowDialogChange = { showDialog = it })
+    }
 }
