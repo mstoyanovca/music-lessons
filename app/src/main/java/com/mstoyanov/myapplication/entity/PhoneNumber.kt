@@ -22,11 +22,11 @@ import kotlinx.serialization.Serializable
     indices = [(Index(value = ["student_owner_id"]))]
 )
 data class PhoneNumber(
-    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "phone_number_id") var phoneNumberId: Long,
-    var number: String,
-    @field:TypeConverters(PhoneNumberTypeConverter::class) var type: PhoneNumberType,
-    @ColumnInfo(name = "student_owner_id") var studentId: Long,
-    @Ignore var isValid: Boolean
+    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "phone_number_id") val phoneNumberId: Long,
+    val number: String,
+    @field:TypeConverters(PhoneNumberTypeConverter::class) val type: PhoneNumberType,
+    @ColumnInfo(name = "student_owner_id") val studentId: Long,
+    @Ignore val isValid: Boolean
 ) {
     constructor() : this(0L, "", PhoneNumberType.CELL, 0L, false)
 

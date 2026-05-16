@@ -23,18 +23,18 @@ import java.time.LocalTime
     indices = [Index(value = ["student_owner_id"])]
 )
 data class Lesson(
-    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "lesson_id") var lessonId: Long,
-    @field:TypeConverters(WeekdayConverter::class) var weekday: Weekday,
+    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "lesson_id") val lessonId: Long,
+    @field:TypeConverters(WeekdayConverter::class) val weekday: Weekday,
     @Serializable(with = LocalTimeSerializer::class)
     @ColumnInfo(name = "time_from")
     @field:TypeConverters(LocalTimeConverter::class)
-    var timeFrom: LocalTime,
+    val timeFrom: LocalTime,
     @Serializable(with = LocalTimeSerializer::class)
     @ColumnInfo(name = "time_to")
     @field:TypeConverters(LocalTimeConverter::class)
-    var timeTo: LocalTime,
-    @ColumnInfo(name = "student_owner_id") var studentId: Long,
-    @Ignore var student: Student
+    val timeTo: LocalTime,
+    @ColumnInfo(name = "student_owner_id") val studentId: Long,
+    @Ignore val student: Student
 ) : Comparable<Lesson> {
 
     constructor() : this(

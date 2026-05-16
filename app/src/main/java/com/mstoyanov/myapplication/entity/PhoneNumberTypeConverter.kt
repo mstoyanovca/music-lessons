@@ -3,7 +3,6 @@ package com.mstoyanov.myapplication.entity
 import androidx.room.TypeConverter
 
 class PhoneNumberTypeConverter {
-    // do not delete this method, AndroidStudio doesn't see it being used, but it is:
     @TypeConverter
     fun toPhoneNumberType(value: String): PhoneNumberType {
         return when (value) {
