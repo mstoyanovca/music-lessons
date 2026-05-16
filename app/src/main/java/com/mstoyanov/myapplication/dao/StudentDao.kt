@@ -1,8 +1,8 @@
 package com.mstoyanov.myapplication.dao
 
-import com.mstoyanov.myapplication.model.PhoneNumber
-import com.mstoyanov.myapplication.model.PhoneNumberType
-import com.mstoyanov.myapplication.model.Student
+import com.mstoyanov.myapplication.entity.PhoneNumber
+import com.mstoyanov.myapplication.entity.PhoneNumberType
+import com.mstoyanov.myapplication.entity.Student
 
 object StudentDao {
     private val students = mutableListOf(

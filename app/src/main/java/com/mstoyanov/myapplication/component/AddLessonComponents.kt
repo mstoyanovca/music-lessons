@@ -62,9 +62,9 @@ import androidx.compose.ui.unit.dp
 import com.mstoyanov.myapplication.dao.LessonDao
 import com.mstoyanov.myapplication.dao.StudentDao
 import com.mstoyanov.myapplication.function.weekdayFromPage
-import com.mstoyanov.myapplication.model.Lesson
-import com.mstoyanov.myapplication.model.Student
-import com.mstoyanov.myapplication.model.Weekday
+import com.mstoyanov.myapplication.entity.Lesson
+import com.mstoyanov.myapplication.entity.Student
+import com.mstoyanov.myapplication.entity.Weekday
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 

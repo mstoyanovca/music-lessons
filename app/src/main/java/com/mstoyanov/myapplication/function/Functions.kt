@@ -1,6 +1,6 @@
 package com.mstoyanov.myapplication.function
 
-import com.mstoyanov.myapplication.model.Weekday
+import com.mstoyanov.myapplication.entity.Weekday
 
 fun weekdayFromPage(page: Int): Weekday? {
     return when (page) {

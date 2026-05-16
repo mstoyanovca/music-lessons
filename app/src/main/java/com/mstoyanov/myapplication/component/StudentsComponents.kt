@@ -45,10 +45,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.mstoyanov.myapplication.dao.StudentDao
-import com.mstoyanov.myapplication.model.PhoneNumber
-import com.mstoyanov.myapplication.model.PhoneNumberType
-import com.mstoyanov.myapplication.model.PhoneNumberVisualTransformation
-import com.mstoyanov.myapplication.model.Student
+import com.mstoyanov.myapplication.entity.PhoneNumber
+import com.mstoyanov.myapplication.entity.PhoneNumberType
+import com.mstoyanov.myapplication.entity.PhoneNumberVisualTransformation
+import com.mstoyanov.myapplication.entity.Student
 
 @Composable
 fun Students() {
