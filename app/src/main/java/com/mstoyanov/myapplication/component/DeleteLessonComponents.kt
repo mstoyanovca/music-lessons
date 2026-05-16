@@ -14,7 +14,7 @@ fun DeleteLessonAlertDialog(
     lesson: Lesson,
     onExpandedChange: (Boolean) -> Unit,
     showDialog: Boolean,
-    onShowDialogChange: (Boolean) -> Unit
+    onShowDialogChange: (Boolean) -> Unit,
 ) {
     if (showDialog) {
         AlertDialog(
@@ -28,9 +28,9 @@ fun DeleteLessonAlertDialog(
             confirmButton = {
                 Button(
                     onClick = {
+                        onShowDialogChange(false)
                         onExpandedChange(false)
                         LessonDao.delete(lesson)
-                        onShowDialogChange(false)
                     }
                 ) {
                     Text("Delete")
