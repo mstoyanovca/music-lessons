@@ -1,4 +1,4 @@
-package model
+package com.mstoyanov.myapplication.model
 
 enum class PhoneNumberType(private val value: String) {
     HOME("Home"),

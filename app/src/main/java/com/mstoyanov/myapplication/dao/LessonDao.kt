@@ -3,8 +3,8 @@ package com.mstoyanov.myapplication.dao
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
-import model.Lesson
-import model.Weekday
+import com.mstoyanov.myapplication.model.Lesson
+import com.mstoyanov.myapplication.model.Weekday
 import java.time.LocalTime
 
 object LessonDao {

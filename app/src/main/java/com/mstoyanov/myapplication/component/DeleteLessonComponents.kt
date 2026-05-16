@@ -7,7 +7,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import com.mstoyanov.myapplication.dao.LessonDao
-import model.Lesson
+import com.mstoyanov.myapplication.model.Lesson
 
 @Composable
 fun DeleteLessonAlertDialog(

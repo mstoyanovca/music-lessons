@@ -1,4 +1,4 @@
-package model
+package com.mstoyanov.myapplication.model
 
 import androidx.room.TypeConverter
 import java.time.LocalTime

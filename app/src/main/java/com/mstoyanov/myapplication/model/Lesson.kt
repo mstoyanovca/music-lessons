@@ -1,4 +1,4 @@
-package model
+package com.mstoyanov.myapplication.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
@@ -8,7 +8,6 @@ import androidx.room.Ignore
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
-import model.LocalTimeSerializer
 import kotlinx.serialization.Serializable
 import java.time.LocalTime
 

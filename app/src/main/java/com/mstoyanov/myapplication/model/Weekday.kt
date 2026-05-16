@@ -1,4 +1,4 @@
-package model
+package com.mstoyanov.myapplication.model
 
 enum class Weekday(val value: String) {
     MONDAY("Monday"),

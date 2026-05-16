@@ -1,4 +1,4 @@
-package model
+package com.mstoyanov.myapplication.model
 
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.OffsetMapping

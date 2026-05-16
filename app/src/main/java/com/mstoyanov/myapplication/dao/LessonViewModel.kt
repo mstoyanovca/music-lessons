@@ -6,7 +6,7 @@ import com.mstoyanov.myapplication.function.weekdayFromPage
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
-import model.Lesson
+import com.mstoyanov.myapplication.model.Lesson
 
 class LessonViewModel : ViewModel() {
     fun lessonsState(page: Int): StateFlow<List<Lesson>> = LessonDao

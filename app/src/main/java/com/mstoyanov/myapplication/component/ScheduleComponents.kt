@@ -46,10 +46,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mstoyanov.myapplication.dao.LessonViewModel
-import model.Lesson
-import model.PhoneNumber
-import model.PhoneNumberType
-import model.PhoneNumberVisualTransformation
+import com.mstoyanov.myapplication.model.Lesson
+import com.mstoyanov.myapplication.model.PhoneNumber
+import com.mstoyanov.myapplication.model.PhoneNumberType
+import com.mstoyanov.myapplication.model.PhoneNumberVisualTransformation
 
 @Composable
 fun Schedule(page: Int, viewModel: LessonViewModel = viewModel()) {
