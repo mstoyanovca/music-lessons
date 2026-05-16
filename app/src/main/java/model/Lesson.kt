@@ -8,7 +8,7 @@ import androidx.room.Ignore
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
-import com.mstoyanov.myapplication.LocalTimeSerializer
+import com.mstoyanov.myapplication.function.LocalTimeSerializer
 import kotlinx.serialization.Serializable
 import java.time.LocalTime
 

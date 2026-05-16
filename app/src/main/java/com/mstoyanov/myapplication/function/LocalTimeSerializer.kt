@@ -1,4 +1,4 @@
-package com.mstoyanov.myapplication
+package com.mstoyanov.myapplication.function
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
