@@ -2,7 +2,6 @@ package com.mstoyanov.myapplication.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import kotlinx.serialization.Serializable
 
@@ -16,10 +15,7 @@ data class Student(
     @ColumnInfo(name = "last_name") val lastName: String,
     // max length 128
     val notes: String,
-    @Ignore val phoneNumbers: MutableList<PhoneNumber>
 ) : Comparable<Student> {
-
-    constructor() : this(0L, "", "", "", mutableListOf<PhoneNumber>())
 
     override fun compareTo(other: Student): Int {
         return if (firstName.isNotEmpty() && firstName.compareTo(other.firstName, ignoreCase = true) != 0)
