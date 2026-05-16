@@ -8,8 +8,11 @@ import androidx.room.Ignore
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
+import com.mstoyanov.myapplication.LocalTimeSerializer
+import kotlinx.serialization.Serializable
 import java.time.LocalTime
 
+@Serializable
 @Entity(
     tableName = "lesson",
     foreignKeys = [ForeignKey(
@@ -23,8 +26,14 @@ import java.time.LocalTime
 data class Lesson(
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "lesson_id") var lessonId: Long,
     @field:TypeConverters(WeekdayConverter::class) var weekday: Weekday,
-    @ColumnInfo(name = "time_from") @field:TypeConverters(LocalTimeConverter::class) var timeFrom: LocalTime,
-    @ColumnInfo(name = "time_to") @field:TypeConverters(LocalTimeConverter::class) var timeTo: LocalTime,
+    @Serializable(with = LocalTimeSerializer::class)
+    @ColumnInfo(name = "time_from")
+    @field:TypeConverters(LocalTimeConverter::class)
+    var timeFrom: LocalTime,
+    @Serializable(with = LocalTimeSerializer::class)
+    @ColumnInfo(name = "time_to")
+    @field:TypeConverters(LocalTimeConverter::class)
+    var timeTo: LocalTime,
     @ColumnInfo(name = "student_owner_id") var studentId: Long,
     @Ignore var student: Student
 ) : Comparable<Lesson> {
@@ -50,4 +59,5 @@ data class Lesson(
             else -> student.lastName.compareTo(other.student.lastName, ignoreCase = true)
         }
     }
+
 }

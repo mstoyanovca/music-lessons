@@ -8,7 +8,9 @@ import androidx.room.Ignore
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
+import kotlinx.serialization.Serializable
 
+@Serializable
 @Entity(
     tableName = "phone_number",
     foreignKeys = [(ForeignKey(
@@ -27,4 +29,5 @@ data class PhoneNumber(
     @Ignore var isValid: Boolean
 ) {
     constructor() : this(0L, "", PhoneNumberType.CELL, 0L, false)
+
 }

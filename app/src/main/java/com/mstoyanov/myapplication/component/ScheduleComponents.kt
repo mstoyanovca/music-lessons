@@ -22,6 +22,8 @@ import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Sms
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.HorizontalDivider
@@ -30,6 +32,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -45,6 +48,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mstoyanov.myapplication.LessonViewModel
+import com.mstoyanov.myapplication.dao.LessonDao
 import model.Lesson
 import model.PhoneNumber
 import model.PhoneNumberType
@@ -125,7 +129,7 @@ private fun ColumnScope.LessonContent(lesson: Lesson, expanded: Boolean, expande
         LessonSummary(lesson)
         if (expanded && expandedId == lesson.lessonId) {
             PhoneNumbers(lesson.student.phoneNumbers)
-            Fabs(lesson.lessonId)
+            Fabs(lesson)
         }
     }
 }
@@ -187,7 +191,9 @@ private fun PhoneNumbers(phoneNumbers: MutableList<PhoneNumber>) {
 }
 
 @Composable
-private fun Fabs(lessonId: Long) {
+private fun Fabs(lesson: Lesson) {
+    var showDialog by rememberSaveable { mutableStateOf(false) }
+
     HorizontalDivider(
         modifier = Modifier.padding(vertical = 8.dp),
         thickness = 1.dp,
@@ -204,9 +210,40 @@ private fun Fabs(lessonId: Long) {
         }
         Spacer(Modifier.width(8.dp))
         SmallFloatingActionButton(
-            onClick = { /* delete lesson */ }
+            onClick = { showDialog = true }
         ) {
             Icon(Filled.Delete, contentDescription = null)
         }
+    }
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            text = {
+                Text(
+                    text = "Are you sure you want to delete the lesson with ${lesson.student.firstName} ${lesson.student.lastName}?",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        LessonDao.delete(lesson)
+                        showDialog = false
+                    }
+                ) {
+                    Text("Delete")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { showDialog = false }
+                ) {
+                    Text(
+                        text = "Cancel"
+                    )
+                }
+            }
+        )
     }
 }
