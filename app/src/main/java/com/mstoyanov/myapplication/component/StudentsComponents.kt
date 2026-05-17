@@ -44,16 +44,19 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.mstoyanov.myapplication.dao.StudentDao
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.mstoyanov.myapplication.dao.StudentViewModel
 import com.mstoyanov.myapplication.entity.PhoneNumber
 import com.mstoyanov.myapplication.entity.PhoneNumberType
 import com.mstoyanov.myapplication.entity.PhoneNumberVisualTransformation
-import com.mstoyanov.myapplication.entity.Student
+import com.mstoyanov.myapplication.entity.StudentWithPhoneNumbers
 
 @Composable
-fun Students() {
+fun Students(viewModel: StudentViewModel = viewModel()) {
     var expanded by rememberSaveable { mutableStateOf(false) }
     var expandedId by rememberSaveable { mutableLongStateOf(0) }
+    val studentsWithPhoneNumbers by viewModel.students.collectAsStateWithLifecycle()
 
     LazyColumn(
         modifier = Modifier
@@ -61,9 +64,9 @@ fun Students() {
             .fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        items(StudentDao.findAll()) { student ->
+        items(studentsWithPhoneNumbers) { studentWithPhoneNumbers ->
             CardContent(
-                student,
+                studentWithPhoneNumbers,
                 expanded,
                 expandedId,
                 onExpandedChange = { expanded = it },
@@ -75,7 +78,7 @@ fun Students() {
 
 @Composable
 private fun CardContent(
-    student: Student,
+    studentWithPhoneNumbers: StudentWithPhoneNumbers,
     expanded: Boolean,
     expandedId: Long,
     onExpandedChange: (Boolean) -> Unit,
@@ -100,13 +103,13 @@ private fun CardContent(
                 ),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            this@ElevatedCard.StudentContent(student, expanded, expandedId)
+            this@ElevatedCard.StudentContent(studentWithPhoneNumbers, expanded, expandedId)
             IconButton(onClick = {
-                if (expandedId == student.studentId || !expanded) onExpandedChange(!expanded)
-                onExpandedIdChange(student.studentId)
+                if (expandedId == studentWithPhoneNumbers.student.studentId || !expanded) onExpandedChange(!expanded)
+                onExpandedIdChange(studentWithPhoneNumbers.student.studentId)
             }) {
                 Icon(
-                    imageVector = if (expanded && expandedId == student.studentId) Filled.ExpandLess else Filled.ExpandMore,
+                    imageVector = if (expanded && expandedId == studentWithPhoneNumbers.student.studentId) Filled.ExpandLess else Filled.ExpandMore,
                     contentDescription = null
                 )
             }
@@ -115,17 +118,17 @@ private fun CardContent(
 }
 
 @Composable
-private fun ColumnScope.StudentContent(student: Student, expanded: Boolean, expandedId: Long) {
+private fun ColumnScope.StudentContent(studentWithPhoneNumbers: StudentWithPhoneNumbers, expanded: Boolean, expandedId: Long) {
     Column(
         modifier = Modifier
             .weight(1f)
             .padding(8.dp)
     ) {
-        StudentName(student.firstName, student.lastName)
-        if (expanded && expandedId == student.studentId) {
-            PhoneNumbers(student.phoneNumbers)
-            Notes(student.notes)
-            Fabs(student.studentId)
+        StudentName(studentWithPhoneNumbers.student.firstName, studentWithPhoneNumbers.student.lastName)
+        if (expanded && expandedId == studentWithPhoneNumbers.student.studentId) {
+            PhoneNumbers(studentWithPhoneNumbers.phoneNumbers)
+            Notes(studentWithPhoneNumbers.student.notes)
+            Fabs(studentWithPhoneNumbers.student.studentId)
         }
     }
 }
@@ -149,7 +152,7 @@ private fun StudentName(firstName: String, lastName: String) {
 }
 
 @Composable
-private fun PhoneNumbers(phoneNumbers: MutableList<PhoneNumber>) {
+private fun PhoneNumbers(phoneNumbers: List<PhoneNumber>) {
     phoneNumbers.forEach { phoneNumber ->
         HorizontalDivider(
             modifier = Modifier.padding(vertical = 8.dp),
