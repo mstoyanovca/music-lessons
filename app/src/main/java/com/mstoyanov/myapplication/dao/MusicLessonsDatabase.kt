@@ -1,6 +1,8 @@
 package com.mstoyanov.myapplication.dao
 
+import android.content.Context
 import androidx.room.Database
+import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.mstoyanov.myapplication.entity.Lesson
@@ -20,4 +22,17 @@ abstract class MusicLessonsDatabase : RoomDatabase() {
     abstract fun studentDao(): StudentDao
     abstract fun phoneNumberDao(): PhoneNumberDao
     abstract fun lessonDao(): LessonDao
+
+    companion object {
+        @Volatile
+        private var Instance: MusicLessonsDatabase? = null
+
+        fun getDatabase(context: Context): MusicLessonsDatabase {
+            return Instance ?: synchronized(this) {
+                Room.databaseBuilder(context, MusicLessonsDatabase::class.java, "school")
+                    .build()
+                    .also { Instance = it }
+            }
+        }
+    }
 }
