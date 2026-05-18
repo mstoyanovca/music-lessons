@@ -9,10 +9,10 @@ activityCompose = "1.13.0"
 kotlin = "2.3.21"
 composeBom = "2026.05.00"
 compose-material-icons = "1.7.8"
-room = "2.8.4"
-ksp = "2.3.6"
 navigationCompose = "2.9.8"
 lifecycle = "2.10.0"
+room = "2.8.4"
+ksp = "2.3.6"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -41,5 +41,6 @@ androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-co
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+room = { id = "androidx.room", version.ref = "room" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
