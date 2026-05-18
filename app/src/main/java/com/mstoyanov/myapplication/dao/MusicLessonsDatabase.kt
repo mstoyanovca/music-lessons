@@ -1,10 +1,13 @@
 package com.mstoyanov.myapplication.dao
 
 import android.content.Context
+import androidx.room.AutoMigration
 import androidx.room.Database
+import androidx.room.DeleteColumn
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import androidx.room.migration.AutoMigrationSpec
 import com.mstoyanov.myapplication.entity.Lesson
 import com.mstoyanov.myapplication.entity.LocalTimeConverter
 import com.mstoyanov.myapplication.entity.PhoneNumber
@@ -15,10 +18,13 @@ import com.mstoyanov.myapplication.entity.WeekdayConverter
 @Database(
     version = 5,
     entities = [Student::class, PhoneNumber::class, Lesson::class],
-    exportSchema = false
+    autoMigrations = [AutoMigration(from = 4, to = 5, spec = MusicLessonsDatabase.MyAutoMigration::class)]
 )
 @TypeConverters(LocalTimeConverter::class, PhoneNumberTypeConverter::class, WeekdayConverter::class)
 abstract class MusicLessonsDatabase : RoomDatabase() {
+    @DeleteColumn(tableName = "student", columnName = "email")
+    class MyAutoMigration : AutoMigrationSpec
+
     abstract fun studentDao(): StudentDao
     abstract fun phoneNumberDao(): PhoneNumberDao
     abstract fun lessonDao(): LessonDao
