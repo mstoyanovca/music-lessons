@@ -16,7 +16,7 @@ import com.mstoyanov.myapplication.entity.Student
 import com.mstoyanov.myapplication.entity.WeekdayConverter
 
 @Database(
-    version = 5,
+    version = 6,
     entities = [Student::class, PhoneNumber::class, Lesson::class],
     autoMigrations = [AutoMigration(from = 4, to = 5, spec = MusicLessonsDatabase.MyAutoMigration::class)]
 )
