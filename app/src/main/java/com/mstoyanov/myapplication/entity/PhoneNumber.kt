@@ -15,7 +15,6 @@ import kotlinx.serialization.Serializable
         entity = Student::class,
         parentColumns = arrayOf("student_id"),
         childColumns = arrayOf("student_owner_id"),
-        onUpdate = ForeignKey.CASCADE,
         onDelete = ForeignKey.CASCADE
     ))],
     indices = [(Index(value = ["student_owner_id"]))]
@@ -32,6 +31,4 @@ data class PhoneNumber(
     val type: PhoneNumberType = PhoneNumberType.CELL,
     @ColumnInfo(name = "student_owner_id")
     val studentId: Long = 0L,
-) {
-
-}
+)
