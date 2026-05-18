@@ -44,16 +44,19 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.mstoyanov.myapplication.dao.StudentViewModel
 import com.mstoyanov.myapplication.entity.PhoneNumber
 import com.mstoyanov.myapplication.entity.PhoneNumberType
 import com.mstoyanov.myapplication.entity.PhoneNumberVisualTransformation
 import com.mstoyanov.myapplication.entity.Student
 
 @Composable
-fun Students() {
+fun Students(studentViewModel: StudentViewModel = viewModel()) {
     var expanded by rememberSaveable { mutableStateOf(false) }
     var expandedId by rememberSaveable { mutableLongStateOf(0) }
-    val students = listOf<Student>()  // by viewModel.students.collectAsStateWithLifecycle()
+    val students by studentViewModel.students.collectAsStateWithLifecycle()
 
     LazyColumn(
         modifier = Modifier
