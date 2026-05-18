@@ -22,11 +22,17 @@ import kotlinx.serialization.Serializable
     indices = [(Index(value = ["student_owner_id"]))]
 )
 data class PhoneNumber(
-    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "phone_number_id") val phoneNumberId: Long,
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "phone_number_id")
+    val phoneNumberId: Long,
     // max length 32
+    @ColumnInfo(name = "number")
     val number: String,
-    @field:TypeConverters(PhoneNumberTypeConverter::class) val type: PhoneNumberType,
-    @ColumnInfo(name = "student_owner_id") val studentId: Long,
+    @field:TypeConverters(PhoneNumberTypeConverter::class)
+    @ColumnInfo(name = "type")
+    val type: PhoneNumberType,
+    @ColumnInfo(name = "student_owner_id")
+    val studentId: Long,
 ) {
 
 }

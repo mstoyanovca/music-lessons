@@ -10,25 +10,23 @@ import androidx.room.Update
 import com.mstoyanov.myapplication.MusicLessonsApplication
 import com.mstoyanov.myapplication.entity.PhoneNumber
 import com.mstoyanov.myapplication.entity.Student
-import com.mstoyanov.myapplication.entity.StudentWithPhoneNumbers
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface StudentDao {
-    @Transaction
-    @Query("select * from student")
-    suspend fun findAllWithPhoneNumbers(): Flow<List<StudentWithPhoneNumbers>>
-
-    @Insert
-    suspend fun insert(student: Student): Long
+    @Query("select * from student join phone_number on student.student_id = phone_number.student_owner_id")
+    suspend fun findAllStudents(): Flow<Map<Student, List<PhoneNumber>>>
 
     @Transaction
     @Insert
-    suspend fun insertWithPhoneNumbers(studentWithPhoneNumbers: StudentWithPhoneNumbers, context: Context): List<Long> {
-        val studentId = insert(studentWithPhoneNumbers.student)
-        val phoneNumbers = studentWithPhoneNumbers.phoneNumbers.map { it.copy(studentId = studentId) }
+    suspend fun insert(student: Student, context: Context): List<Long> {
+        val studentId = insertStudent(student)
+        val phoneNumbers = student.phoneNumbers.map { it.copy(studentId = studentId) }
         return MusicLessonsApplication.db.phoneNumberDao().insertAll(phoneNumbers)
     }
+
+    @Insert
+    suspend fun insertStudent(student: Student): Long
 
     @Update
     suspend fun update(student: Student)
