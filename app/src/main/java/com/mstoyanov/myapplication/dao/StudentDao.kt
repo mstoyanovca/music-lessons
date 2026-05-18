@@ -1,6 +1,5 @@
 package com.mstoyanov.myapplication.dao
 
-import android.content.Context
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -15,7 +14,6 @@ import kotlinx.coroutines.flow.flow
 
 @Dao
 interface StudentDao {
-    @Transaction
     suspend fun findAll(): Flow<List<Student>> {
         return flow { findAllStudents().map { it.key.copy(phoneNumbers = it.value) } }
     }
@@ -24,7 +22,7 @@ interface StudentDao {
     suspend fun findAllStudents(): Map<Student, List<PhoneNumber>>
 
     @Transaction
-    suspend fun insert(student: Student, context: Context): List<Long> {
+    suspend fun insert(student: Student): List<Long> {
         val studentId = insertStudent(student)
         val phoneNumbers = student.phoneNumbers.map { it.copy(studentId = studentId) }
         return MusicLessonsApplication.db.phoneNumberDao().insertAll(phoneNumbers)

@@ -4,7 +4,6 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
-import androidx.room.Transaction
 import androidx.room.Update
 import com.mstoyanov.myapplication.entity.Lesson
 import com.mstoyanov.myapplication.entity.Student
@@ -13,12 +12,11 @@ import kotlinx.coroutines.flow.flow
 
 @Dao
 interface LessonDao {
-    @Transaction
     suspend fun findByWeekday(weekday: String): Flow<List<Lesson>> {
         return flow { findLessonsByWeekday(weekday).map { it.key.copy(student = it.value) } }
     }
 
-    @Query("select * from lesson join student on lesson.student_owner_id = student.student_id ")
+    @Query("select * from lesson join student on lesson.student_owner_id = student.student_id where lesson.weekday == :weekday")
     suspend fun findLessonsByWeekday(weekday: String): Map<Lesson, Student>
 
     @Insert

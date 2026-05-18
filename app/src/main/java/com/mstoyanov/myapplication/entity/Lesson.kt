@@ -24,22 +24,37 @@ import java.time.LocalTime
 data class Lesson(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "lesson_id")
-    val lessonId: Long = 0L,
+    val lessonId: Long,
     @field:TypeConverters(WeekdayConverter::class)
     @ColumnInfo(name = "weekday")
-    val weekday: Weekday = Weekday.MONDAY,
+    val weekday: Weekday,
     @Serializable(with = LocalTimeSerializer::class)
     @field:TypeConverters(LocalTimeConverter::class)
     @ColumnInfo(name = "time_from")
-    val timeFrom: LocalTime = LocalTime.of(16, 0),
+    val timeFrom: LocalTime,
     @Serializable(with = LocalTimeSerializer::class)
     @field:TypeConverters(LocalTimeConverter::class)
     @ColumnInfo(name = "time_to")
-    val timeTo: LocalTime = LocalTime.of(16, 30),
+    val timeTo: LocalTime,
     @ColumnInfo(name = "student_owner_id")
-    val studentId: Long = 0L,
-    @Ignore val student: Student = Student()
+    val studentId: Long,
+    @Ignore val student: Student
 ) : Comparable<Lesson> {
+
+    constructor(
+        lessonId: Long = 0L,
+        weekday: Weekday = Weekday.MONDAY,
+        timeFrom: LocalTime = LocalTime.of(16, 0),
+        timeTo: LocalTime = LocalTime.of(16, 30),
+        studentId: Long = 0L
+    ) : this(
+        lessonId = lessonId,
+        weekday = weekday,
+        timeFrom = timeFrom,
+        timeTo = timeTo,
+        studentId = studentId,
+        student = Student()
+    )
 
     override fun compareTo(other: Lesson): Int {
         return when {
