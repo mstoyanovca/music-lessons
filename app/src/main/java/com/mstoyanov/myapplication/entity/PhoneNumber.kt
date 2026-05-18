@@ -16,6 +16,7 @@ import kotlinx.serialization.Serializable
         entity = Student::class,
         parentColumns = arrayOf("student_id"),
         childColumns = arrayOf("student_owner_id"),
+        onUpdate = CASCADE,
         onDelete = CASCADE
     ))],
     indices = [(Index(value = ["student_owner_id"]))]

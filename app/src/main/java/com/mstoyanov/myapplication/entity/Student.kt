@@ -14,7 +14,7 @@ data class Student(
     // max length 24
     @ColumnInfo(name = "last_name") val lastName: String,
     // max length 128
-    val notes: String,
+    @ColumnInfo(name = "notes") val notes: String,
 ) : Comparable<Student> {
 
     override fun compareTo(other: Student): Int {
