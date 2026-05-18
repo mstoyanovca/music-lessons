@@ -32,7 +32,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -44,16 +43,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.mstoyanov.myapplication.dao.LessonViewModel
 import com.mstoyanov.myapplication.entity.Lesson
 import com.mstoyanov.myapplication.entity.PhoneNumber
 import com.mstoyanov.myapplication.entity.PhoneNumberType
 import com.mstoyanov.myapplication.entity.PhoneNumberVisualTransformation
 
 @Composable
-fun Schedule(page: Int, viewModel: LessonViewModel = viewModel()) {
-    val lessons by viewModel.lessonsState(page).collectAsState()
+fun Schedule(page: Int) {
+    val lessons = listOf<Lesson>()  // by viewModel.lessons.collectAsStateWithLifecycle()
     var expanded by rememberSaveable { mutableStateOf(false) }
     var expandedId by rememberSaveable { mutableLongStateOf(0) }
 
@@ -160,7 +157,7 @@ private fun LessonSummary(lesson: Lesson) {
 }
 
 @Composable
-private fun PhoneNumbers(phoneNumbers: MutableList<PhoneNumber>) {
+private fun PhoneNumbers(phoneNumbers: List<PhoneNumber>) {
     phoneNumbers.forEach { phoneNumber ->
         HorizontalDivider(
             modifier = Modifier.padding(vertical = 8.dp),

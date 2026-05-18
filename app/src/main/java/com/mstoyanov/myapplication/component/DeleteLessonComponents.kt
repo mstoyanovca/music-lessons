@@ -6,7 +6,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import com.mstoyanov.myapplication.dao.LessonDao
 import com.mstoyanov.myapplication.entity.Lesson
 
 @Composable
@@ -30,7 +29,7 @@ fun DeleteLessonAlertDialog(
                     onClick = {
                         onShowDialogChange(false)
                         onExpandedChange(false)
-                        LessonDao.delete(lesson)
+                        // LessonDao.delete(lesson)
                     }
                 ) {
                     Text("Delete")

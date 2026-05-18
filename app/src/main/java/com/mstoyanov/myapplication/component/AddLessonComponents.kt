@@ -59,12 +59,9 @@ import androidx.compose.ui.layout.layout
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.mstoyanov.myapplication.dao.LessonDao
-import com.mstoyanov.myapplication.dao.StudentDao
-import com.mstoyanov.myapplication.function.weekdayFromPage
-import com.mstoyanov.myapplication.entity.Lesson
 import com.mstoyanov.myapplication.entity.Student
 import com.mstoyanov.myapplication.entity.Weekday
+import com.mstoyanov.myapplication.function.weekdayFromPage
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
@@ -74,7 +71,7 @@ fun AddLesson(page: Int, navigateBack: () -> Unit) {
     val weekday = weekdayFromPage(page)
     var timeFrom by remember { mutableStateOf(if (weekday == Weekday.SATURDAY) LocalTime.of(9, 0) else LocalTime.of(16, 0)) }
     var timeTo by remember { mutableStateOf(if (weekday == Weekday.SATURDAY) LocalTime.of(9, 30) else LocalTime.of(16, 30)) }
-    val students = StudentDao.findAll()
+    val students = listOf<Student>()  // by viewModel.students.collectAsStateWithLifecycle()
     var student = students.firstOrNull()
 
     Scaffold(
@@ -104,8 +101,8 @@ fun AddLesson(page: Int, navigateBack: () -> Unit) {
                 FloatingActionButton(
                     onClick = {
                         if (student != null)
-                            LessonDao.save(Lesson(lessonId = 0L, weekday!!, timeFrom, timeTo, student!!.studentId, student!!))
-                        navigateBack()
+                        //LessonDao.save(Lesson(lessonId = 0L, weekday!!, timeFrom, timeTo, student!!.studentId, student!!))
+                            navigateBack()
                     }
                 ) {
                     Icon(Icons.Default.Save, contentDescription = null)
