@@ -16,7 +16,7 @@ data class Student(
     @ColumnInfo(name = "last_name") val lastName: String = "",
     // max length 128
     @ColumnInfo(name = "notes") val notes: String = "",
-    @Ignore var phoneNumbers: List<PhoneNumber> = listOf()
+    @Ignore val phoneNumbers: List<PhoneNumber> = listOf()
 ) : Comparable<Student> {
 
     override fun compareTo(other: Student): Int {
