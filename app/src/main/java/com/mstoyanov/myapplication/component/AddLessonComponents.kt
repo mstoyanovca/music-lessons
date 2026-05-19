@@ -48,7 +48,6 @@ import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -74,8 +73,8 @@ import java.time.format.DateTimeFormatter
 @OptIn(ExperimentalMaterial3Api::class)
 fun AddLesson(page: Int, navigateBack: () -> Unit, studentViewModel: StudentViewModel = viewModel(), lessonViewModel: LessonViewModel = viewModel()) {
     val weekday = weekdayFromPage(page)
-    var timeFrom by remember { mutableStateOf(if (weekday == Weekday.SATURDAY) LocalTime.of(9, 0) else LocalTime.of(16, 0)) }
-    var timeTo by remember { mutableStateOf(if (weekday == Weekday.SATURDAY) LocalTime.of(9, 30) else LocalTime.of(16, 30)) }
+    var timeFrom by rememberSaveable { mutableStateOf(if (weekday == Weekday.SATURDAY) LocalTime.of(9, 0) else LocalTime.of(16, 0)) }
+    var timeTo by rememberSaveable { mutableStateOf(if (weekday == Weekday.SATURDAY) LocalTime.of(9, 30) else LocalTime.of(16, 30)) }
     val students by studentViewModel.students.collectAsStateWithLifecycle()
     var student = students.firstOrNull()
 
