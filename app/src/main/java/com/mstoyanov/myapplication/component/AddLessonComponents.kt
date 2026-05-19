@@ -78,23 +78,7 @@ fun AddLesson(page: Int, navigateBack: () -> Unit, studentViewModel: StudentView
     var student = students.firstOrNull()
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                ),
-                title = { Text("Add Lesson") },
-                navigationIcon = {
-                    IconButton(onClick = navigateBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = null
-                        )
-                    }
-                },
-            )
-        },
+        topBar = { TopAppBarImpl(navigateBack) },
         floatingActionButton = {
             AnimatedVisibility(
                 visible = student != null,
@@ -122,6 +106,26 @@ fun AddLesson(page: Int, navigateBack: () -> Unit, studentViewModel: StudentView
             item { TimePicker(timeFrom, timeTo, onTimeFromSelect = { timeFrom = it }, onTimeToSelect = { timeTo = it }) }
         }
     }
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun TopAppBarImpl(navigateBack: () -> Unit) {
+    TopAppBar(
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+        ),
+        title = { Text("Add Lesson") },
+        navigationIcon = {
+            IconButton(onClick = navigateBack) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = null
+                )
+            }
+        },
+    )
 }
 
 @Composable
