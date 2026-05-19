@@ -21,8 +21,6 @@ import androidx.compose.material.icons.filled.EditNote
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Phone
-import androidx.compose.material.icons.filled.Sms
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.HorizontalDivider
@@ -40,16 +38,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mstoyanov.myapplication.dao.StudentViewModel
-import com.mstoyanov.myapplication.entity.PhoneNumber
-import com.mstoyanov.myapplication.entity.PhoneNumberType
-import com.mstoyanov.myapplication.entity.PhoneNumberVisualTransformation
 import com.mstoyanov.myapplication.entity.Student
 
 @Composable
@@ -148,43 +142,6 @@ private fun StudentName(firstName: String, lastName: String) {
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
-    }
-}
-
-@Composable
-private fun PhoneNumbers(phoneNumbers: List<PhoneNumber>) {
-    phoneNumbers.forEach { phoneNumber ->
-        HorizontalDivider(
-            modifier = Modifier.padding(vertical = 8.dp),
-            thickness = 1.dp,
-            color = MaterialTheme.colorScheme.outlineVariant
-        )
-
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(
-                imageVector = Icons.Default.Phone,
-                contentDescription = null,
-                tint = Color.Blue
-            )
-            Spacer(Modifier.width(4.dp))
-            val formattedPhoneNumber = PhoneNumberVisualTransformation()
-                .filter(AnnotatedString(phoneNumber.number))
-                .text
-            Text(
-                text = "$formattedPhoneNumber ${phoneNumber.type.displayValue()}",
-                style = MaterialTheme.typography.bodyLarge,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-            Spacer(Modifier.width(24.dp))
-            if (phoneNumber.type == PhoneNumberType.CELL) {
-                Icon(
-                    imageVector = Icons.Default.Sms,
-                    contentDescription = null,
-                    tint = Color.Blue
-                )
-            }
-        }
     }
 }
 

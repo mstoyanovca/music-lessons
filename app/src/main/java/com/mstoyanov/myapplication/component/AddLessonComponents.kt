@@ -59,6 +59,9 @@ import androidx.compose.ui.layout.layout
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.mstoyanov.myapplication.dao.StudentViewModel
 import com.mstoyanov.myapplication.entity.Student
 import com.mstoyanov.myapplication.entity.Weekday
 import com.mstoyanov.myapplication.function.weekdayFromPage
@@ -67,11 +70,11 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun AddLesson(page: Int, navigateBack: () -> Unit) {
+fun AddLesson(page: Int, navigateBack: () -> Unit, studentViewModel: StudentViewModel = viewModel()) {
     val weekday = weekdayFromPage(page)
     var timeFrom by remember { mutableStateOf(if (weekday == Weekday.SATURDAY) LocalTime.of(9, 0) else LocalTime.of(16, 0)) }
     var timeTo by remember { mutableStateOf(if (weekday == Weekday.SATURDAY) LocalTime.of(9, 30) else LocalTime.of(16, 30)) }
-    val students = listOf<Student>()  // by viewModel.students.collectAsStateWithLifecycle()
+    val students by studentViewModel.students.collectAsStateWithLifecycle()
     var student = students.firstOrNull()
 
     Scaffold(

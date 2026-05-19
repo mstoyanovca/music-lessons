@@ -8,16 +8,16 @@ import androidx.room.Update
 import com.mstoyanov.myapplication.entity.Lesson
 import com.mstoyanov.myapplication.entity.Student
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 
 @Dao
 interface LessonDao {
-    suspend fun findByWeekday(weekday: String): Flow<List<Lesson>> {
-        return flow { findLessonsByWeekday(weekday).map { it.key.copy(student = it.value) } }
+    fun findByWeekday(weekday: String): Flow<List<Lesson>> {
+        return findLessonsByWeekday(weekday).map { map -> map.entries.map { it.key.copy(student = it.value) } }
     }
 
     @Query("select * from lesson join student on lesson.student_owner_id = student.student_id where lesson.weekday == :weekday")
-    suspend fun findLessonsByWeekday(weekday: String): Map<Lesson, Student>
+    fun findLessonsByWeekday(weekday: String): Flow<Map<Lesson, Student>>
 
     @Insert
     suspend fun insert(lesson: Lesson)

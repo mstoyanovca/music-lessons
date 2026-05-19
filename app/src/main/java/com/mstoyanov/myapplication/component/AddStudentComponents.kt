@@ -19,10 +19,12 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.mstoyanov.myapplication.dao.StudentViewModel
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun AddStudent(navigateBack: () -> Unit) {
+fun AddStudent(navigateBack: () -> Unit, studentViewModel: StudentViewModel = viewModel()) {
     Scaffold(
         topBar = { TopAppBarImpl(navigateBack) },
         floatingActionButton = {
