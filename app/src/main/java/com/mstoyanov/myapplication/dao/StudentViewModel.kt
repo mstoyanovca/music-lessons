@@ -4,25 +4,20 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mstoyanov.myapplication.MusicLessonsApplication
 import com.mstoyanov.myapplication.entity.Student
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class StudentViewModel : ViewModel() {
-    private val _students = MutableStateFlow<List<Student>>(emptyList())
-    val students: StateFlow<List<Student>> = _students.asStateFlow()
+    val students: StateFlow<List<Student>> = MusicLessonsApplication.db.studentDao().findAll().stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = emptyList()
+    )
 
-    fun findAll() {
+    fun insert(student: Student) {
         viewModelScope.launch {
-            MusicLessonsApplication.db.studentDao().findAll().collect { students ->
-                _students.value = students
-            }
-        }
-    }
-
-    fun insert(student: Student){
-        viewModelScope.launch{
             MusicLessonsApplication.db.studentDao().insertStudent(student)
         }
     }

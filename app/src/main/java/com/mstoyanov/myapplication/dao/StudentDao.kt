@@ -10,19 +10,19 @@ import com.mstoyanov.myapplication.MusicLessonsApplication
 import com.mstoyanov.myapplication.entity.PhoneNumber
 import com.mstoyanov.myapplication.entity.Student
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 
 @Dao
 interface StudentDao {
-    suspend fun findAll(): Flow<List<Student>> {
-        return flow { findAllStudents().map { it.key.copy(phoneNumbers = it.value) } }
+    fun findAll(): Flow<List<Student>> {
+        return findAllStudents().map { map -> map.entries.map { (student, phoneNumbers) -> student.copy(phoneNumbers = phoneNumbers) } }
     }
 
     @Query("select * from student join phone_number on student.student_id = phone_number.student_owner_id")
-    suspend fun findAllStudents(): Map<Student, List<PhoneNumber>>
+    fun findAllStudents(): Flow<Map<Student, List<PhoneNumber>>>
 
     @Transaction
-    suspend fun insert(student: Student): List<Long> {
+    suspend fun insert(student: Student) {
         val studentId = insertStudent(student)
         val phoneNumbers = student.phoneNumbers.map { it.copy(studentId = studentId) }
         return MusicLessonsApplication.db.phoneNumberDao().insertAll(phoneNumbers)

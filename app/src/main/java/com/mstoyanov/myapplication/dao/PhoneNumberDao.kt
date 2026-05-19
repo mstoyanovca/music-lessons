@@ -9,10 +9,10 @@ import com.mstoyanov.myapplication.entity.PhoneNumber
 @Dao
 interface PhoneNumberDao {
     @Insert
-    suspend fun insertAll(phoneNumbers: List<PhoneNumber>): List<Long>
+    suspend fun insertAll(phoneNumbers: List<PhoneNumber>)
 
     @Upsert
-    suspend fun upsertAll(phoneNumbers: List<PhoneNumber>): List<Long>
+    suspend fun upsertAll(phoneNumbers: List<PhoneNumber>)
 
     @Delete
     suspend fun deleteAll(phoneNumbers: List<PhoneNumber>)

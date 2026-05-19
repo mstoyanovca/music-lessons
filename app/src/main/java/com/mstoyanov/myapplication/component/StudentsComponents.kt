@@ -32,7 +32,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -58,10 +57,6 @@ fun Students(studentViewModel: StudentViewModel = viewModel()) {
     var expanded by rememberSaveable { mutableStateOf(false) }
     var expandedId by rememberSaveable { mutableLongStateOf(0) }
     val students by studentViewModel.students.collectAsStateWithLifecycle()
-
-    LaunchedEffect(Unit) {
-        studentViewModel.findAll()
-    }
 
     LazyColumn(
         modifier = Modifier
