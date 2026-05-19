@@ -6,6 +6,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.mstoyanov.myapplication.dao.LessonViewModel
 import com.mstoyanov.myapplication.entity.Lesson
 
 @Composable
@@ -14,6 +16,7 @@ fun DeleteLessonAlertDialog(
     onExpandedChange: (Boolean) -> Unit,
     showDialog: Boolean,
     onShowDialogChange: (Boolean) -> Unit,
+    lessonViewModel: LessonViewModel = viewModel()
 ) {
     if (showDialog) {
         AlertDialog(
@@ -29,7 +32,7 @@ fun DeleteLessonAlertDialog(
                     onClick = {
                         onShowDialogChange(false)
                         onExpandedChange(false)
-                        // LessonDao.delete(lesson)
+                        lessonViewModel.delete(lesson)
                     }
                 ) {
                     Text("Delete")

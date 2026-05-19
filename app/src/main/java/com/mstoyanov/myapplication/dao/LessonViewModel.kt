@@ -7,6 +7,7 @@ import com.mstoyanov.myapplication.entity.Lesson
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 class LessonViewModel() : ViewModel() {
     fun findByWeekday(weekday: String): StateFlow<List<Lesson>> = MusicLessonsApplication.db.lessonDao().findByWeekday(weekday).stateIn(
@@ -14,4 +15,16 @@ class LessonViewModel() : ViewModel() {
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = emptyList()
     )
+
+    fun insert(lesson: Lesson) {
+        viewModelScope.launch {
+            MusicLessonsApplication.db.lessonDao().insert(lesson)
+        }
+    }
+
+    fun delete(lesson: Lesson) {
+        viewModelScope.launch {
+            MusicLessonsApplication.db.lessonDao().delete(lesson)
+        }
+    }
 }

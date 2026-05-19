@@ -61,7 +61,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.mstoyanov.myapplication.dao.LessonViewModel
 import com.mstoyanov.myapplication.dao.StudentViewModel
+import com.mstoyanov.myapplication.entity.Lesson
 import com.mstoyanov.myapplication.entity.Student
 import com.mstoyanov.myapplication.entity.Weekday
 import com.mstoyanov.myapplication.function.weekdayFromPage
@@ -70,7 +72,7 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun AddLesson(page: Int, navigateBack: () -> Unit, studentViewModel: StudentViewModel = viewModel()) {
+fun AddLesson(page: Int, navigateBack: () -> Unit, studentViewModel: StudentViewModel = viewModel(), lessonViewModel: LessonViewModel = viewModel()) {
     val weekday = weekdayFromPage(page)
     var timeFrom by remember { mutableStateOf(if (weekday == Weekday.SATURDAY) LocalTime.of(9, 0) else LocalTime.of(16, 0)) }
     var timeTo by remember { mutableStateOf(if (weekday == Weekday.SATURDAY) LocalTime.of(9, 30) else LocalTime.of(16, 30)) }
@@ -88,8 +90,8 @@ fun AddLesson(page: Int, navigateBack: () -> Unit, studentViewModel: StudentView
                 FloatingActionButton(
                     onClick = {
                         if (student != null)
-                        //LessonDao.save(Lesson(lessonId = 0L, weekday!!, timeFrom, timeTo, student!!.studentId, student!!))
-                            navigateBack()
+                            lessonViewModel.insert(Lesson(lessonId = 0L, weekday!!, timeFrom, timeTo, student!!.studentId, student!!))
+                        navigateBack()
                     }
                 ) {
                     Icon(Icons.Default.Save, contentDescription = null)
