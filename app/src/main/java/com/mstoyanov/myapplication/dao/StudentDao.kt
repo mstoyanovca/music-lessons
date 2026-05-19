@@ -32,9 +32,9 @@ interface StudentDao {
     suspend fun insertStudent(student: Student): Long
 
     @Transaction
-    suspend fun update(student: Student, deletedPhoneNumbers: List<PhoneNumber>) {
+    suspend fun update(student: Student) {
         updateStudent(student)
-        MusicLessonsApplication.db.phoneNumberDao().deleteAll(deletedPhoneNumbers)
+        MusicLessonsApplication.db.phoneNumberDao().deleteAll(student.phoneNumbers)
         MusicLessonsApplication.db.phoneNumberDao().upsertAll(student.phoneNumbers)
     }
 
