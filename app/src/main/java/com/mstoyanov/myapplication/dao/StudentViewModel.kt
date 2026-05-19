@@ -21,16 +21,9 @@ class StudentViewModel : ViewModel() {
         }
     }
 
-    /*companion object {
-        val Factory: ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val savedStateHandle = createSavedStateHandle()
-                val x = (this[APPLICATION_KEY] as MusicLessonsApplication).db
-                StudentViewModel(
-                    studentDao = (this[APPLICATION_KEY] as MusicLessonsApplication).db
-                    savedStateHandle = savedStateHandle
-                )
-            }
+    fun insert(student: Student){
+        viewModelScope.launch{
+            MusicLessonsApplication.db.studentDao().insertStudent(student)
         }
-    }*/
+    }
 }
