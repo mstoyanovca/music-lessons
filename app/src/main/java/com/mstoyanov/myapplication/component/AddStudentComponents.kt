@@ -1,14 +1,25 @@
 package com.mstoyanov.myapplication.component
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.plus
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.EditNote
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Save
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -26,6 +37,8 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.toMutableStateList
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -40,15 +53,22 @@ fun AddStudent(navigateBack: () -> Unit, studentViewModel: StudentViewModel = vi
     var firstName by rememberSaveable { mutableStateOf("") }
     var lastName by rememberSaveable { mutableStateOf("") }
     var notes by rememberSaveable { mutableStateOf("") }
-    var phoneNumbers: List<PhoneNumber> = rememberSaveable { mutableStateListOf() }
+    var phoneNumbers = rememberSaveable { mutableStateListOf<PhoneNumber>() }
+    var studentIsValid by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
         topBar = { TopAppBarImpl(navigateBack) },
         floatingActionButton = {
-            FloatingActionButton(onClick = {
-                studentViewModel.insert(Student(studentId = 0L, firstName, lastName, notes, phoneNumbers))
-            }) {
-                Icon(Icons.Default.Save, contentDescription = null)
+            AnimatedVisibility(
+                visible = studentIsValid,
+                enter = scaleIn(),
+                exit = scaleOut()
+            ) {
+                FloatingActionButton(onClick = {
+                    studentViewModel.insert(Student(studentId = 0L, firstName, lastName, notes))
+                }) {
+                    Icon(Icons.Default.Save, contentDescription = null)
+                }
             }
         }) { innerPadding ->
         StudentContent(
@@ -60,7 +80,7 @@ fun AddStudent(navigateBack: () -> Unit, studentViewModel: StudentViewModel = vi
             onFirstNameChange = { firstName = it },
             onLastNameChange = { lastName = it },
             onNotesChange = { notes = it },
-            onPhoneNumbersChange = { phoneNumbers = it }
+            onPhoneNumbersChange = { phoneNumbers = it.toMutableStateList() }
         )
     }
 }
@@ -91,11 +111,11 @@ private fun StudentContent(
     firstName: String,
     lastName: String,
     notes: String,
-    phoneNumbers: List<PhoneNumber>,
+    phoneNumbers: MutableList<PhoneNumber>,
     onFirstNameChange: (String) -> Unit,
     onLastNameChange: (String) -> Unit,
     onNotesChange: (String) -> Unit,
-    onPhoneNumbersChange: (List<PhoneNumber>) -> Unit
+    onPhoneNumbersChange: (MutableList<PhoneNumber>) -> Unit
 ) {
     Column(
         modifier = Modifier.padding(innerPadding + PaddingValues(horizontal = 8.dp)),
@@ -103,8 +123,22 @@ private fun StudentContent(
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
             value = firstName,
-            onValueChange = { onFirstNameChange(it) },
+            onValueChange = { if (it.length <= 24) onFirstNameChange(it) },
+            leadingIcon = { Icon(Icons.Default.Person, contentDescription = null) },
             label = { Text("First Name") },
+            textStyle = MaterialTheme.typography.bodyLarge,
+            colors = TextFieldDefaults.colors(
+                focusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                unfocusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer
+            ),
+            singleLine = true
+        )
+        OutlinedTextField(
+            modifier = Modifier.fillMaxWidth(),
+            value = lastName,
+            onValueChange = { if (it.length <= 24) onLastNameChange(it) },
+            leadingIcon = { Icon(Icons.Default.Person, contentDescription = null) },
+            label = { Text("Last Name") },
             textStyle = MaterialTheme.typography.bodyLarge,
             colors = TextFieldDefaults.colors(
                 focusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -115,20 +149,9 @@ private fun StudentContent(
         )
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
-            value = lastName,
-            onValueChange = { onLastNameChange(it) },
-            label = { Text("Last Name") },
-            textStyle = MaterialTheme.typography.bodyLarge,
-            colors = TextFieldDefaults.colors(
-                focusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                unfocusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer
-            ),
-            singleLine = true,
-        )
-        OutlinedTextField(
-            modifier = Modifier.fillMaxWidth(),
             value = notes,
-            onValueChange = { onNotesChange(it) },
+            onValueChange = { if (it.length <= 128) onNotesChange(it) },
+            leadingIcon = { Icon(Icons.Default.EditNote, contentDescription = null) },
             label = { Text("Notes") },
             textStyle = MaterialTheme.typography.bodyLarge,
             colors = TextFieldDefaults.colors(
@@ -144,6 +167,13 @@ private fun StudentContent(
                 // TODO:
                 onPhoneNumbersChange(mutableListOf(PhoneNumber()))
             },
+            leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null) },
+            trailingIcon = {
+                IconButton(onClick = { phoneNumbers.removeAt(0) }) {
+                    Icon(imageVector = Icons.Default.Delete, contentDescription = null)
+                }
+            },
+                // { Icon(Icons.Default.Delete, contentDescription = null) },
             label = { Text("Phone") },
             textStyle = MaterialTheme.typography.bodyLarge,
             colors = TextFieldDefaults.colors(
@@ -153,5 +183,27 @@ private fun StudentContent(
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
         )
+
+        Column {
+            phoneNumbers.forEachIndexed { index, phoneNumber ->
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    OutlinedTextField(
+                        value = phoneNumber.number,
+                        onValueChange = { phoneNumbers[index] = phoneNumbers[index].copy(number = it) },
+                        label = { Text("Phone Number ${index + 1}") },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                        modifier = Modifier.weight(1f)
+                    )
+                    IconButton(onClick = { phoneNumbers.removeAt(index) }) {
+                        Icon(imageVector = Icons.Default.Delete, contentDescription = null)
+                    }
+                }
+                Spacer(Modifier.height(8.dp))
+            }
+
+            Button(onClick = { phoneNumbers.add(PhoneNumber()) }) {
+                Text("Add Number")
+            }
+        }
     }
 }

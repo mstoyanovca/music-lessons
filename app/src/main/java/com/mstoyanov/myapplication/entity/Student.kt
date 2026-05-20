@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
 @Entity(tableName = "student")
 data class Student(
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "student_id") val studentId: Long,
-    // max length 24
+    // max length 24, validated in AddStudentComponents
     @ColumnInfo(name = "first_name") val firstName: String,
     // max length 24
     @ColumnInfo(name = "last_name") val lastName: String,
