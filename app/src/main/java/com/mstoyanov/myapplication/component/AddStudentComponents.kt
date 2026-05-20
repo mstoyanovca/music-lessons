@@ -5,10 +5,7 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.plus
 import androidx.compose.foundation.text.KeyboardOptions
@@ -38,7 +35,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -160,48 +156,33 @@ private fun StudentContent(
             ),
             maxLines = 4
         )
-        OutlinedTextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = phoneNumbers.firstOrNull()?.number ?: "",
-            onValueChange = {
-                // TODO:
-                onPhoneNumbersChange(mutableListOf(PhoneNumber()))
-            },
-            leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null) },
-            trailingIcon = {
-                IconButton(onClick = { phoneNumbers.removeAt(0) }) {
-                    Icon(imageVector = Icons.Default.Delete, contentDescription = null)
-                }
-            },
-                // { Icon(Icons.Default.Delete, contentDescription = null) },
-            label = { Text("Phone") },
-            textStyle = MaterialTheme.typography.bodyLarge,
-            colors = TextFieldDefaults.colors(
-                focusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                unfocusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer
-            ),
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
-        )
-
         Column {
             phoneNumbers.forEachIndexed { index, phoneNumber ->
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    OutlinedTextField(
-                        value = phoneNumber.number,
-                        onValueChange = { phoneNumbers[index] = phoneNumbers[index].copy(number = it) },
-                        label = { Text("Phone Number ${index + 1}") },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-                        modifier = Modifier.weight(1f)
-                    )
-                    IconButton(onClick = { phoneNumbers.removeAt(index) }) {
-                        Icon(imageVector = Icons.Default.Delete, contentDescription = null)
-                    }
-                }
-                Spacer(Modifier.height(8.dp))
+                OutlinedTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = phoneNumber.number,
+                    onValueChange = {
+                        phoneNumbers[index] = PhoneNumber().copy(number = it)
+                    },
+                    leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null) },
+                    trailingIcon = {
+                        IconButton(onClick = { phoneNumbers.removeAt(index) }) {
+                            Icon(imageVector = Icons.Default.Delete, contentDescription = null)
+                        }
+                    },
+                    label = { Text("Phone") },
+                    textStyle = MaterialTheme.typography.bodyLarge,
+                    colors = TextFieldDefaults.colors(
+                        focusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        unfocusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    ),
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
+                )
             }
-
-            Button(onClick = { phoneNumbers.add(PhoneNumber()) }) {
+            Button(
+                modifier = Modifier.padding(top = 4.dp),
+                onClick = { phoneNumbers.add(PhoneNumber()) }) {
                 Text("Add Number")
             }
         }
