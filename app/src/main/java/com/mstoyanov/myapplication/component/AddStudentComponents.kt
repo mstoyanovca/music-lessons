@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.plus
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Save
@@ -26,6 +27,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mstoyanov.myapplication.dao.StudentViewModel
@@ -37,8 +39,8 @@ import com.mstoyanov.myapplication.entity.Student
 fun AddStudent(navigateBack: () -> Unit, studentViewModel: StudentViewModel = viewModel()) {
     var firstName by rememberSaveable { mutableStateOf("") }
     var lastName by rememberSaveable { mutableStateOf("") }
-    var phoneNumbers = rememberSaveable { mutableStateListOf<PhoneNumber>() }
     var notes by rememberSaveable { mutableStateOf("") }
+    var phoneNumbers: List<PhoneNumber> = rememberSaveable { mutableStateListOf() }
 
     Scaffold(
         topBar = { TopAppBarImpl(navigateBack) },
@@ -54,9 +56,11 @@ fun AddStudent(navigateBack: () -> Unit, studentViewModel: StudentViewModel = vi
             firstName,
             lastName,
             notes,
+            phoneNumbers,
             onFirstNameChange = { firstName = it },
             onLastNameChange = { lastName = it },
-            onNotesChange = { notes = it }
+            onNotesChange = { notes = it },
+            onPhoneNumbersChange = { phoneNumbers = it }
         )
     }
 }
@@ -87,9 +91,11 @@ private fun StudentContent(
     firstName: String,
     lastName: String,
     notes: String,
+    phoneNumbers: List<PhoneNumber>,
     onFirstNameChange: (String) -> Unit,
     onLastNameChange: (String) -> Unit,
-    onNotesChange: (String) -> Unit
+    onNotesChange: (String) -> Unit,
+    onPhoneNumbersChange: (List<PhoneNumber>) -> Unit
 ) {
     Column(
         modifier = Modifier.padding(innerPadding + PaddingValues(horizontal = 8.dp)),
@@ -103,7 +109,9 @@ private fun StudentContent(
             colors = TextFieldDefaults.colors(
                 focusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 unfocusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer
-            )
+            ),
+            singleLine = true,
+            supportingText = { Text("First or last name is required") }
         )
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
@@ -114,7 +122,8 @@ private fun StudentContent(
             colors = TextFieldDefaults.colors(
                 focusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 unfocusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer
-            )
+            ),
+            singleLine = true,
         )
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
@@ -125,7 +134,24 @@ private fun StudentContent(
             colors = TextFieldDefaults.colors(
                 focusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 unfocusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer
-            )
+            ),
+            maxLines = 4
+        )
+        OutlinedTextField(
+            modifier = Modifier.fillMaxWidth(),
+            value = phoneNumbers.firstOrNull()?.number ?: "",
+            onValueChange = {
+                // TODO:
+                onPhoneNumbersChange(mutableListOf(PhoneNumber()))
+            },
+            label = { Text("Phone") },
+            textStyle = MaterialTheme.typography.bodyLarge,
+            colors = TextFieldDefaults.colors(
+                focusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                unfocusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer
+            ),
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
         )
     }
 }
