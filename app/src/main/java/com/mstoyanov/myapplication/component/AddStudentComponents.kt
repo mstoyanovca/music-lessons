@@ -11,12 +11,12 @@ import androidx.compose.foundation.layout.plus
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.AddIcCall
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.EditNote
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Save
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -36,11 +36,15 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.autofill.ContentType
+import androidx.compose.ui.semantics.contentType
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mstoyanov.myapplication.dao.StudentViewModel
 import com.mstoyanov.myapplication.entity.PhoneNumber
+import com.mstoyanov.myapplication.entity.PhoneNumberVisualTransformation
 import com.mstoyanov.myapplication.entity.Student
 
 @Composable
@@ -117,7 +121,9 @@ private fun StudentContent(
         modifier = Modifier.padding(innerPadding + PaddingValues(horizontal = 8.dp)),
     ) {
         OutlinedTextField(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .semantics { contentType = ContentType.PersonFirstName },
             value = firstName,
             onValueChange = { if (it.length <= 24) onFirstNameChange(it) },
             leadingIcon = { Icon(Icons.Default.Person, contentDescription = null) },
@@ -130,7 +136,9 @@ private fun StudentContent(
             singleLine = true
         )
         OutlinedTextField(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .semantics { contentType = ContentType.PersonLastName },
             value = lastName,
             onValueChange = { if (it.length <= 24) onLastNameChange(it) },
             leadingIcon = { Icon(Icons.Default.Person, contentDescription = null) },
@@ -162,11 +170,12 @@ private fun StudentContent(
                     modifier = Modifier.fillMaxWidth(),
                     value = phoneNumber.number,
                     onValueChange = {
-                        phoneNumbers[index] = PhoneNumber().copy(number = it)
+                        phoneNumbers[index] = phoneNumbers[index].copy(number = it)
+                        onPhoneNumbersChange(phoneNumbers)
                     },
                     leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null) },
                     trailingIcon = {
-                        IconButton(onClick = { phoneNumbers.removeAt(index) }) {
+                        IconButton(onClick = { phoneNumbers.remove(phoneNumber) }) {
                             Icon(imageVector = Icons.Default.Delete, contentDescription = null)
                         }
                     },
@@ -177,14 +186,19 @@ private fun StudentContent(
                         unfocusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer
                     ),
                     singleLine = true,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    visualTransformation = PhoneNumberVisualTransformation()
                 )
             }
-            Button(
-                modifier = Modifier.padding(top = 4.dp),
-                onClick = { phoneNumbers.add(PhoneNumber()) }) {
-                Text("Add Number")
+        }
+        IconButton(
+            modifier = Modifier.padding(top = 4.dp),
+            onClick = {
+                phoneNumbers.add(PhoneNumber())
+                onPhoneNumbersChange(phoneNumbers)
             }
+        ) {
+            Icon(imageVector = Icons.Default.AddIcCall, contentDescription = null)
         }
     }
 }
