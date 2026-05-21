@@ -18,9 +18,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.mstoyanov.myapplication.entity.NanpVisualTransformation
 import com.mstoyanov.myapplication.entity.PhoneNumber
 import com.mstoyanov.myapplication.entity.PhoneNumberType
-import com.mstoyanov.myapplication.entity.PhoneNumberVisualTransformation
 
 @Composable
 fun PhoneNumbers(phoneNumbers: List<PhoneNumber>) {
@@ -38,7 +38,7 @@ fun PhoneNumbers(phoneNumbers: List<PhoneNumber>) {
                 tint = Color.Blue
             )
             Spacer(Modifier.width(4.dp))
-            val formattedPhoneNumber = PhoneNumberVisualTransformation()
+            val formattedPhoneNumber = NanpVisualTransformation()
                 .filter(AnnotatedString(phoneNumber.number))
                 .text
             Text(
