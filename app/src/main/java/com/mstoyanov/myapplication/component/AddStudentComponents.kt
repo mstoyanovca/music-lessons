@@ -43,8 +43,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mstoyanov.myapplication.dao.StudentViewModel
+import com.mstoyanov.myapplication.entity.NanpVisualTransformation
 import com.mstoyanov.myapplication.entity.PhoneNumber
-import com.mstoyanov.myapplication.entity.PhoneNumberVisualTransformation
 import com.mstoyanov.myapplication.entity.Student
 
 @Composable
@@ -117,6 +117,8 @@ private fun StudentContent(
     onNotesChange: (String) -> Unit,
     onPhoneNumbersChange: (MutableList<PhoneNumber>) -> Unit
 ) {
+    val numericRegex = Regex("[^0-9]")
+
     Column(
         modifier = Modifier.padding(innerPadding + PaddingValues(horizontal = 8.dp)),
     ) {
@@ -170,7 +172,12 @@ private fun StudentContent(
                     modifier = Modifier.fillMaxWidth(),
                     value = phoneNumber.number,
                     onValueChange = {
-                        phoneNumbers[index] = phoneNumbers[index].copy(number = it)
+                        val stripped = numericRegex.replace(it, "")
+                        if (stripped.length >= 10) {
+                            phoneNumbers[index] = phoneNumbers[index].copy(number = stripped.substring(0..9))
+                        } else {
+                            phoneNumbers[index] = phoneNumbers[index].copy(number = stripped)
+                        }
                         onPhoneNumbersChange(phoneNumbers)
                     },
                     leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null) },
@@ -187,7 +194,7 @@ private fun StudentContent(
                     ),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    visualTransformation = PhoneNumberVisualTransformation()
+                    visualTransformation = NanpVisualTransformation()
                 )
             }
         }
