@@ -7,8 +7,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.plus
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AddIcCall
@@ -35,7 +36,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.autofill.ContentType
 import androidx.compose.ui.semantics.contentType
@@ -54,7 +54,7 @@ fun AddStudent(navigateBack: () -> Unit, studentViewModel: StudentViewModel = vi
     var firstName by rememberSaveable { mutableStateOf("") }
     var lastName by rememberSaveable { mutableStateOf("") }
     var notes by rememberSaveable { mutableStateOf("") }
-    var phoneNumbers = rememberSaveable { mutableStateListOf<PhoneNumber>() }
+    var phoneNumbers = rememberSaveable { mutableStateListOf(PhoneNumber()) }
     var studentIsValid by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
@@ -118,8 +118,14 @@ private fun StudentContent(
     onNotesChange: (String) -> Unit,
     onPhoneNumbersChange: (MutableList<PhoneNumber>) -> Unit
 ) {
+    val scrollState = rememberScrollState()
+
     Column(
-        modifier = Modifier.padding(innerPadding + PaddingValues(horizontal = 8.dp)),
+        modifier = Modifier
+            .padding(innerPadding)
+            .padding(horizontal = 8.dp)
+            .padding(bottom = 8.dp)
+            .verticalScroll(scrollState),
     ) {
         OutlinedTextField(
             modifier = Modifier
@@ -152,19 +158,6 @@ private fun StudentContent(
             singleLine = true,
             supportingText = { Text("First or last name is required") }
         )
-        OutlinedTextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = notes,
-            onValueChange = { if (it.length <= 128) onNotesChange(it) },
-            leadingIcon = { Icon(Icons.Default.EditNote, contentDescription = null) },
-            label = { Text("Notes") },
-            textStyle = MaterialTheme.typography.bodyLarge,
-            colors = TextFieldDefaults.colors(
-                focusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                unfocusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer
-            ),
-            maxLines = 4
-        )
         Column {
             phoneNumbers.forEachIndexed { index, phoneNumber ->
                 OutlinedTextField(
@@ -196,9 +189,7 @@ private fun StudentContent(
             }
         }
         IconButton(
-            modifier = Modifier
-                .padding(top = 4.dp)
-                .align(Alignment.End),
+            modifier = Modifier.padding(top = 8.dp),
             onClick = {
                 phoneNumbers.add(PhoneNumber())
                 onPhoneNumbersChange(phoneNumbers)
@@ -206,5 +197,18 @@ private fun StudentContent(
         ) {
             Icon(imageVector = Icons.Default.AddIcCall, contentDescription = null)
         }
+        OutlinedTextField(
+            modifier = Modifier.fillMaxWidth(),
+            value = notes,
+            onValueChange = { if (it.length <= 128) onNotesChange(it) },
+            leadingIcon = { Icon(Icons.Default.EditNote, contentDescription = null) },
+            label = { Text("Notes") },
+            textStyle = MaterialTheme.typography.bodyLarge,
+            colors = TextFieldDefaults.colors(
+                focusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                unfocusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer
+            ),
+            maxLines = 4
+        )
     }
 }
