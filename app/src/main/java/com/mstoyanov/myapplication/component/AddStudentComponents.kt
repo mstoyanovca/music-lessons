@@ -197,7 +197,8 @@ private fun StudentContent(
             onClick = {
                 phoneNumbers.add(PhoneNumber())
                 onPhoneNumbersChange(phoneNumbers)
-            }
+            },
+            enabled = phoneNumbers.isEmpty() || phoneNumbers.map { it.number.length }.all { it == 10 }
         ) {
             Icon(imageVector = Icons.Default.AddIcCall, contentDescription = null)
         }
