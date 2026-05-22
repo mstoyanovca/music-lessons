@@ -167,9 +167,9 @@ private fun StudentContent(
                 OutlinedTextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = phoneNumber.number,
-                    onValueChange = {
-                        val stripped = Regex("[^0-9]")
-                            .replace(it, "")
+                    onValueChange = { it ->
+                        val stripped = it
+                            .filter { it.isDigit() }
                             .substring(0..(it.length - 1).coerceAtMost(9))
                         phoneNumbers[index] = phoneNumbers[index].copy(number = stripped)
                         onPhoneNumbersChange(phoneNumbers)

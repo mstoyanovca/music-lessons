@@ -184,7 +184,10 @@ private fun Fabs(student: Student, studentViewModel: StudentViewModel = viewMode
     ) {
         Spacer(modifier = Modifier.weight(1f))
         SmallFloatingActionButton(
-            onClick = { /* edit student */ }
+            onClick = {
+                // TODO: open edit student screen here
+                /* edit student */
+            }
         ) {
             Icon(Filled.Edit, contentDescription = null)
         }
