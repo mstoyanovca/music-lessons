@@ -35,6 +35,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.autofill.ContentType
 import androidx.compose.ui.semantics.contentType
@@ -117,8 +118,6 @@ private fun StudentContent(
     onNotesChange: (String) -> Unit,
     onPhoneNumbersChange: (MutableList<PhoneNumber>) -> Unit
 ) {
-    val numericRegex = Regex("[^0-9]")
-
     Column(
         modifier = Modifier.padding(innerPadding + PaddingValues(horizontal = 8.dp)),
     ) {
@@ -172,12 +171,10 @@ private fun StudentContent(
                     modifier = Modifier.fillMaxWidth(),
                     value = phoneNumber.number,
                     onValueChange = {
-                        val stripped = numericRegex.replace(it, "")
-                        if (stripped.length >= 10) {
-                            phoneNumbers[index] = phoneNumbers[index].copy(number = stripped.substring(0..9))
-                        } else {
-                            phoneNumbers[index] = phoneNumbers[index].copy(number = stripped)
-                        }
+                        val stripped = Regex("[^0-9]")
+                            .replace(it, "")
+                            .substring(0..(it.length - 1).coerceAtMost(9))
+                        phoneNumbers[index] = phoneNumbers[index].copy(number = stripped)
                         onPhoneNumbersChange(phoneNumbers)
                     },
                     leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null) },
@@ -199,7 +196,9 @@ private fun StudentContent(
             }
         }
         IconButton(
-            modifier = Modifier.padding(top = 4.dp),
+            modifier = Modifier
+                .padding(top = 4.dp)
+                .align(Alignment.End),
             onClick = {
                 phoneNumbers.add(PhoneNumber())
                 onPhoneNumbersChange(phoneNumbers)
