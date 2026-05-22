@@ -18,7 +18,7 @@ interface StudentDao {
         return findAllStudents().map { map -> map.entries.map { (student, phoneNumbers) -> student.copy(phoneNumbers = phoneNumbers) } }
     }
 
-    @Query("select * from student join phone_number on student.student_id = phone_number.student_owner_id")
+    @Query("select * from student left join phone_number on student.student_id = phone_number.student_owner_id")
     fun findAllStudents(): Flow<Map<Student, List<PhoneNumber>>>
 
     @Transaction

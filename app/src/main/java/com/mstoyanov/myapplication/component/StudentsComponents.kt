@@ -195,7 +195,7 @@ private fun Fabs(student: Student, studentViewModel: StudentViewModel = viewMode
         SmallFloatingActionButton(
             onClick = {
                 // TODO: open a dialog here
-                // studentViewModel.delete(student)
+                studentViewModel.delete(student)
             }
         ) {
             Icon(Filled.Delete, contentDescription = null)
