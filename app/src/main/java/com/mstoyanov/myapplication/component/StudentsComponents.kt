@@ -58,9 +58,9 @@ fun Students(studentViewModel: StudentViewModel = viewModel()) {
             .fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        items(students) { studentWithPhoneNumbers ->
+        items(students) { student ->
             CardContent(
-                studentWithPhoneNumbers,
+                student,
                 expanded,
                 expandedId,
                 onExpandedChange = { expanded = it },
@@ -122,7 +122,7 @@ private fun ColumnScope.StudentContent(student: Student, expanded: Boolean, expa
         if (expanded && expandedId == student.studentId) {
             PhoneNumbers(student.phoneNumbers)
             Notes(student.notes)
-            Fabs(student.studentId)
+            Fabs(student)
         }
     }
 }
@@ -173,7 +173,7 @@ private fun Notes(notes: String) {
 }
 
 @Composable
-private fun Fabs(studentId: Long) {
+private fun Fabs(student: Student, studentViewModel: StudentViewModel = viewModel()) {
     HorizontalDivider(
         modifier = Modifier.padding(vertical = 8.dp),
         thickness = 1.dp,
@@ -190,7 +190,10 @@ private fun Fabs(studentId: Long) {
         }
         Spacer(Modifier.width(8.dp))
         SmallFloatingActionButton(
-            onClick = { /* delete student */ }
+            onClick = {
+                // TODO: open a dialog here
+                // studentViewModel.delete(student)
+            }
         ) {
             Icon(Filled.Delete, contentDescription = null)
         }

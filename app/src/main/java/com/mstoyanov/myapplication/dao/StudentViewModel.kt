@@ -21,4 +21,16 @@ class StudentViewModel : ViewModel() {
             MusicLessonsApplication.db.studentDao().insert(student)
         }
     }
+
+    fun update(student: Student) {
+        viewModelScope.launch {
+            MusicLessonsApplication.db.studentDao().update(student)
+        }
+    }
+
+    fun delete(student: Student) {
+        viewModelScope.launch {
+            MusicLessonsApplication.db.studentDao().delete(student)
+        }
+    }
 }
