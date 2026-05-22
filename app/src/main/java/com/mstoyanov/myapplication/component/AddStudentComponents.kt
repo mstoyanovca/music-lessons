@@ -55,18 +55,23 @@ fun AddStudent(navigateBack: () -> Unit, studentViewModel: StudentViewModel = vi
     var lastName by rememberSaveable { mutableStateOf("") }
     var notes by rememberSaveable { mutableStateOf("") }
     var phoneNumbers = rememberSaveable { mutableStateListOf(PhoneNumber()) }
-    var studentIsValid by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
         topBar = { TopAppBarImpl(navigateBack) },
         floatingActionButton = {
             AnimatedVisibility(
-                visible = studentIsValid,
+                visible = firstName.isNotEmpty() || lastName.isNotEmpty(),
                 enter = scaleIn(),
                 exit = scaleOut()
             ) {
                 FloatingActionButton(onClick = {
-                    studentViewModel.insert(Student(studentId = 0L, firstName, lastName, notes))
+                    val student = Student(
+                        studentId = 0L,
+                        firstName,
+                        lastName,
+                        notes
+                    ).copy(phoneNumbers = phoneNumbers.filter { it.number.isNotEmpty() })
+                    studentViewModel.insert(student)
                 }) {
                     Icon(Icons.Default.Save, contentDescription = null)
                 }
@@ -155,8 +160,7 @@ private fun StudentContent(
                 focusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 unfocusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer
             ),
-            singleLine = true,
-            supportingText = { Text("First or last name is required") }
+            singleLine = true
         )
         Column {
             phoneNumbers.forEachIndexed { index, phoneNumber ->

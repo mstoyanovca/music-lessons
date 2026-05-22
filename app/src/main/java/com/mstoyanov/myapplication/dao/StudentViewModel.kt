@@ -18,7 +18,7 @@ class StudentViewModel : ViewModel() {
 
     fun insert(student: Student) {
         viewModelScope.launch {
-            MusicLessonsApplication.db.studentDao().insertStudent(student)
+            MusicLessonsApplication.db.studentDao().insert(student)
         }
     }
 }
