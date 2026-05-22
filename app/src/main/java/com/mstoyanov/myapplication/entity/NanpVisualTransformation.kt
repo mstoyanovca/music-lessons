@@ -8,7 +8,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 class NanpVisualTransformation : VisualTransformation {
 
     override fun filter(text: AnnotatedString): TransformedText {
-        val trimmed = if (text.text.length >= 10) text.text.substring(0..9) else text.text
+        val trimmed = text.text.substring(0..(text.text.length - 1).coerceAtMost(9))
         var out = if (trimmed.isNotEmpty()) "(" else ""
 
         for (i in trimmed.indices) {
