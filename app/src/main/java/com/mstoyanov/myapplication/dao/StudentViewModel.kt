@@ -16,7 +16,8 @@ class StudentViewModel : ViewModel() {
         initialValue = Student()
     )
 
-    fun findAll(): StateFlow<List<Student>> = MusicLessonsApplication.db.studentDao().findAll().stateIn(
+    // do not turn this into fun, it stops working:
+    val students: StateFlow<List<Student>> = MusicLessonsApplication.db.studentDao().findAll().stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = emptyList()

@@ -53,7 +53,7 @@ fun Students(
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
     var expandedId by rememberSaveable { mutableLongStateOf(0) }
-    val students by studentViewModel.findAll().collectAsStateWithLifecycle()
+    val students by studentViewModel.students.collectAsStateWithLifecycle()
 
     LazyColumn(
         modifier = Modifier

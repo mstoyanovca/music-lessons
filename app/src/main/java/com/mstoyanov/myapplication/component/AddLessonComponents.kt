@@ -75,7 +75,7 @@ fun AddLesson(page: Int, navigateBack: () -> Unit, studentViewModel: StudentView
     val weekday = weekdayFromPage(page)
     var timeFrom by rememberSaveable { mutableStateOf(if (weekday == Weekday.SATURDAY) LocalTime.of(9, 0) else LocalTime.of(16, 0)) }
     var timeTo by rememberSaveable { mutableStateOf(if (weekday == Weekday.SATURDAY) LocalTime.of(9, 30) else LocalTime.of(16, 30)) }
-    val students by studentViewModel.findAll().collectAsStateWithLifecycle()
+    val students by studentViewModel.students.collectAsStateWithLifecycle()
     var student = students.firstOrNull()
 
     Scaffold(
