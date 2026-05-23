@@ -64,11 +64,11 @@ import com.mstoyanov.myapplication.function.validatePhoneNumbers
 
 @Composable
 fun EditStudent(studentId: Long, navigateBack: () -> Unit, studentViewModel: StudentViewModel = viewModel()) {
-    val student = studentViewModel.findById(studentId).collectAsState().value!!
-    var firstName by rememberSaveable { mutableStateOf(student.firstName) }
-    var lastName by rememberSaveable { mutableStateOf(student.lastName) }
-    var phoneNumbers = rememberSaveable { student.phoneNumbers.toMutableStateList() }
-    var notes by rememberSaveable { mutableStateOf(student.notes) }
+    val student = studentViewModel.findById(studentId).collectAsState()
+    var firstName by rememberSaveable { mutableStateOf(student.value?.firstName.orEmpty()) }
+    var lastName by rememberSaveable { mutableStateOf(student.value?.lastName.orEmpty()) }
+    var phoneNumbers = rememberSaveable { student.value?.phoneNumbers?.toMutableList() ?: mutableListOf() }
+    var notes by rememberSaveable { mutableStateOf(student.value?.notes.orEmpty()) }
     var phoneNumbersAreValid by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
@@ -118,7 +118,7 @@ private fun TopAppBarImpl(navigateBack: () -> Unit) {
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
         ),
-        title = { Text("Add Student") },
+        title = { Text("Edit Student") },
         navigationIcon = {
             IconButton(onClick = navigateBack) {
                 Icon(
