@@ -74,7 +74,7 @@ fun Schedule(page: Int, lessonViewModel: LessonViewModel = viewModel()) {
 }
 
 @Composable
-fun LazyItemScope.CardContent(
+private fun LazyItemScope.CardContent(
     lesson: Lesson,
     expanded: Boolean,
     expandedId: Long,
@@ -168,7 +168,10 @@ private fun Fabs(lesson: Lesson, onExpandedChange: (Boolean) -> Unit) {
     ) {
         Spacer(modifier = Modifier.weight(1f))
         SmallFloatingActionButton(
-            onClick = { /* edit lesson */ }
+            onClick = {
+                // TODO: open edit lesson screen here
+                /* edit lesson */
+            }
         ) {
             Icon(Filled.Edit, contentDescription = null)
         }
