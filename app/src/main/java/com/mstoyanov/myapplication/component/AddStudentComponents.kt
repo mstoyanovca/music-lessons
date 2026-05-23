@@ -58,6 +58,7 @@ import com.mstoyanov.myapplication.entity.NanpVisualTransformation
 import com.mstoyanov.myapplication.entity.PhoneNumber
 import com.mstoyanov.myapplication.entity.PhoneNumberType
 import com.mstoyanov.myapplication.entity.Student
+import com.mstoyanov.myapplication.function.phoneNumbersAreValid
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -71,7 +72,7 @@ fun AddStudent(navigateBack: () -> Unit, studentViewModel: StudentViewModel = vi
         topBar = { TopAppBarImpl(navigateBack) },
         floatingActionButton = {
             AnimatedVisibility(
-                visible = (firstName.isNotEmpty() || lastName.isNotEmpty()) && phoneNumbers.map { it.number.length }.all { it == 10 },
+                visible = (firstName.isNotEmpty() || lastName.isNotEmpty()) && phoneNumbersAreValid(phoneNumbers),
                 enter = scaleIn(),
                 exit = scaleOut()
             ) {
@@ -123,7 +124,6 @@ private fun TopAppBarImpl(navigateBack: () -> Unit) {
 }
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 private fun StudentContent(
     innerPadding: PaddingValues,
     firstName: String,
@@ -144,73 +144,134 @@ private fun StudentContent(
             .padding(bottom = 8.dp)
             .verticalScroll(scrollState),
     ) {
-        OutlinedTextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .semantics { contentType = ContentType.PersonFirstName },
-            shape = RoundedCornerShape(8.dp),
-            value = firstName,
-            onValueChange = { if (it.length <= 24) onFirstNameChange(it) },
-            leadingIcon = { Icon(Icons.Default.Person, contentDescription = null) },
-            label = { Text("First Name") },
-            textStyle = MaterialTheme.typography.bodyLarge,
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                focusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                unfocusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer
-            ),
-            singleLine = true
-        )
-        OutlinedTextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .semantics { contentType = ContentType.PersonLastName },
-            shape = RoundedCornerShape(8.dp),
-            value = lastName,
-            onValueChange = { if (it.length <= 24) onLastNameChange(it) },
-            leadingIcon = { Icon(Icons.Default.Person, contentDescription = null) },
-            label = { Text("Last Name") },
-            textStyle = MaterialTheme.typography.bodyLarge,
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                focusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                unfocusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer
-            ),
-            singleLine = true
-        )
-        Column {
-            phoneNumbers.forEachIndexed { index, phoneNumber ->
-                var expanded by rememberSaveable { mutableStateOf(false) }
-                var isFocused by rememberSaveable { mutableStateOf(false) }
+        FirstName(firstName, onFirstNameChange)
+        LastName(lastName, onLastNameChange)
+        PhoneNumbers(phoneNumbers, onPhoneNumbersChange)
+        AddPhoneNumber(phoneNumbers, onPhoneNumbersChange)
+        Notes(notes, onNotesChange)
+    }
+}
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+@Composable
+private fun FirstName(
+    firstName: String,
+    onFirstNameChange: (String) -> Unit
+) {
+    OutlinedTextField(
+        modifier = Modifier
+            .fillMaxWidth()
+            .semantics { contentType = ContentType.PersonFirstName },
+        shape = RoundedCornerShape(8.dp),
+        value = firstName,
+        onValueChange = { if (it.length <= 24) onFirstNameChange(it) },
+        leadingIcon = { Icon(Icons.Default.Person, contentDescription = null) },
+        label = { Text("First Name") },
+        textStyle = MaterialTheme.typography.bodyLarge,
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+            unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+            focusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            unfocusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer
+        ),
+        singleLine = true
+    )
+}
+
+@Composable
+private fun LastName(
+    lastName: String,
+    onLastNameChange: (String) -> Unit
+) {
+    OutlinedTextField(
+        modifier = Modifier
+            .fillMaxWidth()
+            .semantics { contentType = ContentType.PersonLastName },
+        shape = RoundedCornerShape(8.dp),
+        value = lastName,
+        onValueChange = { if (it.length <= 24) onLastNameChange(it) },
+        leadingIcon = { Icon(Icons.Default.Person, contentDescription = null) },
+        label = { Text("Last Name") },
+        textStyle = MaterialTheme.typography.bodyLarge,
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+            unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+            focusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            unfocusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer
+        ),
+        singleLine = true
+    )
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun PhoneNumbers(
+    phoneNumbers: MutableList<PhoneNumber>,
+    onPhoneNumbersChange: (MutableList<PhoneNumber>) -> Unit
+) {
+    Column {
+        phoneNumbers.forEachIndexed { index, phoneNumber ->
+            var expanded by rememberSaveable { mutableStateOf(false) }
+            var isFocused by rememberSaveable { mutableStateOf(false) }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                OutlinedTextField(
+                    modifier = Modifier.weight(2f),
+                    shape = RoundedCornerShape(8.dp),
+                    value = phoneNumber.number,
+                    onValueChange = { it ->
+                        val stripped = it
+                            .filter { it.isDigit() }
+                            .substring(0..(it.length - 1).coerceAtMost(9))
+                        phoneNumbers[index] = phoneNumbers[index].copy(number = stripped)
+                        onPhoneNumbersChange(phoneNumbers)
+                    },
+                    leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null) },
+                    trailingIcon = {
+                        IconButton(onClick = { phoneNumbers.remove(phoneNumber) }) {
+                            Icon(
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = null,
+                                tint = Color.Blue
+                            )
+                        }
+                    },
+                    label = { Text("Phone") },
+                    textStyle = MaterialTheme.typography.bodyLarge,
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                        focusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        unfocusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    ),
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    visualTransformation = NanpVisualTransformation()
+                )
+                ExposedDropdownMenuBox(
+                    modifier = Modifier.weight(1f),
+                    expanded = expanded,
+                    onExpandedChange = { expanded = it }
                 ) {
                     OutlinedTextField(
-                        modifier = Modifier.weight(2f),
+                        modifier = Modifier
+                            .menuAnchor(
+                                type = ExposedDropdownMenuAnchorType.PrimaryNotEditable,
+                                enabled = true
+                            )
+                            .onFocusChanged { isFocused = it.isFocused },
                         shape = RoundedCornerShape(8.dp),
-                        value = phoneNumber.number,
-                        onValueChange = { it ->
-                            val stripped = it
-                                .filter { it.isDigit() }
-                                .substring(0..(it.length - 1).coerceAtMost(9))
-                            phoneNumbers[index] = phoneNumbers[index].copy(number = stripped)
-                            onPhoneNumbersChange(phoneNumbers)
-                        },
-                        leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null) },
-                        trailingIcon = {
-                            IconButton(onClick = { phoneNumbers.remove(phoneNumber) }) {
-                                Icon(
-                                    imageVector = Icons.Default.Delete,
-                                    contentDescription = null,
-                                    tint = Color.Blue
-                                )
+                        readOnly = true,
+                        value = phoneNumber.type.displayValue(),
+                        onValueChange = { },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                        label = {
+                            if (isFocused) {
+                                Text("Type")
                             }
                         },
-                        label = { Text("Phone") },
                         textStyle = MaterialTheme.typography.bodyLarge,
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -218,93 +279,73 @@ private fun StudentContent(
                             focusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
                             unfocusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer
                         ),
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        visualTransformation = NanpVisualTransformation()
+                        singleLine = true
                     )
-                    ExposedDropdownMenuBox(
-                        modifier = Modifier.weight(1f),
+                    ExposedDropdownMenu(
                         expanded = expanded,
-                        onExpandedChange = { expanded = it }
+                        onDismissRequest = { expanded = false },
+                        shape = RoundedCornerShape(8.dp)
                     ) {
-                        OutlinedTextField(
-                            modifier = Modifier
-                                .menuAnchor(
-                                    type = ExposedDropdownMenuAnchorType.PrimaryNotEditable,
-                                    enabled = true
-                                )
-                                .onFocusChanged { isFocused = it.isFocused },
-                            shape = RoundedCornerShape(8.dp),
-                            readOnly = true,
-                            value = phoneNumber.type.displayValue(),
-                            onValueChange = { },
-                            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                            label = {
-                                if (isFocused) {
-                                    Text("Type")
-                                }
-                            },
-                            textStyle = MaterialTheme.typography.bodyLarge,
-                            colors = TextFieldDefaults.colors(
-                                focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                                unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                                focusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                                unfocusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer
-                            ),
-                            singleLine = true
-                        )
-                        ExposedDropdownMenu(
-                            expanded = expanded,
-                            onDismissRequest = { expanded = false },
-                            shape = RoundedCornerShape(8.dp)
-                        ) {
-                            PhoneNumberType.entries.forEach { type ->
-                                DropdownMenuItem(
-                                    text = { Text(type.displayValue()) },
-                                    onClick = {
-                                        phoneNumbers[index] = phoneNumbers[index].copy(type = type)
-                                        expanded = false
-                                    },
-                                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
-                                )
-                            }
+                        PhoneNumberType.entries.forEach { type ->
+                            DropdownMenuItem(
+                                text = { Text(type.displayValue()) },
+                                onClick = {
+                                    phoneNumbers[index] = phoneNumbers[index].copy(type = type)
+                                    expanded = false
+                                },
+                                contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                            )
                         }
                     }
                 }
             }
         }
-        IconButton(
-            modifier = Modifier.padding(top = 8.dp),
-            onClick = {
-                phoneNumbers.add(PhoneNumber())
-                onPhoneNumbersChange(phoneNumbers)
-            },
-            colors = IconButtonDefaults.iconButtonColors(
-                contentColor = Color.Blue,
-                disabledContentColor = Color.Gray
-            ),
-            enabled = phoneNumbers.isEmpty() || phoneNumbers.map { it.number.length }.all { it == 10 }
-        ) {
-            Icon(
-                imageVector = Icons.Default.AddIcCall,
-                contentDescription = null
-            )
-        }
-        OutlinedTextField(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(8.dp),
-            value = notes,
-            onValueChange = { if (it.length <= 128) onNotesChange(it) },
-            leadingIcon = { Icon(Icons.Default.EditNote, contentDescription = null) },
-            label = { Text("Notes") },
-            textStyle = MaterialTheme.typography.bodyLarge,
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                focusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                unfocusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer
-            ),
-            maxLines = 4
+    }
+}
+
+@Composable
+private fun AddPhoneNumber(
+    phoneNumbers: MutableList<PhoneNumber>,
+    onPhoneNumbersChange: (MutableList<PhoneNumber>) -> Unit
+) {
+    IconButton(
+        modifier = Modifier.padding(top = 8.dp),
+        onClick = {
+            phoneNumbers.add(PhoneNumber())
+            onPhoneNumbersChange(phoneNumbers)
+        },
+        colors = IconButtonDefaults.iconButtonColors(
+            contentColor = Color.Blue,
+            disabledContentColor = Color.Gray
+        ),
+        enabled = phoneNumbers.isEmpty() || phoneNumbers.map { it.number.length }.all { it == 10 }
+    ) {
+        Icon(
+            imageVector = Icons.Default.AddIcCall,
+            contentDescription = null
         )
     }
+}
+
+@Composable
+private fun Notes(
+    notes: String,
+    onNotesChange: (String) -> Unit
+) {
+    OutlinedTextField(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(8.dp),
+        value = notes,
+        onValueChange = { if (it.length <= 128) onNotesChange(it) },
+        leadingIcon = { Icon(Icons.Default.EditNote, contentDescription = null) },
+        label = { Text("Notes") },
+        textStyle = MaterialTheme.typography.bodyLarge,
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+            unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+            focusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            unfocusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer
+        ),
+        maxLines = 4
+    )
 }

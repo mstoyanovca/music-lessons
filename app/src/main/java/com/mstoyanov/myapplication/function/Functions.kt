@@ -1,5 +1,6 @@
 package com.mstoyanov.myapplication.function
 
+import com.mstoyanov.myapplication.entity.PhoneNumber
 import com.mstoyanov.myapplication.entity.Weekday
 
 fun weekdayFromPage(page: Int): Weekday? {
@@ -12,4 +13,8 @@ fun weekdayFromPage(page: Int): Weekday? {
         5 -> Weekday.SATURDAY
         else -> null
     }
+}
+
+fun phoneNumbersAreValid(phoneNumbers: List<PhoneNumber>): Boolean {
+    return phoneNumbers.isEmpty() || phoneNumbers.map { it.number.length }.all { it == 10 }
 }
