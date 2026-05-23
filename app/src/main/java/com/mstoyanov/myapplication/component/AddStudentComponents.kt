@@ -301,6 +301,7 @@ private fun PhoneNumbers(
                                 text = { Text(type.displayValue()) },
                                 onClick = {
                                     phoneNumbers[index] = phoneNumbers[index].copy(type = type)
+                                    onPhoneNumbersChange(phoneNumbers)
                                     expanded = false
                                 },
                                 contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
