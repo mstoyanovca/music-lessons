@@ -87,6 +87,7 @@ fun AddStudent(navigateBack: () -> Unit, studentViewModel: StudentViewModel = vi
                         notes
                     ).copy(phoneNumbers = phoneNumbers.filter { it.number.isNotEmpty() })
                     studentViewModel.insert(student)
+                    navigateBack()
                 }) {
                     Icon(Icons.Default.Save, contentDescription = null)
                 }
