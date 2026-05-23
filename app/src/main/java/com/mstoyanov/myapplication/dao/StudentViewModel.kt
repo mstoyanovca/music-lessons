@@ -10,23 +10,17 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class StudentViewModel : ViewModel() {
-    fun findById(studentId: Long): StateFlow<Student> {
-        return MusicLessonsApplication.db.studentDao().findById(studentId)
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5000),
-                initialValue = Student()
-            )
-    }
+    fun findById(studentId: Long): StateFlow<Student> = MusicLessonsApplication.db.studentDao().findById(studentId).stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = Student()
+    )
 
-    fun findAll(): StateFlow<List<Student>> {
-        return MusicLessonsApplication.db.studentDao().findAll()
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5000),
-                initialValue = emptyList()
-            )
-    }
+    fun findAll(): StateFlow<List<Student>> = MusicLessonsApplication.db.studentDao().findAll().stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = emptyList()
+    )
 
     fun insert(student: Student) {
         viewModelScope.launch {

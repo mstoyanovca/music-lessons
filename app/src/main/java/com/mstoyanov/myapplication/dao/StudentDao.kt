@@ -9,16 +9,27 @@ import androidx.room.Update
 import com.mstoyanov.myapplication.MusicLessonsApplication
 import com.mstoyanov.myapplication.entity.PhoneNumber
 import com.mstoyanov.myapplication.entity.Student
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.map
 
 @Dao
 interface StudentDao {
-    @Query("select * from student where student_id = :studentId")
-    fun findById(studentId: Long): Flow<Student>
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun findById(studentId: Long): Flow<Student> {
+        return findStudentById(studentId)
+            .map { map -> map.entries.map { (student, phoneNumbers) -> student.copy(phoneNumbers = phoneNumbers) } }
+            .flatMapConcat { list -> list.asFlow() }
+    }
+
+    @Query("select * from student left join phone_number on student.student_id = phone_number.student_owner_id where student_id = :studentId")
+    fun findStudentById(studentId: Long): Flow<Map<Student, List<PhoneNumber>>>
 
     fun findAll(): Flow<List<Student>> {
-        return findAllStudents().map { map -> map.entries.map { (student, phoneNumbers) -> student.copy(phoneNumbers = phoneNumbers) } }
+        return findAllStudents()
+            .map { map -> map.entries.map { (student, phoneNumbers) -> student.copy(phoneNumbers = phoneNumbers) } }
     }
 
     @Query("select * from student left join phone_number on student.student_id = phone_number.student_owner_id")
@@ -28,7 +39,7 @@ interface StudentDao {
     suspend fun insert(student: Student) {
         val studentId = insertStudent(student)
         val phoneNumbers = student.phoneNumbers.map { it.copy(studentId = studentId) }
-        return MusicLessonsApplication.db.phoneNumberDao().insertAll(phoneNumbers)
+        MusicLessonsApplication.db.phoneNumberDao().insertAll(phoneNumbers)
     }
 
     @Insert

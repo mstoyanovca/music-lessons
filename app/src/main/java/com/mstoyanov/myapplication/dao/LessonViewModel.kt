@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class LessonViewModel() : ViewModel() {
+class LessonViewModel : ViewModel() {
     fun findByWeekday(weekday: String): StateFlow<List<Lesson>> = MusicLessonsApplication.db.lessonDao().findByWeekday(weekday).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
