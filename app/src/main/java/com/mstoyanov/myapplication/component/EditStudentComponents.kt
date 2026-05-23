@@ -18,12 +18,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mstoyanov.myapplication.dao.StudentViewModel
 import com.mstoyanov.myapplication.entity.Student
@@ -31,11 +31,11 @@ import com.mstoyanov.myapplication.function.validatePhoneNumbers
 
 @Composable
 fun EditStudent(studentId: Long, navigateBack: () -> Unit, studentViewModel: StudentViewModel = viewModel()) {
-    val student = studentViewModel.findById(studentId).collectAsState()
-    var firstName by rememberSaveable { mutableStateOf(student.value?.firstName.orEmpty()) }
-    var lastName by rememberSaveable { mutableStateOf(student.value?.lastName.orEmpty()) }
-    var phoneNumbers = rememberSaveable { student.value?.phoneNumbers?.toMutableList() ?: mutableListOf() }
-    var notes by rememberSaveable { mutableStateOf(student.value?.notes.orEmpty()) }
+    val student by studentViewModel.findById(studentId).collectAsStateWithLifecycle()
+    var firstName by rememberSaveable { mutableStateOf(student.firstName) }
+    var lastName by rememberSaveable { mutableStateOf(student.lastName) }
+    var phoneNumbers = rememberSaveable { student.phoneNumbers.toMutableList() }
+    var notes by rememberSaveable { mutableStateOf(student.notes) }
     var phoneNumbersAreValid by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
