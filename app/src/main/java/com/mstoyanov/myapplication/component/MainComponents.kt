@@ -31,8 +31,10 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.mstoyanov.myapplication.AddLessonRoute
 import com.mstoyanov.myapplication.AddStudentRoute
+import com.mstoyanov.myapplication.EditStudentRoute
 import com.mstoyanov.myapplication.HomeRoute
 import com.mstoyanov.myapplication.R
+import com.mstoyanov.myapplication.entity.Student
 import kotlinx.coroutines.launch
 
 @Composable
@@ -47,7 +49,8 @@ fun MainScreen() {
         composable<HomeRoute> {
             MainScreenContent(
                 onAddLessonClick = { navController.navigate(AddLessonRoute(page = it)) },
-                onAddStudentClick = { navController.navigate(AddStudentRoute) })
+                onAddStudentClick = { navController.navigate(AddStudentRoute) },
+                onEditStudentClick = { navController.navigate(EditStudentRoute(student = it)) })
         }
         composable<AddLessonRoute> { backStackEntry ->
             val addLessonRoute: AddLessonRoute = backStackEntry.toRoute<AddLessonRoute>()
@@ -68,13 +71,25 @@ fun MainScreen() {
                 }
             })
         }
+        composable<EditStudentRoute> { backStackEntry ->
+            val editStudentRoute: EditStudentRoute = backStackEntry.toRoute<EditStudentRoute>()
+            EditStudent(
+                student = editStudentRoute.student,
+                navigateBack = {
+                    // avoid freeze after two rapid back icon clicks:
+                    if (navController.currentBackStackEntry?.lifecycle?.currentState == Lifecycle.State.RESUMED) {
+                        navController.popBackStack()
+                    }
+                })
+        }
     }
 }
 
 @Composable
 private fun MainScreenContent(
     onAddLessonClick: (page: Int) -> Unit,
-    onAddStudentClick: () -> Unit
+    onAddStudentClick: () -> Unit,
+    onEditStudentClick: (student: Student) -> Unit
 ) {
     val pagerState = rememberPagerState(pageCount = { 7 })
 
@@ -99,7 +114,7 @@ private fun MainScreenContent(
             modifier = Modifier.padding(innerPadding),
             beyondViewportPageCount = 6
         ) { page ->
-            if (page == 6) Students()
+            if (page == 6) Students(onEditStudentClick)
             else Schedule(page)
         }
     }

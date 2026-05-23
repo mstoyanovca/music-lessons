@@ -47,7 +47,10 @@ import com.mstoyanov.myapplication.dao.StudentViewModel
 import com.mstoyanov.myapplication.entity.Student
 
 @Composable
-fun Students(studentViewModel: StudentViewModel = viewModel()) {
+fun Students(
+    onEditStudentClick: (student: Student) -> Unit,
+    studentViewModel: StudentViewModel = viewModel()
+) {
     var expanded by rememberSaveable { mutableStateOf(false) }
     var expandedId by rememberSaveable { mutableLongStateOf(0) }
     val students by studentViewModel.students.collectAsStateWithLifecycle()
@@ -64,7 +67,8 @@ fun Students(studentViewModel: StudentViewModel = viewModel()) {
                 expanded,
                 expandedId,
                 onExpandedChange = { expanded = it },
-                onExpandedIdChange = { expandedId = it }
+                onExpandedIdChange = { expandedId = it },
+                onEditStudentClick
             )
         }
     }
@@ -76,7 +80,8 @@ private fun CardContent(
     expanded: Boolean,
     expandedId: Long,
     onExpandedChange: (Boolean) -> Unit,
-    onExpandedIdChange: (Long) -> Unit
+    onExpandedIdChange: (Long) -> Unit,
+    onEditStudentClick: (student: Student) -> Unit,
 ) {
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
@@ -97,7 +102,13 @@ private fun CardContent(
                 ),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            this@ElevatedCard.StudentContent(student, expanded, expandedId, onExpandedChange)
+            this@ElevatedCard.StudentContent(
+                student,
+                expanded,
+                expandedId,
+                onExpandedChange,
+                onEditStudentClick
+            )
             IconButton(onClick = {
                 if (expandedId == student.studentId || !expanded) onExpandedChange(!expanded)
                 onExpandedIdChange(student.studentId)
@@ -112,7 +123,13 @@ private fun CardContent(
 }
 
 @Composable
-private fun ColumnScope.StudentContent(student: Student, expanded: Boolean, expandedId: Long, onExpandedChange: (Boolean) -> Unit) {
+private fun ColumnScope.StudentContent(
+    student: Student,
+    expanded: Boolean,
+    expandedId: Long,
+    onExpandedChange: (Boolean) -> Unit,
+    onEditStudentClick: (student: Student) -> Unit
+) {
     Column(
         modifier = Modifier
             .weight(1f)
@@ -122,7 +139,7 @@ private fun ColumnScope.StudentContent(student: Student, expanded: Boolean, expa
         if (expanded && expandedId == student.studentId) {
             PhoneNumbers(student.phoneNumbers)
             Notes(student.notes)
-            Fabs(student, onExpandedChange)
+            Fabs(student, onExpandedChange, onEditStudentClick)
         }
     }
 }
@@ -173,7 +190,11 @@ private fun Notes(notes: String) {
 }
 
 @Composable
-private fun Fabs(student: Student, onExpandedChange: (Boolean) -> Unit) {
+private fun Fabs(
+    student: Student,
+    onExpandedChange: (Boolean) -> Unit,
+    onEditStudentClick: (student: Student) -> Unit
+) {
     var showDialog by rememberSaveable { mutableStateOf(false) }
 
     HorizontalDivider(
@@ -186,10 +207,7 @@ private fun Fabs(student: Student, onExpandedChange: (Boolean) -> Unit) {
     ) {
         Spacer(modifier = Modifier.weight(1f))
         SmallFloatingActionButton(
-            onClick = {
-                // TODO: open edit student screen here
-                /* edit student */
-            }
+            onClick = { onEditStudentClick(student) }
         ) {
             Icon(Filled.Edit, contentDescription = null)
         }
