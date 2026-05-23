@@ -15,6 +15,6 @@ fun weekdayFromPage(page: Int): Weekday? {
     }
 }
 
-fun phoneNumbersAreValid(phoneNumbers: List<PhoneNumber>): Boolean {
+fun validatePhoneNumbers(phoneNumbers: List<PhoneNumber>): Boolean {
     return phoneNumbers.isEmpty() || phoneNumbers.map { it.number.length }.all { it == 10 }
 }

@@ -1,6 +1,8 @@
 package com.mstoyanov.myapplication.component
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.Arrangement
@@ -58,7 +60,7 @@ import com.mstoyanov.myapplication.entity.NanpVisualTransformation
 import com.mstoyanov.myapplication.entity.PhoneNumber
 import com.mstoyanov.myapplication.entity.PhoneNumberType
 import com.mstoyanov.myapplication.entity.Student
-import com.mstoyanov.myapplication.function.phoneNumbersAreValid
+import com.mstoyanov.myapplication.function.validatePhoneNumbers
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -67,14 +69,15 @@ fun AddStudent(navigateBack: () -> Unit, studentViewModel: StudentViewModel = vi
     var lastName by rememberSaveable { mutableStateOf("") }
     var phoneNumbers = rememberSaveable { mutableStateListOf(PhoneNumber()) }
     var notes by rememberSaveable { mutableStateOf("") }
+    var phoneNumbersAreValid by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
         topBar = { TopAppBarImpl(navigateBack) },
         floatingActionButton = {
             AnimatedVisibility(
-                visible = (firstName.isNotEmpty() || lastName.isNotEmpty()) && phoneNumbersAreValid(phoneNumbers),
-                enter = scaleIn(),
-                exit = scaleOut()
+                visible = (firstName.isNotEmpty() || lastName.isNotEmpty()) && phoneNumbersAreValid,
+                enter = fadeIn() + scaleIn(),
+                exit = fadeOut() + scaleOut(),
             ) {
                 FloatingActionButton(onClick = {
                     val student = Student(
@@ -98,7 +101,10 @@ fun AddStudent(navigateBack: () -> Unit, studentViewModel: StudentViewModel = vi
             onFirstNameChange = { firstName = it },
             onLastNameChange = { lastName = it },
             onNotesChange = { notes = it },
-            onPhoneNumbersChange = { phoneNumbers = it.toMutableStateList() }
+            onPhoneNumbersChange = {
+                phoneNumbers = it.toMutableStateList()
+                phoneNumbersAreValid = validatePhoneNumbers(it)
+            }
         )
     }
 }
@@ -230,7 +236,10 @@ private fun PhoneNumbers(
                     },
                     leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null) },
                     trailingIcon = {
-                        IconButton(onClick = { phoneNumbers.remove(phoneNumber) }) {
+                        IconButton(onClick = {
+                            phoneNumbers.remove(phoneNumber)
+                            onPhoneNumbersChange(phoneNumbers)
+                        }) {
                             Icon(
                                 imageVector = Icons.Default.Delete,
                                 contentDescription = null,
@@ -318,7 +327,7 @@ private fun AddPhoneNumber(
             contentColor = Color.Blue,
             disabledContentColor = Color.Gray
         ),
-        enabled = phoneNumbers.isEmpty() || phoneNumbers.map { it.number.length }.all { it == 10 }
+        enabled = validatePhoneNumbers(phoneNumbers)
     ) {
         Icon(
             imageVector = Icons.Default.AddIcCall,
