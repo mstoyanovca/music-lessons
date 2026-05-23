@@ -34,7 +34,6 @@ import com.mstoyanov.myapplication.AddStudentRoute
 import com.mstoyanov.myapplication.EditStudentRoute
 import com.mstoyanov.myapplication.HomeRoute
 import com.mstoyanov.myapplication.R
-import com.mstoyanov.myapplication.entity.Student
 import kotlinx.coroutines.launch
 
 @Composable
@@ -50,7 +49,7 @@ fun MainScreen() {
             MainScreenContent(
                 onAddLessonClick = { navController.navigate(AddLessonRoute(page = it)) },
                 onAddStudentClick = { navController.navigate(AddStudentRoute) },
-                onEditStudentClick = { navController.navigate(EditStudentRoute(student = it)) })
+                onEditStudentClick = { navController.navigate(EditStudentRoute(studentId = it)) })
         }
         composable<AddLessonRoute> { backStackEntry ->
             val addLessonRoute: AddLessonRoute = backStackEntry.toRoute<AddLessonRoute>()
@@ -74,7 +73,7 @@ fun MainScreen() {
         composable<EditStudentRoute> { backStackEntry ->
             val editStudentRoute: EditStudentRoute = backStackEntry.toRoute<EditStudentRoute>()
             EditStudent(
-                student = editStudentRoute.student,
+                studentId = editStudentRoute.studentId,
                 navigateBack = {
                     // avoid freeze after two rapid back icon clicks:
                     if (navController.currentBackStackEntry?.lifecycle?.currentState == Lifecycle.State.RESUMED) {
@@ -89,7 +88,7 @@ fun MainScreen() {
 private fun MainScreenContent(
     onAddLessonClick: (page: Int) -> Unit,
     onAddStudentClick: () -> Unit,
-    onEditStudentClick: (student: Student) -> Unit
+    onEditStudentClick: (studentId: Long) -> Unit
 ) {
     val pagerState = rememberPagerState(pageCount = { 7 })
 

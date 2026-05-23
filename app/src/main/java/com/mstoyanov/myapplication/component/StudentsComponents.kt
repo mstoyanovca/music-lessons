@@ -48,12 +48,12 @@ import com.mstoyanov.myapplication.entity.Student
 
 @Composable
 fun Students(
-    onEditStudentClick: (student: Student) -> Unit,
+    onEditStudentClick: (studentId: Long) -> Unit,
     studentViewModel: StudentViewModel = viewModel()
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
     var expandedId by rememberSaveable { mutableLongStateOf(0) }
-    val students by studentViewModel.students.collectAsStateWithLifecycle()
+    val students by studentViewModel.findAll().collectAsStateWithLifecycle()
 
     LazyColumn(
         modifier = Modifier
@@ -81,7 +81,7 @@ private fun CardContent(
     expandedId: Long,
     onExpandedChange: (Boolean) -> Unit,
     onExpandedIdChange: (Long) -> Unit,
-    onEditStudentClick: (student: Student) -> Unit,
+    onEditStudentClick: (studentId: Long) -> Unit
 ) {
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
@@ -128,7 +128,7 @@ private fun ColumnScope.StudentContent(
     expanded: Boolean,
     expandedId: Long,
     onExpandedChange: (Boolean) -> Unit,
-    onEditStudentClick: (student: Student) -> Unit
+    onEditStudentClick: (studentId: Long) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -193,7 +193,7 @@ private fun Notes(notes: String) {
 private fun Fabs(
     student: Student,
     onExpandedChange: (Boolean) -> Unit,
-    onEditStudentClick: (student: Student) -> Unit
+    onEditStudentClick: (studentId: Long) -> Unit
 ) {
     var showDialog by rememberSaveable { mutableStateOf(false) }
 
@@ -207,7 +207,7 @@ private fun Fabs(
     ) {
         Spacer(modifier = Modifier.weight(1f))
         SmallFloatingActionButton(
-            onClick = { onEditStudentClick(student) }
+            onClick = { onEditStudentClick(student.studentId) }
         ) {
             Icon(Filled.Edit, contentDescription = null)
         }

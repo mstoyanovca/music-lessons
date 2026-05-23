@@ -14,6 +14,9 @@ import kotlinx.coroutines.flow.map
 
 @Dao
 interface StudentDao {
+    @Query("select * from student where student_id = :studentId")
+    fun findById(studentId: Long): Flow<Student>
+
     fun findAll(): Flow<List<Student>> {
         return findAllStudents().map { map -> map.entries.map { (student, phoneNumbers) -> student.copy(phoneNumbers = phoneNumbers) } }
     }
@@ -34,6 +37,7 @@ interface StudentDao {
     @Transaction
     suspend fun update(student: Student) {
         updateStudent(student)
+        // TODO:
         MusicLessonsApplication.db.phoneNumberDao().deleteAll(student.phoneNumbers)
         MusicLessonsApplication.db.phoneNumberDao().upsertAll(student.phoneNumbers)
     }

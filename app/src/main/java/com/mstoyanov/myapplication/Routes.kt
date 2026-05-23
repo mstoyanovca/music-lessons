@@ -1,6 +1,5 @@
 package com.mstoyanov.myapplication
 
-import com.mstoyanov.myapplication.entity.Student
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -14,4 +13,4 @@ data class AddLessonRoute(val page: Int)
 object AddStudentRoute
 
 @Serializable
-data class EditStudentRoute(val student: Student)
+data class EditStudentRoute(val studentId: Long)
