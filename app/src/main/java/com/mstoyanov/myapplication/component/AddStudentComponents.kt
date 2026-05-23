@@ -63,7 +63,6 @@ import com.mstoyanov.myapplication.entity.Student
 import com.mstoyanov.myapplication.function.validatePhoneNumbers
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 fun AddStudent(navigateBack: () -> Unit, studentViewModel: StudentViewModel = viewModel()) {
     var firstName by rememberSaveable { mutableStateOf("") }
     var lastName by rememberSaveable { mutableStateOf("") }
