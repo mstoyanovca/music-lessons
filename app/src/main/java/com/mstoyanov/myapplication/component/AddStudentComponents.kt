@@ -29,6 +29,7 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -46,6 +47,7 @@ import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.autofill.ContentType
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.contentType
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardType
@@ -106,7 +108,7 @@ private fun TopAppBarImpl(navigateBack: () -> Unit) {
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
-            titleContentColor = MaterialTheme.colorScheme.primary,
+            titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
         ),
         title = { Text("Add Student") },
         navigationIcon = {
@@ -153,6 +155,8 @@ private fun StudentContent(
             label = { Text("First Name") },
             textStyle = MaterialTheme.typography.bodyLarge,
             colors = TextFieldDefaults.colors(
+                focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
                 focusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 unfocusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer
             ),
@@ -169,6 +173,8 @@ private fun StudentContent(
             label = { Text("Last Name") },
             textStyle = MaterialTheme.typography.bodyLarge,
             colors = TextFieldDefaults.colors(
+                focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
                 focusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 unfocusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer
             ),
@@ -197,12 +203,18 @@ private fun StudentContent(
                         leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null) },
                         trailingIcon = {
                             IconButton(onClick = { phoneNumbers.remove(phoneNumber) }) {
-                                Icon(imageVector = Icons.Default.Delete, contentDescription = null)
+                                Icon(
+                                    imageVector = Icons.Default.Delete,
+                                    contentDescription = null,
+                                    tint = Color.Blue
+                                )
                             }
                         },
                         label = { Text("Phone") },
                         textStyle = MaterialTheme.typography.bodyLarge,
                         colors = TextFieldDefaults.colors(
+                            focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
                             focusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
                             unfocusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer
                         ),
@@ -235,7 +247,9 @@ private fun StudentContent(
                             textStyle = MaterialTheme.typography.bodyLarge,
                             colors = TextFieldDefaults.colors(
                                 focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                                unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer
+                                unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                                focusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                                unfocusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer
                             ),
                             singleLine = true
                         )
@@ -265,9 +279,16 @@ private fun StudentContent(
                 phoneNumbers.add(PhoneNumber())
                 onPhoneNumbersChange(phoneNumbers)
             },
+            colors = IconButtonDefaults.iconButtonColors(
+                contentColor = Color.Blue,
+                disabledContentColor = Color.Gray
+            ),
             enabled = phoneNumbers.isEmpty() || phoneNumbers.map { it.number.length }.all { it == 10 }
         ) {
-            Icon(imageVector = Icons.Default.AddIcCall, contentDescription = null)
+            Icon(
+                imageVector = Icons.Default.AddIcCall,
+                contentDescription = null
+            )
         }
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
@@ -278,6 +299,8 @@ private fun StudentContent(
             label = { Text("Notes") },
             textStyle = MaterialTheme.typography.bodyLarge,
             colors = TextFieldDefaults.colors(
+                focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
                 focusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 unfocusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer
             ),

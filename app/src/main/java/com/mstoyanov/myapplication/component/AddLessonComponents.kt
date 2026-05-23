@@ -179,7 +179,7 @@ private fun StudentPicker(students: List<Student>, student: Student?, onStudentS
                 focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
                 unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
                 focusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                unfocusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                unfocusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer
             ),
         )
         ExposedDropdownMenu(
