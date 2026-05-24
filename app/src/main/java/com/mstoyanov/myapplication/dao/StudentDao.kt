@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.map
 @Dao
 interface StudentDao {
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun findById(studentId: Long): Flow<Student> {
+    fun findById(studentId: Long): Flow<Student?> {
         return findStudentById(studentId)
             .map { map -> map.entries.map { (student, phoneNumbers) -> student.copy(phoneNumbers = phoneNumbers) } }
             .flatMapConcat { list -> list.asFlow() }
