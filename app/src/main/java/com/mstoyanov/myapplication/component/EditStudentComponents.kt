@@ -21,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -36,9 +37,13 @@ import com.mstoyanov.myapplication.function.validatePhoneNumbers
 
 @Composable
 fun EditStudent(studentId: Long, navigateBack: () -> Unit, studentViewModel: StudentViewModel = viewModel()) {
-    val studentState by studentViewModel.findById(studentId).collectAsStateWithLifecycle()
+    //val studentState by studentViewModel.findById(studentId).collectAsStateWithLifecycle()
+    LaunchedEffect(studentId) {
+        studentViewModel.findById(studentId)
+    }
+    val student2 by studentViewModel.studentState.collectAsStateWithLifecycle()
 
-    when (val student = studentState) {
+    when (val student = student2) {
         null -> {
             Box(
                 modifier = Modifier.fillMaxSize(),

@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.map
 @Dao
 interface StudentDao {
     @Query("select * from student where student_id = :studentId")
-    fun findById(studentId: Long): Flow<Student?>
+    suspend fun findById(studentId: Long): Student?
 
     @OptIn(ExperimentalCoroutinesApi::class)
     fun findById2(studentId: Long): Flow<Student> {
