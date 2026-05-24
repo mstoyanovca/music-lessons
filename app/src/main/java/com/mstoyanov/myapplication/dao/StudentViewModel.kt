@@ -10,10 +10,10 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class StudentViewModel : ViewModel() {
-    fun findById(studentId: Long): StateFlow<Student> = MusicLessonsApplication.db.studentDao().findById(studentId).stateIn(
+    fun findById(studentId: Long): StateFlow<Student?> = MusicLessonsApplication.db.studentDao().findById(studentId).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
-        initialValue = Student()
+        initialValue = null
     )
 
     // do not turn this into fun, it stops working:

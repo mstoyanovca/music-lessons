@@ -5,9 +5,12 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Save
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -23,6 +26,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mstoyanov.myapplication.dao.StudentViewModel
@@ -31,49 +36,63 @@ import com.mstoyanov.myapplication.function.validatePhoneNumbers
 
 @Composable
 fun EditStudent(studentId: Long, navigateBack: () -> Unit, studentViewModel: StudentViewModel = viewModel()) {
-    val student by studentViewModel.findById(studentId).collectAsStateWithLifecycle()
-    var firstName by rememberSaveable { mutableStateOf(student.firstName) }
-    var lastName by rememberSaveable { mutableStateOf(student.lastName) }
-    var phoneNumbers = rememberSaveable { student.phoneNumbers.toMutableList() }
-    var notes by rememberSaveable { mutableStateOf(student.notes) }
-    var phoneNumbersAreValid by rememberSaveable { mutableStateOf(false) }
+    val studentState by studentViewModel.findById(studentId).collectAsStateWithLifecycle()
 
-    Scaffold(
-        topBar = { TopAppBarImpl(navigateBack) },
-        floatingActionButton = {
-            AnimatedVisibility(
-                visible = (firstName.isNotEmpty() || lastName.isNotEmpty()) && phoneNumbersAreValid,
-                enter = fadeIn() + scaleIn(),
-                exit = fadeOut() + scaleOut(),
+    when (val student = studentState) {
+        null -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
             ) {
-                FloatingActionButton(onClick = {
-                    val student = Student(
-                        studentId = 0L,
-                        firstName,
-                        lastName,
-                        notes
-                    ).copy(phoneNumbers = phoneNumbers.filter { it.number.isNotEmpty() })
-                    studentViewModel.insert(student)
-                    navigateBack()
-                }) {
-                    Icon(Icons.Default.Save, contentDescription = null)
-                }
+                CircularProgressIndicator()
             }
-        }) { innerPadding ->
-        StudentContent(
-            innerPadding,
-            firstName,
-            lastName,
-            notes,
-            phoneNumbers,
-            onFirstNameChange = { firstName = it },
-            onLastNameChange = { lastName = it },
-            onNotesChange = { notes = it },
-            onPhoneNumbersChange = {
-                phoneNumbers = it.toMutableStateList()
-                phoneNumbersAreValid = validatePhoneNumbers(it)
+        }
+
+        else -> {
+            var firstName by rememberSaveable { mutableStateOf(student.firstName) }
+            var lastName by rememberSaveable { mutableStateOf(student.lastName) }
+            var phoneNumbers = rememberSaveable { student.phoneNumbers.toMutableList() }
+            var notes by rememberSaveable { mutableStateOf(student.notes) }
+            var phoneNumbersAreValid by rememberSaveable { mutableStateOf(false) }
+
+            Scaffold(
+                topBar = { TopAppBarImpl(navigateBack) },
+                floatingActionButton = {
+                    AnimatedVisibility(
+                        visible = (firstName.isNotEmpty() || lastName.isNotEmpty()) && phoneNumbersAreValid,
+                        enter = fadeIn() + scaleIn(),
+                        exit = fadeOut() + scaleOut(),
+                    ) {
+                        FloatingActionButton(onClick = {
+                            val student = Student(
+                                studentId = 0L,
+                                firstName,
+                                lastName,
+                                notes
+                            ).copy(phoneNumbers = phoneNumbers.filter { it.number.isNotEmpty() })
+                            studentViewModel.insert(student)
+                            navigateBack()
+                        }) {
+                            Icon(Icons.Default.Save, contentDescription = null)
+                        }
+                    }
+                }) { innerPadding ->
+                StudentContent(
+                    innerPadding,
+                    firstName,
+                    lastName,
+                    notes,
+                    phoneNumbers,
+                    onFirstNameChange = { firstName = it },
+                    onLastNameChange = { lastName = it },
+                    onNotesChange = { notes = it },
+                    onPhoneNumbersChange = {
+                        phoneNumbers = it.toMutableStateList()
+                        phoneNumbersAreValid = validatePhoneNumbers(it)
+                    }
+                )
             }
-        )
+        }
     }
 }
 
