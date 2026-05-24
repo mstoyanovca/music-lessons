@@ -29,15 +29,12 @@ import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mstoyanov.myapplication.dao.StudentViewModel
-import com.mstoyanov.myapplication.dao.StudentViewModel.Companion.provideFactory
 import com.mstoyanov.myapplication.entity.Student
 import com.mstoyanov.myapplication.function.validatePhoneNumbers
 
 @Composable
-fun EditStudent(navigateBack: () -> Unit) {
-    val studentViewModel: StudentViewModel = viewModel(factory = provideFactory())
+fun EditStudent(studentViewModel: StudentViewModel, navigateBack: () -> Unit) {
     val studentState by studentViewModel.student.collectAsStateWithLifecycle()
 
     when (val student = studentState) {
