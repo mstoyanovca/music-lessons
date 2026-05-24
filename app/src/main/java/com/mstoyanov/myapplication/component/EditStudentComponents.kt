@@ -53,7 +53,7 @@ fun EditStudent(studentId: Long, navigateBack: () -> Unit, studentViewModel: Stu
             var lastName by rememberSaveable { mutableStateOf(student.lastName) }
             var phoneNumbers = rememberSaveable { student.phoneNumbers.toMutableList() }
             var notes by rememberSaveable { mutableStateOf(student.notes) }
-            var phoneNumbersAreValid by rememberSaveable { mutableStateOf(false) }
+            var phoneNumbersAreValid by rememberSaveable { mutableStateOf(true) }
 
             Scaffold(
                 topBar = { TopAppBarImpl(navigateBack) },
