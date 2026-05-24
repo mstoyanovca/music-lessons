@@ -71,15 +71,15 @@ fun MainScreen() {
             })
         }
         composable<EditStudentRoute> { backStackEntry ->
-            val editStudentRoute: EditStudentRoute = backStackEntry.toRoute<EditStudentRoute>()
+            // val editStudentRoute: EditStudentRoute = backStackEntry.toRoute<EditStudentRoute>()
             EditStudent(
-                studentId = editStudentRoute.studentId,
                 navigateBack = {
                     // avoid freeze after two rapid back icon clicks:
                     if (navController.currentBackStackEntry?.lifecycle?.currentState == Lifecycle.State.RESUMED) {
                         navController.popBackStack()
                     }
-                })
+                }
+            )
         }
     }
 }

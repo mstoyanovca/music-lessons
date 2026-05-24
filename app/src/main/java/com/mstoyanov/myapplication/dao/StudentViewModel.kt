@@ -1,24 +1,31 @@
 package com.mstoyanov.myapplication.dao
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.mstoyanov.myapplication.MusicLessonsApplication
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import com.mstoyanov.myapplication.MusicLessonsApplication.Companion.db
 import com.mstoyanov.myapplication.entity.Student
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class StudentViewModel : ViewModel() {
+class StudentViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel() {
+    //private val studentId: Long = checkNotNull(savedStateHandle["studentId"])
+
     // do not turn this into fun, it stops working:
-    val student: StateFlow<Student?> = MusicLessonsApplication.db.studentDao().findById(5L).stateIn(
+    val student: StateFlow<Student?> = db.studentDao().findById(5L).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = null
     )
 
     // do not turn this into fun, it stops working:
-    val students: StateFlow<List<Student>> = MusicLessonsApplication.db.studentDao().findAll().stateIn(
+    val students: StateFlow<List<Student>> = db.studentDao().findAll().stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = emptyList()
@@ -26,19 +33,28 @@ class StudentViewModel : ViewModel() {
 
     fun insert(student: Student) {
         viewModelScope.launch {
-            MusicLessonsApplication.db.studentDao().insert(student)
+            db.studentDao().insert(student)
         }
     }
 
     fun update(student: Student) {
         viewModelScope.launch {
-            MusicLessonsApplication.db.studentDao().update(student)
+            db.studentDao().update(student)
         }
     }
 
     fun delete(student: Student) {
         viewModelScope.launch {
-            MusicLessonsApplication.db.studentDao().delete(student)
+            db.studentDao().delete(student)
+        }
+    }
+
+    companion object {
+        fun provideFactory(): ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                val savedStateHandle = createSavedStateHandle()
+                StudentViewModel(savedStateHandle = savedStateHandle)
+            }
         }
     }
 }
