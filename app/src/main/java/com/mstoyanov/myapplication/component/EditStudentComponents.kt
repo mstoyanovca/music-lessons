@@ -29,6 +29,7 @@ import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.MutableCreationExtras
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mstoyanov.myapplication.dao.StudentViewModel
 import com.mstoyanov.myapplication.entity.Student
@@ -36,7 +37,10 @@ import com.mstoyanov.myapplication.function.validatePhoneNumbers
 
 @Composable
 fun EditStudent(studentId: Long, navigateBack: () -> Unit) {
-    val studentViewModel: StudentViewModel = viewModel(factory = StudentViewModel.provideFactory(studentId))
+    val extras = MutableCreationExtras().apply {
+        set(StudentViewModel.STUDENT_ID, studentId)
+    }
+    val studentViewModel: StudentViewModel = viewModel(factory = StudentViewModel.Factory, extras = extras)
     val studentState by studentViewModel.student.collectAsStateWithLifecycle()
 
     when (val student = studentState) {

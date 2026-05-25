@@ -2,8 +2,8 @@ package com.mstoyanov.myapplication.dao
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.mstoyanov.myapplication.MusicLessonsApplication.Companion.db
@@ -51,11 +51,12 @@ class StudentViewModel(studentId: Long) : ViewModel() {
     }
 
     companion object {
-        fun provideFactory(studentId: Long): ViewModelProvider.Factory = viewModelFactory {
+        val STUDENT_ID = object : CreationExtras.Key<Long> {}
+
+        val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
-                // You can pull arguments from the CreationExtras if needed
-                //val savedStateHandle = createSavedStateHandle()
-                StudentViewModel(studentId)
+                val studentId = this[STUDENT_ID] as Long
+                StudentViewModel(studentId = studentId)
             }
         }
     }
