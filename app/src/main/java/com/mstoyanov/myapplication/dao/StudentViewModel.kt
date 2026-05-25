@@ -7,6 +7,8 @@ import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import androidx.navigation.toRoute
+import com.mstoyanov.myapplication.EditStudentRoute
 import com.mstoyanov.myapplication.MusicLessonsApplication.Companion.db
 import com.mstoyanov.myapplication.entity.Student
 import kotlinx.coroutines.flow.SharingStarted
@@ -16,7 +18,8 @@ import kotlinx.coroutines.launch
 
 class StudentViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
     // private val studentId: Long = checkNotNull(savedStateHandle["studentId"])
-    val x: Long? = savedStateHandle["studentId"]
+    // val x: Long? = savedStateHandle["studentId"]
+    // private val studentId = savedStateHandle.toRoute<EditStudentRoute>().studentId
 
     // do not turn this into fun, it stops working:
     val student: StateFlow<Student?> = db.studentDao().findById(5L).stateIn(

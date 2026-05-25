@@ -73,7 +73,9 @@ fun MainScreen() {
             })
         }
         composable<EditStudentRoute> { backStackEntry ->
-            val studentViewModel: StudentViewModel = viewModel(viewModelStoreOwner = backStackEntry)
+            val studentViewModel: StudentViewModel = viewModel(viewModelStoreOwner = backStackEntry) {
+                StudentViewModel(backStackEntry.savedStateHandle)
+            }
             EditStudent(
                 studentViewModel,
                 navigateBack = {
