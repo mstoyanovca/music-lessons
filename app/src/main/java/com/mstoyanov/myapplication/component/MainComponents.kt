@@ -25,7 +25,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -35,7 +34,6 @@ import com.mstoyanov.myapplication.AddStudentRoute
 import com.mstoyanov.myapplication.EditStudentRoute
 import com.mstoyanov.myapplication.HomeRoute
 import com.mstoyanov.myapplication.R
-import com.mstoyanov.myapplication.dao.StudentViewModel
 import kotlinx.coroutines.launch
 
 @Composable
@@ -73,11 +71,9 @@ fun MainScreen() {
             })
         }
         composable<EditStudentRoute> { backStackEntry ->
-            val studentViewModel: StudentViewModel = viewModel(viewModelStoreOwner = backStackEntry) {
-                StudentViewModel(backStackEntry.savedStateHandle)
-            }
+            val studentId: Long = backStackEntry.toRoute<EditStudentRoute>().studentId
             EditStudent(
-                studentViewModel,
+                studentId,
                 navigateBack = {
                     // avoid freeze after two rapid back icon clicks:
                     if (navController.currentBackStackEntry?.lifecycle?.currentState == Lifecycle.State.RESUMED) {
