@@ -1,11 +1,8 @@
 package com.mstoyanov.myapplication.dao
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.CreationExtras
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import com.mstoyanov.myapplication.MusicLessonsApplication.Companion.db
 import com.mstoyanov.myapplication.entity.Student
 import kotlinx.coroutines.flow.SharingStarted
@@ -13,10 +10,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class StudentViewModel(studentId: Long) : ViewModel() {
-    // private val studentId: Long = checkNotNull(savedStateHandle["studentId"])
-    // val x: Long? = savedStateHandle["studentId"]
-    // private val studentId = savedStateHandle.toRoute<EditStudentRoute>().studentId
+public class StudentViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
+    //private val studentId: Long = checkNotNull(savedStateHandle["studentId"])
 
     // do not turn this into fun, it stops working:
     val student: StateFlow<Student?> = db.studentDao().findById(5L).stateIn(
@@ -47,17 +42,6 @@ class StudentViewModel(studentId: Long) : ViewModel() {
     fun delete(student: Student) {
         viewModelScope.launch {
             db.studentDao().delete(student)
-        }
-    }
-
-    companion object {
-        val STUDENT_ID = object : CreationExtras.Key<Long> {}
-
-        val Factory: ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val studentId = this[STUDENT_ID] as Long
-                StudentViewModel(studentId = studentId)
-            }
         }
     }
 }

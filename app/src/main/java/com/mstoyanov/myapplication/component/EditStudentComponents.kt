@@ -1,5 +1,6 @@
 package com.mstoyanov.myapplication.component
 
+import android.os.Bundle
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -28,9 +29,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.DEFAULT_ARGS_KEY
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.MutableCreationExtras
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import com.mstoyanov.myapplication.dao.StudentViewModel
 import com.mstoyanov.myapplication.entity.Student
 import com.mstoyanov.myapplication.function.validatePhoneNumbers
@@ -38,9 +43,16 @@ import com.mstoyanov.myapplication.function.validatePhoneNumbers
 @Composable
 fun EditStudent(studentId: Long, navigateBack: () -> Unit) {
     val extras = MutableCreationExtras().apply {
-        set(StudentViewModel.STUDENT_ID, studentId)
+        set(DEFAULT_ARGS_KEY, Bundle().apply { putLong("studentId", studentId) })
     }
-    val studentViewModel: StudentViewModel = viewModel(factory = StudentViewModel.Factory, extras = extras)
+    val studentViewModel: StudentViewModel = viewModel(
+        factory = viewModelFactory {
+            initializer {
+                StudentViewModel(savedStateHandle = createSavedStateHandle())
+            }
+        },
+        extras = extras
+    )
     val studentState by studentViewModel.student.collectAsStateWithLifecycle()
 
     when (val student = studentState) {
