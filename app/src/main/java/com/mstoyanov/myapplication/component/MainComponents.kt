@@ -72,7 +72,7 @@ fun MainScreen() {
         }
         composable<EditStudentRoute> { backStackEntry ->
             val studentId: Long = backStackEntry.toRoute<EditStudentRoute>().studentId
-            EditStudent(
+            EditStudentProgressIndicator(
                 studentId,
                 navigateBack = {
                     // avoid freeze after two rapid back icon clicks:
