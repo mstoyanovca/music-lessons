@@ -29,7 +29,7 @@ interface StudentDao {
 
     fun findAll(): Flow<List<Student>> {
         return findAllStudents()
-            .map { map -> map.entries.map { (student, phoneNumbers) -> student.copy(phoneNumbers = phoneNumbers) } }
+            .map { map -> map.entries.map { (student, phoneNumbers) -> student.copy(phoneNumbers = phoneNumbers) }.sorted() }
     }
 
     @Query("select * from student left join phone_number on student.student_id = phone_number.student_owner_id")
