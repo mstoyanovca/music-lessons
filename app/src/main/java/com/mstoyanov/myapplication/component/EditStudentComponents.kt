@@ -82,7 +82,7 @@ fun EditStudentProgressIndicator(studentId: Long, navigateBack: () -> Unit) {
                 student.lastName,
                 originalPhoneNumbers = student.phoneNumbers,
                 student.notes,
-                onStudentUpdate = { student, originalPhoneNumbers -> studentViewModel.update(student, originalPhoneNumbers) },
+                onUpdateStudentClick = { student, originalPhoneNumbers -> studentViewModel.update(student, originalPhoneNumbers) },
                 navigateBack
             )
         }
@@ -96,7 +96,7 @@ private fun EditStudent(
     lastName: String,
     originalPhoneNumbers: List<PhoneNumber>,
     notes: String,
-    onStudentUpdate: (Student, List<PhoneNumber>) -> Unit,
+    onUpdateStudentClick: (Student, List<PhoneNumber>) -> Unit,
     navigateBack: () -> Unit
 ) {
     var studentId by rememberSaveable { mutableLongStateOf(studentId) }
@@ -117,7 +117,7 @@ private fun EditStudent(
             ) {
                 FloatingActionButton(onClick = {
                     val student = Student(studentId, firstName, lastName, notes).copy(phoneNumbers = phoneNumbers)
-                    onStudentUpdate(student, originalPhoneNumbers)
+                    onUpdateStudentClick(student, originalPhoneNumbers)
                     navigateBack()
                 }) {
                     Icon(Icons.Default.Save, contentDescription = null)

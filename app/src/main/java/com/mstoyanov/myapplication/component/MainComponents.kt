@@ -47,9 +47,9 @@ fun MainScreen() {
     ) {
         composable<HomeRoute> {
             MainScreenContent(
-                onAddLessonClick = { navController.navigate(AddLessonRoute(page = it)) },
                 onAddStudentClick = { navController.navigate(AddStudentRoute) },
-                onEditStudentClick = { navController.navigate(EditStudentRoute(studentId = it)) })
+                onEditStudentClick = { navController.navigate(EditStudentRoute(studentId = it)) },
+                onAddLessonClick = { navController.navigate(AddLessonRoute(page = it)) })
         }
         composable<AddLessonRoute> { backStackEntry ->
             val addLessonRoute: AddLessonRoute = backStackEntry.toRoute<AddLessonRoute>()
