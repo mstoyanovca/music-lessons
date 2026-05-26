@@ -64,15 +64,15 @@ fun AddStudent(navigateBack: () -> Unit, studentViewModel: StudentViewModel = vi
             innerPadding,
             firstName,
             lastName,
-            notes,
             phoneNumbers,
+            notes,
             onFirstNameChange = { firstName = it },
             onLastNameChange = { lastName = it },
-            onNotesChange = { notes = it },
             onPhoneNumbersChange = {
                 phoneNumbers = it.toMutableStateList()
                 phoneNumbersAreValid = validatePhoneNumbers(it)
-            }
+            },
+            onNotesChange = { notes = it }
         )
     }
 }

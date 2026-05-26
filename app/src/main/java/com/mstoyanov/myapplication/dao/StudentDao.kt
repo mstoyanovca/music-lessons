@@ -46,11 +46,11 @@ interface StudentDao {
     suspend fun insertStudent(student: Student): Long
 
     @Transaction
-    suspend fun update(student: Student) {
+    suspend fun update(student: Student, originalPhoneNumbers: List<PhoneNumber>) {
         updateStudent(student)
-        // TODO:
-        MusicLessonsApplication.db.phoneNumberDao().deleteAll(student.phoneNumbers)
-        MusicLessonsApplication.db.phoneNumberDao().upsertAll(student.phoneNumbers)
+        MusicLessonsApplication.db.phoneNumberDao().deleteAll(originalPhoneNumbers - student.phoneNumbers.toSet())
+        val updatedPhoneNumbers = student.phoneNumbers.map { it.copy(studentId = student.studentId) }
+        MusicLessonsApplication.db.phoneNumberDao().upsertAll(updatedPhoneNumbers)
     }
 
     @Update

@@ -51,12 +51,12 @@ fun StudentContent(
     innerPadding: PaddingValues,
     firstName: String,
     lastName: String,
-    notes: String,
     phoneNumbers: MutableList<PhoneNumber>,
+    notes: String,
     onFirstNameChange: (String) -> Unit,
     onLastNameChange: (String) -> Unit,
-    onNotesChange: (String) -> Unit,
-    onPhoneNumbersChange: (MutableList<PhoneNumber>) -> Unit
+    onPhoneNumbersChange: (MutableList<PhoneNumber>) -> Unit,
+    onNotesChange: (String) -> Unit
 ) {
     val scrollState = rememberScrollState()
 

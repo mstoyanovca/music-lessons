@@ -27,6 +27,7 @@ import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.DEFAULT_ARGS_KEY
@@ -79,9 +80,9 @@ fun EditStudentProgressIndicator(studentId: Long, navigateBack: () -> Unit) {
                 studentId,
                 student.firstName,
                 student.lastName,
-                student.phoneNumbers.toMutableList(),
+                originalPhoneNumbers = student.phoneNumbers,
                 student.notes,
-                onStudentUpdate = { student: Student -> studentViewModel.update(student) },
+                onStudentUpdate = { student, originalPhoneNumbers -> studentViewModel.update(student, originalPhoneNumbers) },
                 navigateBack
             )
         }
@@ -93,15 +94,16 @@ private fun EditStudent(
     studentId: Long,
     firstName: String,
     lastName: String,
-    phoneNumbers: MutableList<PhoneNumber>,
+    originalPhoneNumbers: List<PhoneNumber>,
     notes: String,
-    onStudentUpdate: (student: Student) -> Unit,
+    onStudentUpdate: (Student, List<PhoneNumber>) -> Unit,
     navigateBack: () -> Unit
 ) {
     var studentId by rememberSaveable { mutableLongStateOf(studentId) }
     var firstName by rememberSaveable { mutableStateOf(firstName) }
     var lastName by rememberSaveable { mutableStateOf(lastName) }
-    var phoneNumbers = rememberSaveable { phoneNumbers.toMutableList() }
+    var phoneNumbers = rememberSaveable { originalPhoneNumbers.toMutableStateList() }
+    val originalPhoneNumbers = rememberSaveable { originalPhoneNumbers }
     var notes by rememberSaveable { mutableStateOf(notes) }
     var phoneNumbersAreValid by rememberSaveable { mutableStateOf(true) }
 
@@ -115,7 +117,7 @@ private fun EditStudent(
             ) {
                 FloatingActionButton(onClick = {
                     val student = Student(studentId, firstName, lastName, notes).copy(phoneNumbers = phoneNumbers)
-                    onStudentUpdate(student)
+                    onStudentUpdate(student, originalPhoneNumbers)
                     navigateBack()
                 }) {
                     Icon(Icons.Default.Save, contentDescription = null)
@@ -126,15 +128,15 @@ private fun EditStudent(
             innerPadding,
             firstName,
             lastName,
-            notes,
             phoneNumbers,
+            notes,
             onFirstNameChange = { firstName = it },
             onLastNameChange = { lastName = it },
-            onNotesChange = { notes = it },
             onPhoneNumbersChange = {
-                phoneNumbers = it
+                phoneNumbers = it.toMutableStateList()
                 phoneNumbersAreValid = validatePhoneNumbers(it)
-            }
+            },
+            onNotesChange = { notes = it }
         )
     }
 }
