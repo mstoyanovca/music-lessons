@@ -30,12 +30,18 @@ import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.DEFAULT_ARGS_KEY
+import androidx.lifecycle.SAVED_STATE_REGISTRY_OWNER_KEY
+import androidx.lifecycle.VIEW_MODEL_STORE_OWNER_KEY
+import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.MutableCreationExtras
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import androidx.savedstate.SavedStateRegistryOwner
 import com.mstoyanov.myapplication.dao.StudentViewModel
 import com.mstoyanov.myapplication.entity.Student
 import com.mstoyanov.myapplication.function.validatePhoneNumbers
@@ -49,6 +55,10 @@ fun EditStudent(studentId: Long, navigateBack: () -> Unit) {
             }
         },
         extras = MutableCreationExtras().apply {
+            // if setting manually CreationExtras in a Composable, explicitly set
+            // VIEW_MODEL_STORE_OWNER_KEY and SAVED_STATE_REGISTRY_OWNER_KEY:
+            set(VIEW_MODEL_STORE_OWNER_KEY, LocalViewModelStoreOwner.current as ViewModelStoreOwner)
+            set(SAVED_STATE_REGISTRY_OWNER_KEY, LocalLifecycleOwner.current as SavedStateRegistryOwner)
             set(DEFAULT_ARGS_KEY, Bundle().apply { putLong("studentId", studentId) })
         }
     )
