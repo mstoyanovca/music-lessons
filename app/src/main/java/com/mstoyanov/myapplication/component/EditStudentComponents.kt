@@ -42,16 +42,15 @@ import com.mstoyanov.myapplication.function.validatePhoneNumbers
 
 @Composable
 fun EditStudent(studentId: Long, navigateBack: () -> Unit) {
-    val extras = MutableCreationExtras().apply {
-        set(DEFAULT_ARGS_KEY, Bundle().apply { putLong("studentId", studentId) })
-    }
     val studentViewModel: StudentViewModel = viewModel(
         factory = viewModelFactory {
             initializer {
                 StudentViewModel(savedStateHandle = createSavedStateHandle())
             }
         },
-        extras = extras
+        extras = MutableCreationExtras().apply {
+            set(DEFAULT_ARGS_KEY, Bundle().apply { putLong("studentId", studentId) })
+        }
     )
     val studentState by studentViewModel.student.collectAsStateWithLifecycle()
 
