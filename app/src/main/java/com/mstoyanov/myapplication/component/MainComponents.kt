@@ -51,17 +51,6 @@ fun MainScreen() {
                 onEditStudentClick = { navController.navigate(EditStudentRoute(studentId = it)) },
                 onAddLessonClick = { navController.navigate(AddLessonRoute(page = it)) })
         }
-        composable<AddLessonRoute> { backStackEntry ->
-            val addLessonRoute: AddLessonRoute = backStackEntry.toRoute<AddLessonRoute>()
-            AddLesson(
-                page = addLessonRoute.page,
-                navigateBack = {
-                    // avoid freeze after two rapid back icon clicks:
-                    if (navController.currentBackStackEntry?.lifecycle?.currentState == Lifecycle.State.RESUMED) {
-                        navController.popBackStack()
-                    }
-                })
-        }
         composable<AddStudentRoute> {
             AddStudent(navigateBack = {
                 // avoid freeze after two rapid back icon clicks:
@@ -81,6 +70,17 @@ fun MainScreen() {
                     }
                 }
             )
+        }
+        composable<AddLessonRoute> { backStackEntry ->
+            val addLessonRoute: AddLessonRoute = backStackEntry.toRoute<AddLessonRoute>()
+            AddLesson(
+                page = addLessonRoute.page,
+                navigateBack = {
+                    // avoid freeze after two rapid back icon clicks:
+                    if (navController.currentBackStackEntry?.lifecycle?.currentState == Lifecycle.State.RESUMED) {
+                        navController.popBackStack()
+                    }
+                })
         }
     }
 }

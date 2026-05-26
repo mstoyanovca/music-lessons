@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.map
 @Dao
 interface LessonDao {
     fun findByWeekday(weekday: String): Flow<List<Lesson>> {
-        return findLessonsByWeekday(weekday).map { map -> map.entries.map { it.key.copy(student = it.value) } }
+        return findLessonsByWeekday(weekday).map { map -> map.entries.map { it.key.copy(student = it.value) }.sorted() }
     }
 
     @Query("select * from lesson join student on lesson.student_owner_id = student.student_id where lesson.weekday == :weekday")
