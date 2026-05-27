@@ -58,28 +58,25 @@ fun Students(
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
     var expandedId by rememberSaveable { mutableLongStateOf(0) }
+    val lazyColumnState = rememberLazyListState()
     val students by studentViewModel.students.collectAsStateWithLifecycle()
 
-    val listState = rememberLazyListState()
-    val isAtBottom by remember {
+    val isAtTop by remember {
         derivedStateOf {
-            listState.firstVisibleItemIndex == 0 && listState.firstVisibleItemScrollOffset == 0
+            lazyColumnState.firstVisibleItemIndex == 0 && lazyColumnState.firstVisibleItemScrollOffset == 0
         }
     }
-    LaunchedEffect(isAtBottom) {
-        if (isAtBottom) {
-            onReachedBottom(true)
-        } else {
-            onReachedBottom(false)
-        }
+    LaunchedEffect(isAtTop) {
+        if (isAtTop) onReachedBottom(false)
+        else onReachedBottom(true)
     }
 
     LazyColumn(
-        state = listState,
         modifier = Modifier
             .padding(all = 8.dp)
             .fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(8.dp),
+        state = lazyColumnState
     ) {
         items(
             items = students,
