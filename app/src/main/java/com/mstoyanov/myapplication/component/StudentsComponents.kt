@@ -61,7 +61,10 @@ fun Students(
             .fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        items(students) { student ->
+        items(
+            items = students,
+            key = { it.studentId }
+        ) { student ->
             CardContent(
                 student,
                 expanded,
