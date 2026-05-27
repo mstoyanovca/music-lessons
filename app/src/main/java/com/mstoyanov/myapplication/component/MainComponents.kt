@@ -24,6 +24,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -100,7 +101,7 @@ private fun MainScreenContent(
 ) {
     val pagerState = rememberPagerState(pageCount = { 7 })
     var studentIsAtTop by rememberSaveable { mutableStateOf(true) }
-    var isAtTop2 by rememberSaveable { mutableStateOf(false) }
+    var scheduleIsAtTop = rememberSaveable { mutableStateMapOf<Int, Boolean>() }
 
     Scaffold(
         topBar = {
@@ -111,7 +112,7 @@ private fun MainScreenContent(
         },
         floatingActionButton = {
             AnimatedVisibility(
-                visible = studentIsAtTop || pagerState.currentPage < 6,
+                visible = studentIsAtTop || scheduleIsAtTop[pagerState.currentPage] ?: false,
                 enter = scaleIn(),
                 exit = scaleOut()
             ) {
@@ -130,7 +131,7 @@ private fun MainScreenContent(
             beyondViewportPageCount = 6
         ) { page ->
             if (page == 6) Students(onStudentReachedTop = { studentIsAtTop = it }, onEditStudentClick)
-            else Schedule(page, onReachedTop2 = { isAtTop2 = it })
+            else Schedule(page, onScheduleReachedTop = { scheduleIsAtTop[page] = it })
         }
     }
 }
