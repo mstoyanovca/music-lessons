@@ -53,7 +53,7 @@ import com.mstoyanov.myapplication.function.weekdayFromPage
 @Composable
 fun Schedule(
     page: Int,
-    onReachedBottom: (isAtBottom: Boolean) -> Unit,
+    onReachedTop2: (isAtBottom: Boolean) -> Unit,
     lessonViewModel: LessonViewModel = viewModel()
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
@@ -67,8 +67,8 @@ fun Schedule(
         }
     }
     LaunchedEffect(isAtTop) {
-        if (isAtTop) onReachedBottom(false)
-        else onReachedBottom(true)
+        if (isAtTop) onReachedTop2(true)
+        else onReachedTop2(false)
     }
 
     LazyColumn(

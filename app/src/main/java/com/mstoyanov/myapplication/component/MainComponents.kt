@@ -99,7 +99,8 @@ private fun MainScreenContent(
     onEditStudentClick: (studentId: Long) -> Unit
 ) {
     val pagerState = rememberPagerState(pageCount = { 7 })
-    var isAtBottom by rememberSaveable { mutableStateOf(false) }
+    var isAtTop by rememberSaveable { mutableStateOf(true) }
+    var isAtTop2 by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -110,7 +111,7 @@ private fun MainScreenContent(
         },
         floatingActionButton = {
             AnimatedVisibility(
-                visible = !isAtBottom,
+                visible = pagerState.currentPage == 6 && isAtTop || pagerState.currentPage < 6,
                 enter = scaleIn(),
                 exit = scaleOut()
             ) {
@@ -128,8 +129,8 @@ private fun MainScreenContent(
             modifier = Modifier.padding(innerPadding),
             beyondViewportPageCount = 6
         ) { page ->
-            if (page == 6) Students(onReachedBottom = { isAtBottom = it }, onEditStudentClick)
-            else Schedule(page, onReachedBottom = { isAtBottom = it })
+            if (page == 6) Students(onReachedTop = { isAtTop = it }, onEditStudentClick)
+            else Schedule(page, onReachedTop2 = { isAtTop2 = it })
         }
     }
 }
