@@ -52,7 +52,7 @@ import com.mstoyanov.myapplication.entity.Student
 
 @Composable
 fun Students(
-    onReachedTop: (isAtTop: Boolean) -> Unit,
+    onStudentReachedTop: (isAtTop: Boolean) -> Unit,
     onEditStudentClick: (studentId: Long) -> Unit,
     studentViewModel: StudentViewModel = viewModel()
 ) {
@@ -67,8 +67,8 @@ fun Students(
         }
     }
     LaunchedEffect(isAtTop) {
-        if (isAtTop) onReachedTop(true)
-        else onReachedTop(false)
+        if (isAtTop) onStudentReachedTop(true)
+        else onStudentReachedTop(false)
     }
 
     LazyColumn(
