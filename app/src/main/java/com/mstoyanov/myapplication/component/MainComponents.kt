@@ -1,5 +1,8 @@
 package com.mstoyanov.myapplication.component
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -20,7 +23,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -92,6 +99,7 @@ private fun MainScreenContent(
     onEditStudentClick: (studentId: Long) -> Unit
 ) {
     val pagerState = rememberPagerState(pageCount = { 7 })
+    var isAtBottom by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -101,20 +109,26 @@ private fun MainScreenContent(
             }
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = {
-                if (pagerState.currentPage == 6) onAddStudentClick()
-                else onAddLessonClick(pagerState.currentPage)
-            }) {
-                Icon(Icons.Default.Add, contentDescription = null)
+            AnimatedVisibility(
+                visible = !isAtBottom,
+                enter = scaleIn(),
+                exit = scaleOut()
+            ) {
+                FloatingActionButton(onClick = {
+                    if (pagerState.currentPage == 6) onAddStudentClick()
+                    else onAddLessonClick(pagerState.currentPage)
+                }) {
+                    Icon(Icons.Default.Add, contentDescription = null)
+                }
             }
-        })
-    { innerPadding ->
+        }
+    ) { innerPadding ->
         HorizontalPager(
             state = pagerState,
             modifier = Modifier.padding(innerPadding),
             beyondViewportPageCount = 6
         ) { page ->
-            if (page == 6) Students(onEditStudentClick)
+            if (page == 6) Students(onReachedBottom = { isAtBottom = it }, onEditStudentClick)
             else Schedule(page)
         }
     }

@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.Icons.Filled
 import androidx.compose.material.icons.filled.Delete
@@ -30,9 +31,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -48,6 +52,7 @@ import com.mstoyanov.myapplication.entity.Student
 
 @Composable
 fun Students(
+    onReachedBottom: (reachedBottom: Boolean) -> Unit,
     onEditStudentClick: (studentId: Long) -> Unit,
     studentViewModel: StudentViewModel = viewModel()
 ) {
@@ -55,7 +60,22 @@ fun Students(
     var expandedId by rememberSaveable { mutableLongStateOf(0) }
     val students by studentViewModel.students.collectAsStateWithLifecycle()
 
+    val listState = rememberLazyListState()
+    val isAtBottom by remember {
+        derivedStateOf {
+            listState.firstVisibleItemIndex == 0 && listState.firstVisibleItemScrollOffset == 0
+        }
+    }
+    LaunchedEffect(isAtBottom) {
+        if (isAtBottom) {
+            onReachedBottom(true)
+        } else {
+            onReachedBottom(false)
+        }
+    }
+
     LazyColumn(
+        state = listState,
         modifier = Modifier
             .padding(all = 8.dp)
             .fillMaxSize(),
