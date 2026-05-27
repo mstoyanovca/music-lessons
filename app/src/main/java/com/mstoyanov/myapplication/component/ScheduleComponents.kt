@@ -31,6 +31,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
@@ -50,30 +51,32 @@ import com.mstoyanov.myapplication.entity.Lesson
 import com.mstoyanov.myapplication.function.weekdayFromPage
 
 @Composable
-fun Schedule(page: Int, lessonViewModel: LessonViewModel = viewModel()) {
-    val lessons by lessonViewModel.findByWeekday(weekdayFromPage(page)!!.value).collectAsStateWithLifecycle()
+fun Schedule(
+    page: Int,
+    onReachedBottom: (isAtBottom: Boolean) -> Unit,
+    lessonViewModel: LessonViewModel = viewModel()
+) {
     var expanded by rememberSaveable { mutableStateOf(false) }
     var expandedId by rememberSaveable { mutableLongStateOf(0) }
+    val lazyColumnState = rememberLazyListState()
+    val lessons by lessonViewModel.findByWeekday(weekdayFromPage(page)!!.value).collectAsStateWithLifecycle()
 
-    /*val lazyColumnState = rememberLazyListState()
-    val isAtBottom = remember {
+    val isAtTop by remember {
         derivedStateOf {
-            val layoutInfo = lazyColumnState.layoutInfo
-            val visibleItemsInfo = layoutInfo.visibleItemsInfo
-            if (layoutInfo.totalItemsCount == 0) {
-                false
-            } else {
-                val lastVisibleItem = visibleItemsInfo.lastOrNull()
-                lastVisibleItem?.index == layoutInfo.totalItemsCount - 1
-            }
+            lazyColumnState.firstVisibleItemIndex == 0 && lazyColumnState.firstVisibleItemScrollOffset == 0
         }
-    }*/
+    }
+    LaunchedEffect(isAtTop) {
+        if (isAtTop) onReachedBottom(false)
+        else onReachedBottom(true)
+    }
 
     LazyColumn(
         modifier = Modifier
             .padding(all = 8.dp)
             .fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(8.dp),
+        state = lazyColumnState
     ) {
         items(
             items = lessons,

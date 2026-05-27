@@ -52,7 +52,7 @@ import com.mstoyanov.myapplication.entity.Student
 
 @Composable
 fun Students(
-    onReachedBottom: (reachedBottom: Boolean) -> Unit,
+    onReachedBottom: (isAtBottom: Boolean) -> Unit,
     onEditStudentClick: (studentId: Long) -> Unit,
     studentViewModel: StudentViewModel = viewModel()
 ) {

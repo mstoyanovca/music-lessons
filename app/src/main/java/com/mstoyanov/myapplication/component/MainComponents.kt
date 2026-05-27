@@ -129,7 +129,7 @@ private fun MainScreenContent(
             beyondViewportPageCount = 6
         ) { page ->
             if (page == 6) Students(onReachedBottom = { isAtBottom = it }, onEditStudentClick)
-            else Schedule(page)
+            else Schedule(page, onReachedBottom = { isAtBottom = it })
         }
     }
 }
