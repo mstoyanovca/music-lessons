@@ -34,69 +34,11 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.Lifecycle
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.toRoute
-import com.mstoyanov.myapplication.AddLessonRoute
-import com.mstoyanov.myapplication.AddStudentRoute
-import com.mstoyanov.myapplication.EditStudentRoute
-import com.mstoyanov.myapplication.HomeRoute
 import com.mstoyanov.myapplication.R
 import kotlinx.coroutines.launch
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
-fun MainScreen() {
-    val navController = rememberNavController()
-
-    NavHost(
-        navController = navController,
-        startDestination = HomeRoute
-    ) {
-        composable<HomeRoute> {
-            MainScreenContent(
-                onAddStudentClick = { navController.navigate(AddStudentRoute) },
-                onEditStudentClick = { navController.navigate(EditStudentRoute(studentId = it)) },
-                onAddLessonClick = { navController.navigate(AddLessonRoute(page = it)) })
-        }
-        composable<AddStudentRoute> {
-            AddStudent(navigateBack = {
-                // avoid freeze after two rapid back icon clicks:
-                if (navController.currentBackStackEntry?.lifecycle?.currentState == Lifecycle.State.RESUMED) {
-                    navController.popBackStack()
-                }
-            })
-        }
-        composable<EditStudentRoute> { backStackEntry ->
-            val studentId: Long = backStackEntry.toRoute<EditStudentRoute>().studentId
-            EditStudentProgressIndicator(
-                studentId,
-                navigateBack = {
-                    // avoid freeze after two rapid back icon clicks:
-                    if (navController.currentBackStackEntry?.lifecycle?.currentState == Lifecycle.State.RESUMED) {
-                        navController.popBackStack()
-                    }
-                }
-            )
-        }
-        composable<AddLessonRoute> { backStackEntry ->
-            val addLessonRoute: AddLessonRoute = backStackEntry.toRoute<AddLessonRoute>()
-            AddLesson(
-                page = addLessonRoute.page,
-                navigateBack = {
-                    // avoid freeze after two rapid back icon clicks:
-                    if (navController.currentBackStackEntry?.lifecycle?.currentState == Lifecycle.State.RESUMED) {
-                        navController.popBackStack()
-                    }
-                })
-        }
-    }
-}
-
-@Composable
-private fun MainScreenContent(
+fun MainScreen(
     onAddLessonClick: (page: Int) -> Unit,
     onAddStudentClick: () -> Unit,
     onEditStudentClick: (studentId: Long) -> Unit
