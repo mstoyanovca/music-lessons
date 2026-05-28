@@ -106,9 +106,9 @@ private fun MainScreenContent(
     val nestedScrollConnection = remember {
         object : NestedScrollConnection {
             override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-                // hide FAB when scrolling down (negative y):
+                // hide FAB when, scrolling down:
                 if (available.y < -1) isFabVisible.value = false
-                // show FAB when scrolling up (positive y):
+                // show FAB when, scrolling up:
                 if (available.y > 1) isFabVisible.value = true
                 return Offset.Zero
             }
