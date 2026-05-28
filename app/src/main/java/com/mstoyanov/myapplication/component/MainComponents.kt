@@ -23,13 +23,15 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
@@ -100,10 +102,21 @@ private fun MainScreenContent(
     onEditStudentClick: (studentId: Long) -> Unit
 ) {
     val pagerState = rememberPagerState(pageCount = { 7 })
-    var studentIsAtTop by rememberSaveable { mutableStateOf(true) }
-    var scheduleIsAtTop = rememberSaveable { mutableStateMapOf<Int, Boolean>() }
+    val isFabVisible = rememberSaveable { mutableStateOf(true) }
+    val nestedScrollConnection = remember {
+        object : NestedScrollConnection {
+            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                // hide FAB when scrolling down (negative y):
+                if (available.y < -1) isFabVisible.value = false
+                // show FAB when scrolling up (positive y):
+                if (available.y > 1) isFabVisible.value = true
+                return Offset.Zero
+            }
+        }
+    }
 
     Scaffold(
+        modifier = Modifier.nestedScroll(nestedScrollConnection),
         topBar = {
             Column {
                 TopAppBarImpl()
@@ -112,7 +125,7 @@ private fun MainScreenContent(
         },
         floatingActionButton = {
             AnimatedVisibility(
-                visible = studentIsAtTop || scheduleIsAtTop[pagerState.currentPage] ?: false,
+                visible = isFabVisible.value,
                 enter = scaleIn(),
                 exit = scaleOut()
             ) {
@@ -130,8 +143,8 @@ private fun MainScreenContent(
             modifier = Modifier.padding(innerPadding),
             beyondViewportPageCount = 6
         ) { page ->
-            if (page == 6) Students(onStudentReachedTop = { studentIsAtTop = it }, onEditStudentClick)
-            else Schedule(page, onScheduleReachedTop = { scheduleIsAtTop[page] = it })
+            if (page == 6) Students(onEditStudentClick)
+            else Schedule(page)
         }
     }
 }

@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.Icons.Filled
 import androidx.compose.material.icons.filled.Delete
@@ -31,12 +30,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -52,31 +48,18 @@ import com.mstoyanov.myapplication.entity.Student
 
 @Composable
 fun Students(
-    onStudentReachedTop: (isAtTop: Boolean) -> Unit,
     onEditStudentClick: (studentId: Long) -> Unit,
     studentViewModel: StudentViewModel = viewModel()
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
     var expandedId by rememberSaveable { mutableLongStateOf(0) }
-    val lazyColumnState = rememberLazyListState()
     val students by studentViewModel.students.collectAsStateWithLifecycle()
-
-    val isAtTop by remember {
-        derivedStateOf {
-            lazyColumnState.firstVisibleItemIndex == 0 && lazyColumnState.firstVisibleItemScrollOffset == 0
-        }
-    }
-    LaunchedEffect(isAtTop) {
-        if (isAtTop) onStudentReachedTop(true)
-        else onStudentReachedTop(false)
-    }
 
     LazyColumn(
         modifier = Modifier
             .padding(all = 8.dp)
             .fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        state = lazyColumnState
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(
             items = students,
