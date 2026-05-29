@@ -9,13 +9,11 @@ import androidx.room.Update
 import com.mstoyanov.myapplication.MusicLessonsApplication.Companion.db
 import com.mstoyanov.myapplication.entity.PhoneNumber
 import com.mstoyanov.myapplication.entity.Student
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 @Dao
 interface StudentDao {
-    @OptIn(ExperimentalCoroutinesApi::class)
     fun findById(studentId: Long): Flow<Student> {
         return findStudentById(studentId)
             .map { map ->

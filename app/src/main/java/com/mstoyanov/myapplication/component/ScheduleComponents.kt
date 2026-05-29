@@ -1,5 +1,6 @@
 package com.mstoyanov.myapplication.component
 
+import android.os.Bundle
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
@@ -40,8 +41,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.DEFAULT_ARGS_KEY
+import androidx.lifecycle.SAVED_STATE_REGISTRY_OWNER_KEY
+import androidx.lifecycle.VIEW_MODEL_STORE_OWNER_KEY
+import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.createSavedStateHandle
+import androidx.lifecycle.viewmodel.MutableCreationExtras
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import androidx.savedstate.SavedStateRegistryOwner
 import com.mstoyanov.myapplication.dao.LessonViewModel
 import com.mstoyanov.myapplication.entity.Lesson
 import com.mstoyanov.myapplication.function.weekdayFromPage
@@ -50,11 +62,24 @@ import com.mstoyanov.myapplication.function.weekdayFromPage
 fun Schedule(
     page: Int,
     onEditLessonClick: (lessonId: Long) -> Unit,
-    lessonViewModel: LessonViewModel = viewModel()
 ) {
+    val lessonViewModel: LessonViewModel = viewModel(
+        factory = viewModelFactory {
+            initializer {
+                LessonViewModel(savedStateHandle = createSavedStateHandle())
+            }
+        },
+        extras = MutableCreationExtras().apply {
+            // if manually setting CreationExtras, explicitly set VIEW_MODEL_STORE_OWNER_KEY and SAVED_STATE_REGISTRY_OWNER_KEY:
+            set(VIEW_MODEL_STORE_OWNER_KEY, LocalViewModelStoreOwner.current as ViewModelStoreOwner)
+            set(SAVED_STATE_REGISTRY_OWNER_KEY, LocalLifecycleOwner.current as SavedStateRegistryOwner)
+            set(DEFAULT_ARGS_KEY, Bundle().apply { putString("weekday", weekdayFromPage(page)!!.value) })
+        }
+    )
+
     var expanded by rememberSaveable { mutableStateOf(false) }
     var expandedId by rememberSaveable { mutableLongStateOf(0) }
-    val lessons by lessonViewModel.findByWeekday(weekdayFromPage(page)!!.value).collectAsStateWithLifecycle()
+    val lessons by lessonViewModel.lessons.collectAsStateWithLifecycle()
 
     LazyColumn(
         modifier = Modifier

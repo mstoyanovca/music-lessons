@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mstoyanov.myapplication.MusicLessonsApplication.Companion.db
 import com.mstoyanov.myapplication.entity.Lesson
-import com.mstoyanov.myapplication.entity.Student
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
@@ -13,6 +12,7 @@ import kotlinx.coroutines.launch
 
 class LessonViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
     private val lessonId: Long? = savedStateHandle.get<Long>("lessonId")
+    private val weekday: String? = savedStateHandle.get<String>("weekday")
 
     val lesson: StateFlow<Lesson?> = db.lessonDao().findById(lessonId ?: 0).stateIn(
         scope = viewModelScope,
@@ -20,8 +20,7 @@ class LessonViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
         initialValue = null
     )
 
-    // TODO: turn into val
-    fun findByWeekday(weekday: String): StateFlow<List<Lesson>> = db.lessonDao().findByWeekday(weekday).stateIn(
+    val lessons: StateFlow<List<Lesson>> = db.lessonDao().findByWeekday(weekday ?: "").stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = emptyList()

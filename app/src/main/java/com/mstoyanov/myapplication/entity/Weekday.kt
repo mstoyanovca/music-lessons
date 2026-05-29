@@ -1,10 +1,10 @@
 package com.mstoyanov.myapplication.entity
 
 enum class Weekday(val value: String) {
-    MONDAY("Monday"),
-    TUESDAY("Tuesday"),
-    WEDNESDAY("Wednesday"),
-    THURSDAY("Thursday"),
-    FRIDAY("Friday"),
-    SATURDAY("Saturday");
+    MONDAY(value = "Monday"),
+    TUESDAY(value = "Tuesday"),
+    WEDNESDAY(value = "Wednesday"),
+    THURSDAY(value = "Thursday"),
+    FRIDAY(value = "Friday"),
+    SATURDAY(value = "Saturday");
 }
