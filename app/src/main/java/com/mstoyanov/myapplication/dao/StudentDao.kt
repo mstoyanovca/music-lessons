@@ -11,17 +11,18 @@ import com.mstoyanov.myapplication.entity.PhoneNumber
 import com.mstoyanov.myapplication.entity.Student
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.map
 
 @Dao
 interface StudentDao {
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun findById(studentId: Long): Flow<Student?> {
+    fun findById(studentId: Long): Flow<Student> {
         return findStudentById(studentId)
-            .map { map -> map.entries.map { (student, phoneNumbers) -> student.copy(phoneNumbers = phoneNumbers) } }
-            .flatMapConcat { list -> list.asFlow() }
+            .map { map ->
+                map.entries.map { (student, phoneNumbers) ->
+                    student.copy(phoneNumbers = phoneNumbers)
+                }.first()
+            }
     }
 
     @Query("select * from student left join phone_number on student.student_id = phone_number.student_owner_id where student_id = :studentId")
@@ -29,7 +30,11 @@ interface StudentDao {
 
     fun findAll(): Flow<List<Student>> {
         return findAllStudents()
-            .map { map -> map.entries.map { (student, phoneNumbers) -> student.copy(phoneNumbers = phoneNumbers) }.sorted() }
+            .map { map ->
+                map.entries.map { (student, phoneNumbers) ->
+                    student.copy(phoneNumbers = phoneNumbers)
+                }.sorted()
+            }
     }
 
     @Query("select * from student left join phone_number on student.student_id = phone_number.student_owner_id")
