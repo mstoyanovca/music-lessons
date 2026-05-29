@@ -14,14 +14,12 @@ import kotlinx.coroutines.launch
 class StudentViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
     private val studentId: Long? = savedStateHandle.get<Long>("studentId")
 
-    // do not turn this into fun, it stops working:
     val student: StateFlow<Student?> = db.studentDao().findById(studentId ?: 0).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = null
     )
 
-    // do not turn this into fun, it stops working:
     val students: StateFlow<List<Student>> = db.studentDao().findAll().stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),

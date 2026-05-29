@@ -6,7 +6,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
-import com.mstoyanov.myapplication.MusicLessonsApplication
+import com.mstoyanov.myapplication.MusicLessonsApplication.Companion.db
 import com.mstoyanov.myapplication.entity.PhoneNumber
 import com.mstoyanov.myapplication.entity.Student
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -39,7 +39,7 @@ interface StudentDao {
     suspend fun insert(student: Student) {
         val studentId = insertStudent(student)
         val phoneNumbers = student.phoneNumbers.map { it.copy(studentId = studentId) }
-        MusicLessonsApplication.db.phoneNumberDao().insertAll(phoneNumbers)
+        db.phoneNumberDao().insertAll(phoneNumbers)
     }
 
     @Insert
@@ -48,9 +48,10 @@ interface StudentDao {
     @Transaction
     suspend fun update(student: Student, originalPhoneNumbers: List<PhoneNumber>) {
         updateStudent(student)
-        MusicLessonsApplication.db.phoneNumberDao().deleteAll(originalPhoneNumbers - student.phoneNumbers.toSet())
+        // TODO:
+        db.phoneNumberDao().deleteAll(originalPhoneNumbers - student.phoneNumbers.toSet())
         val updatedPhoneNumbers = student.phoneNumbers.map { it.copy(studentId = student.studentId) }
-        MusicLessonsApplication.db.phoneNumberDao().upsertAll(updatedPhoneNumbers)
+        db.phoneNumberDao().upsertAll(updatedPhoneNumbers)
     }
 
     @Update

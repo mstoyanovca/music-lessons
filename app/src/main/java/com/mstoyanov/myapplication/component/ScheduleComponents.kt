@@ -49,6 +49,7 @@ import com.mstoyanov.myapplication.function.weekdayFromPage
 @Composable
 fun Schedule(
     page: Int,
+    onEditLessonClick: (lessonId: Long) -> Unit,
     lessonViewModel: LessonViewModel = viewModel()
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
@@ -70,7 +71,8 @@ fun Schedule(
                 expanded,
                 expandedId,
                 onExpandedChange = { expanded = it },
-                onExpandedIdChange = { expandedId = it }
+                onExpandedIdChange = { expandedId = it },
+                onEditLessonClick
             )
         }
     }
@@ -82,7 +84,8 @@ private fun LazyItemScope.CardContent(
     expanded: Boolean,
     expandedId: Long,
     onExpandedChange: (Boolean) -> Unit,
-    onExpandedIdChange: (Long) -> Unit
+    onExpandedIdChange: (Long) -> Unit,
+    onEditLessonClick: (lessonId: Long) -> Unit,
 ) {
     ElevatedCard(
         modifier = Modifier.animateItem(),
@@ -104,7 +107,13 @@ private fun LazyItemScope.CardContent(
                 ),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            this@ElevatedCard.LessonContent(lesson, expanded, expandedId, onExpandedChange)
+            this@ElevatedCard.LessonContent(
+                lesson,
+                expanded,
+                expandedId,
+                onExpandedChange,
+                onEditLessonClick
+            )
             IconButton(onClick = {
                 if (expandedId == lesson.lessonId || !expanded) onExpandedChange(!expanded)
                 onExpandedIdChange(lesson.lessonId)
@@ -123,7 +132,8 @@ private fun ColumnScope.LessonContent(
     lesson: Lesson,
     expanded: Boolean,
     expandedId: Long,
-    onExpandedChange: (Boolean) -> Unit
+    onExpandedChange: (Boolean) -> Unit,
+    onEditLessonClick: (lessonId: Long) -> Unit,
 ) {
     Column(
         Modifier
@@ -133,7 +143,7 @@ private fun ColumnScope.LessonContent(
         LessonSummary(lesson)
         if (expanded && expandedId == lesson.lessonId) {
             PhoneNumbers(lesson.student.phoneNumbers)
-            Fabs(lesson, onExpandedChange)
+            Fabs(lesson, onExpandedChange, onEditLessonClick)
         }
     }
 }
@@ -158,7 +168,11 @@ private fun LessonSummary(lesson: Lesson) {
 }
 
 @Composable
-private fun Fabs(lesson: Lesson, onExpandedChange: (Boolean) -> Unit) {
+private fun Fabs(
+    lesson: Lesson,
+    onExpandedChange: (Boolean) -> Unit,
+    onEditLessonClick: (lessonId: Long) -> Unit
+) {
     var showDialog by rememberSaveable { mutableStateOf(false) }
 
     HorizontalDivider(
@@ -172,8 +186,7 @@ private fun Fabs(lesson: Lesson, onExpandedChange: (Boolean) -> Unit) {
         Spacer(modifier = Modifier.weight(1f))
         SmallFloatingActionButton(
             onClick = {
-                // TODO: open edit lesson screen here
-                /* edit lesson */
+                onEditLessonClick(lesson.lessonId)
             }
         ) {
             Icon(Filled.Edit, contentDescription = null)

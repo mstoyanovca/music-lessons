@@ -24,3 +24,4 @@ This is a major version update:
 - SMS
 - DB migration
 - edit lesson
+- TODOs in DAO

@@ -41,7 +41,8 @@ import kotlinx.coroutines.launch
 fun MainScreen(
     onAddLessonClick: (page: Int) -> Unit,
     onAddStudentClick: () -> Unit,
-    onEditStudentClick: (studentId: Long) -> Unit
+    onEditStudentClick: (studentId: Long) -> Unit,
+    onEditLessonClick: (lessonId: Long) -> Unit
 ) {
     val pagerState = rememberPagerState(pageCount = { 7 })
     val isFabVisible = rememberSaveable { mutableStateOf(true) }
@@ -86,7 +87,7 @@ fun MainScreen(
             beyondViewportPageCount = 6
         ) { page ->
             if (page == 6) Students(onEditStudentClick)
-            else Schedule(page)
+            else Schedule(page,onEditLessonClick)
         }
     }
 }
