@@ -62,7 +62,7 @@ fun NavHostImpl() {
         }
         composable<EditLessonRoute> { backStackEntry ->
             val lessonId: Long = backStackEntry.toRoute<EditLessonRoute>().lessonId
-            EditLesson(
+            EditLessonProgressIndicator(
                 lessonId,
                 navigateBack = {
                     // avoid freeze after two rapid back icon clicks:

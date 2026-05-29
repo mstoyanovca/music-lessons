@@ -87,7 +87,7 @@ fun MainScreen(
             beyondViewportPageCount = 6
         ) { page ->
             if (page == 6) Students(onEditStudentClick)
-            else Schedule(page,onEditLessonClick)
+            else Schedule(page, onEditLessonClick)
         }
     }
 }
