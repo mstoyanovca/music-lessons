@@ -22,3 +22,5 @@ This is a major version update:
 - version
 - call
 - SMS
+- DB migration
+- edit lesson
