@@ -38,9 +38,10 @@ interface LessonDao {
                 map.entries.flatMap { (lesson, studentToPhoneNumbers) ->
                     studentToPhoneNumbers.entries.map { (student, phoneNumbers) ->
                         lesson.copy(student = student.copy(phoneNumbers = phoneNumbers))
-                    }.sorted()
+                    }
                 }
             }
+            .map { it.sorted() }
     }
 
     @Query(

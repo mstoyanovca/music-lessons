@@ -31,8 +31,9 @@ interface StudentDao {
             .map { map ->
                 map.entries.map { (student, phoneNumbers) ->
                     student.copy(phoneNumbers = phoneNumbers)
-                }.sorted()
+                }
             }
+            .map { it.sorted() }
     }
 
     @Query("select * from student left join phone_number on student.student_id = phone_number.student_owner_id")
