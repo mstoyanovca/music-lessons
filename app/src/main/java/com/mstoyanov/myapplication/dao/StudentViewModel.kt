@@ -32,9 +32,9 @@ class StudentViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
         }
     }
 
-    fun update(student: Student, originalPhoneNumbers: List<PhoneNumber>) {
+    fun update(student: Student, phoneNumbersBeforeEditing: List<PhoneNumber>) {
         viewModelScope.launch {
-            db.studentDao().update(student, originalPhoneNumbers)
+            db.studentDao().update(student, phoneNumbersBeforeEditing)
         }
     }
 

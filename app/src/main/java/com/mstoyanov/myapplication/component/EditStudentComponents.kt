@@ -80,9 +80,9 @@ fun EditStudentProgressIndicator(studentId: Long, navigateBack: () -> Unit) {
                 studentId,
                 student.firstName,
                 student.lastName,
-                originalPhoneNumbers = student.phoneNumbers,
+                phoneNumbersBeforeEditing = student.phoneNumbers,
                 student.notes,
-                onUpdateStudentClick = { student, originalPhoneNumbers -> studentViewModel.update(student, originalPhoneNumbers) },
+                onUpdateStudentClick = { student, phoneNumbersBeforeEditing -> studentViewModel.update(student, phoneNumbersBeforeEditing) },
                 navigateBack
             )
         }
@@ -94,7 +94,7 @@ private fun EditStudent(
     studentId: Long,
     firstName: String,
     lastName: String,
-    originalPhoneNumbers: List<PhoneNumber>,
+    phoneNumbersBeforeEditing: List<PhoneNumber>,
     notes: String,
     onUpdateStudentClick: (Student, List<PhoneNumber>) -> Unit,
     navigateBack: () -> Unit
@@ -102,8 +102,8 @@ private fun EditStudent(
     var studentId by rememberSaveable { mutableLongStateOf(studentId) }
     var firstName by rememberSaveable { mutableStateOf(firstName) }
     var lastName by rememberSaveable { mutableStateOf(lastName) }
-    var phoneNumbers = rememberSaveable { originalPhoneNumbers.toMutableStateList() }
-    val originalPhoneNumbers = rememberSaveable { originalPhoneNumbers }
+    var phoneNumbers = rememberSaveable { phoneNumbersBeforeEditing.toMutableStateList() }
+    val phoneNumbersBeforeEditing = rememberSaveable { phoneNumbersBeforeEditing }
     var notes by rememberSaveable { mutableStateOf(notes) }
     var phoneNumbersAreValid by rememberSaveable { mutableStateOf(true) }
 
@@ -117,7 +117,7 @@ private fun EditStudent(
             ) {
                 FloatingActionButton(onClick = {
                     val student = Student(studentId, firstName, lastName, notes).copy(phoneNumbers = phoneNumbers)
-                    onUpdateStudentClick(student, originalPhoneNumbers)
+                    onUpdateStudentClick(student, phoneNumbersBeforeEditing)
                     navigateBack()
                 }) {
                     Icon(Icons.Default.Save, contentDescription = null)

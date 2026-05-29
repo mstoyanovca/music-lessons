@@ -46,10 +46,10 @@ interface StudentDao {
     suspend fun insertStudent(student: Student): Long
 
     @Transaction
-    suspend fun update(student: Student, originalPhoneNumbers: List<PhoneNumber>) {
+    suspend fun update(student: Student, phoneNumbersBeforeEditing: List<PhoneNumber>) {
         updateStudent(student)
-        // TODO:
-        db.phoneNumberDao().deleteAll(originalPhoneNumbers - student.phoneNumbers.toSet())
+        val idsToDelete = phoneNumbersBeforeEditing.map { it.studentId } - student.phoneNumbers.map { it.studentId }.toSet()
+        db.phoneNumberDao().deleteByIds(idsToDelete)
         val updatedPhoneNumbers = student.phoneNumbers.map { it.copy(studentId = student.studentId) }
         db.phoneNumberDao().upsertAll(updatedPhoneNumbers)
     }

@@ -12,9 +12,9 @@ data class Student(
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "student_id") val studentId: Long,
     // max length 24, validated in AddStudentComponents
     @ColumnInfo(name = "first_name") val firstName: String,
-    // max length 24
+    // max length 24, validated in AddStudentComponents
     @ColumnInfo(name = "last_name") val lastName: String,
-    // max length 128
+    // max length 128, validated in AddStudentComponents
     @ColumnInfo(name = "notes") val notes: String,
     @Ignore val phoneNumbers: List<PhoneNumber>
 ) : Comparable<Student> {
