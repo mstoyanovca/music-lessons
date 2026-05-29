@@ -80,9 +80,9 @@ fun EditStudentProgressIndicator(studentId: Long, navigateBack: () -> Unit) {
                 studentId,
                 student.firstName,
                 student.lastName,
-                phoneNumbersBeforeEditing = student.phoneNumbers,
+                student.phoneNumbers,
                 student.notes,
-                onUpdateStudentClick = { student, phoneNumbersBeforeEditing -> studentViewModel.update(student, phoneNumbersBeforeEditing) },
+                onUpdateStudentClick = { student, phoneNumberIdsBeforeEditing -> studentViewModel.update(student, phoneNumberIdsBeforeEditing) },
                 navigateBack
             )
         }
@@ -94,18 +94,19 @@ private fun EditStudent(
     studentId: Long,
     firstName: String,
     lastName: String,
-    phoneNumbersBeforeEditing: List<PhoneNumber>,
+    phoneNumbers: List<PhoneNumber>,
     notes: String,
-    onUpdateStudentClick: (Student, List<PhoneNumber>) -> Unit,
+    onUpdateStudentClick: (Student, List<Long>) -> Unit,
     navigateBack: () -> Unit
 ) {
+    val phoneNumberIdsBeforeEditing = rememberSaveable { phoneNumbers.map { it.phoneNumberId } }
+    var phoneNumbersAreValid by rememberSaveable { mutableStateOf(true) }
+
     var studentId by rememberSaveable { mutableLongStateOf(studentId) }
     var firstName by rememberSaveable { mutableStateOf(firstName) }
     var lastName by rememberSaveable { mutableStateOf(lastName) }
-    var phoneNumbers = rememberSaveable { phoneNumbersBeforeEditing.toMutableStateList() }
-    val phoneNumbersBeforeEditing = rememberSaveable { phoneNumbersBeforeEditing }
+    var phoneNumbers = rememberSaveable { phoneNumbers.toMutableStateList() }
     var notes by rememberSaveable { mutableStateOf(notes) }
-    var phoneNumbersAreValid by rememberSaveable { mutableStateOf(true) }
 
     Scaffold(
         topBar = { TopAppBarImpl(navigateBack) },
@@ -117,7 +118,7 @@ private fun EditStudent(
             ) {
                 FloatingActionButton(onClick = {
                     val student = Student(studentId, firstName, lastName, notes).copy(phoneNumbers = phoneNumbers)
-                    onUpdateStudentClick(student, phoneNumbersBeforeEditing)
+                    onUpdateStudentClick(student, phoneNumberIdsBeforeEditing)
                     navigateBack()
                 }) {
                     Icon(Icons.Default.Save, contentDescription = null)

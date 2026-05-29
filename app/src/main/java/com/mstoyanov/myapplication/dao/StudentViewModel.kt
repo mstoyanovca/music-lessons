@@ -4,7 +4,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mstoyanov.myapplication.MusicLessonsApplication.Companion.db
-import com.mstoyanov.myapplication.entity.PhoneNumber
 import com.mstoyanov.myapplication.entity.Student
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -32,9 +31,9 @@ class StudentViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
         }
     }
 
-    fun update(student: Student, phoneNumbersBeforeEditing: List<PhoneNumber>) {
+    fun update(student: Student, phoneNumberIdsBeforeEditing: List<Long>) {
         viewModelScope.launch {
-            db.studentDao().update(student, phoneNumbersBeforeEditing)
+            db.studentDao().update(student, phoneNumberIdsBeforeEditing)
         }
     }
 
