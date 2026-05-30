@@ -30,7 +30,6 @@ fun PhoneNumbers(phoneNumbers: List<PhoneNumber>) {
             thickness = 1.dp,
             color = MaterialTheme.colorScheme.outlineVariant
         )
-
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
                 imageVector = Icons.Default.Phone,
