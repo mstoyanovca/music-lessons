@@ -1,9 +1,6 @@
 package com.mstoyanov.myapplication.component
 
 import android.os.Bundle
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,9 +18,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.input.TextFieldLineLimits
-import androidx.compose.foundation.text.input.rememberTextFieldState
-import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AccessTime
@@ -31,11 +25,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuAnchorType
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -43,7 +33,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.TopAppBar
@@ -58,9 +47,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.layout
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.DEFAULT_ARGS_KEY
 import androidx.lifecycle.SAVED_STATE_REGISTRY_OWNER_KEY
@@ -76,11 +63,8 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.savedstate.SavedStateRegistryOwner
 import com.mstoyanov.myapplication.dao.LessonViewModel
-import com.mstoyanov.myapplication.dao.StudentViewModel
 import com.mstoyanov.myapplication.entity.Lesson
-import com.mstoyanov.myapplication.entity.Student
 import com.mstoyanov.myapplication.entity.Weekday
-import com.mstoyanov.myapplication.function.weekdayFromPage
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
@@ -112,37 +96,32 @@ fun EditLessonProgressIndicator(lessonId: Long, navigateBack: () -> Unit) {
         }
 
         else -> {
-            EditLesson(lessonId, navigateBack)
+            EditLesson(lesson, navigateBack)
         }
     }
 }
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun EditLesson(lessonId: Long, navigateBack: () -> Unit, studentViewModel: StudentViewModel = viewModel(), lessonViewModel: LessonViewModel = viewModel()) {
-    val weekday = weekdayFromPage(0)
-    var timeFrom by rememberSaveable { mutableStateOf(if (weekday == Weekday.SATURDAY) LocalTime.of(9, 0) else LocalTime.of(16, 0)) }
-    var timeTo by rememberSaveable { mutableStateOf(if (weekday == Weekday.SATURDAY) LocalTime.of(9, 30) else LocalTime.of(16, 30)) }
-    val students by studentViewModel.students.collectAsStateWithLifecycle()
-    var student = students.firstOrNull()
+fun EditLesson(
+    lesson: Lesson,
+    navigateBack: () -> Unit,
+    // TODO:
+    lessonViewModel: LessonViewModel = viewModel()
+) {
+    var timeFrom by rememberSaveable { mutableStateOf(lesson.timeFrom) }
+    var timeTo by rememberSaveable { mutableStateOf(lesson.timeTo) }
 
     Scaffold(
         topBar = { TopAppBarImpl(navigateBack) },
         floatingActionButton = {
-            AnimatedVisibility(
-                visible = student != null,
-                enter = scaleIn(),
-                exit = scaleOut()
-            ) {
-                FloatingActionButton(
-                    onClick = {
-                        if (student != null)
-                            lessonViewModel.insert(Lesson(lessonId = 0L, weekday!!, timeFrom, timeTo, student!!.studentId, student!!))
-                        navigateBack()
-                    }
-                ) {
-                    Icon(Icons.Default.Save, contentDescription = null)
+            FloatingActionButton(
+                onClick = {
+                    lessonViewModel.update(lesson.copy(timeFrom = timeFrom, timeTo = timeTo))
+                    navigateBack()
                 }
+            ) {
+                Icon(Icons.Default.Save, contentDescription = null)
             }
         })
     { innerPadding ->
@@ -150,8 +129,8 @@ fun EditLesson(lessonId: Long, navigateBack: () -> Unit, studentViewModel: Stude
             modifier = Modifier.padding(innerPadding + PaddingValues(all = 8.dp)),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            item { WeekdayContent(weekday) }
-            item { StudentPicker(students, student, onStudentSelect = { student = it }) }
+            item { WeekdayContent(lesson.weekday) }
+            item { StudentContent("${lesson.student.firstName} ${lesson.student.lastName}") }
             item { TimePicker(timeFrom, timeTo, onTimeFromSelect = { timeFrom = it }, onTimeToSelect = { timeTo = it }) }
         }
     }
@@ -165,7 +144,7 @@ private fun TopAppBarImpl(navigateBack: () -> Unit) {
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
         ),
-        title = { Text("Add Lesson") },
+        title = { Text("Edit Lesson") },
         navigationIcon = {
             IconButton(onClick = navigateBack) {
                 Icon(
@@ -173,7 +152,7 @@ private fun TopAppBarImpl(navigateBack: () -> Unit) {
                     contentDescription = null
                 )
             }
-        },
+        }
     )
 }
 
@@ -182,7 +161,7 @@ private fun WeekdayContent(weekday: Weekday?) {
     Text(
         modifier = Modifier
             .background(
-                MaterialTheme.colorScheme.primaryContainer,
+                color = MaterialTheme.colorScheme.primaryContainer,
                 shape = RoundedCornerShape(8.dp)
             )
             .height(48.dp)
@@ -196,89 +175,40 @@ private fun WeekdayContent(weekday: Weekday?) {
 }
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
-private fun StudentPicker(students: List<Student>, student: Student?, onStudentSelect: (student: Student) -> Unit) {
-    var expanded by rememberSaveable { mutableStateOf(false) }
-    val textFieldState = if (student != null) {
-        rememberTextFieldState(students[0].firstName + " " + students[0].lastName)
-    } else {
-        rememberTextFieldState("")
-    }
-
-    ExposedDropdownMenuBox(
-        modifier = Modifier.fillMaxWidth(),
-        expanded = expanded,
-        onExpandedChange = { expanded = it }) {
-        TextField(
-            modifier = Modifier
-                .menuAnchor(
-                    type = ExposedDropdownMenuAnchorType.PrimaryNotEditable,
-                    enabled = true
-                )
-                .fillMaxWidth(),
-            shape = RoundedCornerShape(8.dp),
-            readOnly = true,
-            state = textFieldState,
-            lineLimits = TextFieldLineLimits.SingleLine,
-            textStyle = MaterialTheme.typography.bodyLarge,
-            leadingIcon = { Icon(Icons.Default.Person, contentDescription = null) },
-            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-            colors = ExposedDropdownMenuDefaults.textFieldColors(
-                focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                focusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                unfocusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer
-            ),
-        )
-        ExposedDropdownMenu(
-            modifier = Modifier.crop(vertical = 8.dp),
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-            shape = RoundedCornerShape(8.dp)
-        ) {
-            students.forEachIndexed { index, student ->
-                val name = student.firstName + " " + student.lastName
-                DropdownMenuItem(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(MaterialTheme.colorScheme.primaryContainer),
-                    onClick = {
-                        textFieldState.setTextAndPlaceCursorAtEnd(name)
-                        onStudentSelect(student)
-                        expanded = false
-                    },
-                    leadingIcon = { Icon(Icons.Default.Person, contentDescription = null) },
-                    text = {
-                        Text(
-                            text = name,
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    },
-                )
-                if (index < students.lastIndex) {
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
-            }
-        }
-    }
-}
-
-private fun Modifier.crop(vertical: Dp): Modifier = this.layout { measurable, constraints ->
-    val placeable = measurable.measure(constraints)
-    layout(
-        placeable.width,
-        placeable.height - (vertical * 2).toPx().toInt()
+private fun StudentContent(studentName: String) {
+    Row(
+        modifier = Modifier
+            .height(48.dp)
+            .clip(RoundedCornerShape(8.dp))
+            .background(MaterialTheme.colorScheme.primaryContainer)
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        placeable.placeRelative(0, -vertical.toPx().toInt())
+        Icon(
+            modifier = Modifier.padding(start = 12.dp),
+            imageVector = Icons.Default.Person,
+            contentDescription = null,
+            tint = Color.Blue
+        )
+        Spacer(Modifier.width(16.dp))
+        Text(
+            text = studentName,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
     }
 }
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-private fun TimePicker(timeFrom: LocalTime, timeTo: LocalTime, onTimeFromSelect: (LocalTime) -> Unit, onTimeToSelect: (LocalTime) -> Unit) {
+private fun TimePicker(
+    timeFrom: LocalTime,
+    timeTo: LocalTime,
+    onTimeFromSelect: (LocalTime) -> Unit,
+    onTimeToSelect: (LocalTime) -> Unit
+) {
     var timeFromPickerState = rememberTimePickerState(
         is24Hour = true,
         initialHour = timeFrom.hour,
@@ -386,8 +316,8 @@ private fun TimePicker(timeFrom: LocalTime, timeTo: LocalTime, onTimeFromSelect:
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 private fun TimePickerDialog(
     timePickerState: TimePickerState,
     onConfirm: (TimePickerState) -> Unit,

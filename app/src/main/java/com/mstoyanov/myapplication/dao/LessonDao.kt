@@ -15,11 +15,9 @@ import kotlinx.coroutines.flow.map
 interface LessonDao {
     fun findById(lessonId: Long): Flow<Lesson> {
         return findLessonById(lessonId)
-            .map { map ->
-                map.entries.flatMap { (lesson, studentToPhoneNumbers) ->
-                    studentToPhoneNumbers.entries.map { (student, phoneNumbers) ->
-                        lesson.copy(student = student.copy(phoneNumbers = phoneNumbers))
-                    }
+            .map { map: Map<Lesson, Student> ->
+                map.entries.map { (lesson, student) ->
+                    lesson.copy(student = student)
                 }.first()
             }
     }
@@ -27,10 +25,9 @@ interface LessonDao {
     @Query(
         "select * from lesson " +
                 "join student on lesson.student_owner_id = student.student_id " +
-                "left join phone_number on student.student_id = phone_number.student_owner_id " +
                 "where lesson.lesson_id == :lessonId"
     )
-    fun findLessonById(lessonId: Long): Flow<Map<Lesson, Map<Student, List<PhoneNumber>>>>
+    fun findLessonById(lessonId: Long): Flow<Map<Lesson, Student>>
 
     fun findByWeekday(weekday: String): Flow<List<Lesson>> {
         return findLessonsByWeekday(weekday)
