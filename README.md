@@ -23,5 +23,3 @@ This is a major version update:
 - call
 - SMS
 - DB migration
-- edit lesson
-- TODOs in DAO
