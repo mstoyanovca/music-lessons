@@ -1,5 +1,6 @@
 package com.mstoyanov.myapplication.component
 
+import android.os.Bundle
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
@@ -34,7 +35,21 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.DEFAULT_ARGS_KEY
+import androidx.lifecycle.SAVED_STATE_REGISTRY_OWNER_KEY
+import androidx.lifecycle.VIEW_MODEL_STORE_OWNER_KEY
+import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.createSavedStateHandle
+import androidx.lifecycle.viewmodel.MutableCreationExtras
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import androidx.savedstate.SavedStateRegistryOwner
 import com.mstoyanov.myapplication.R
+import com.mstoyanov.myapplication.dao.LessonViewModel
+import com.mstoyanov.myapplication.function.weekdayFromPage
 import kotlinx.coroutines.launch
 
 @Composable
@@ -86,8 +101,29 @@ fun MainScreen(
             modifier = Modifier.padding(innerPadding),
             beyondViewportPageCount = 6
         ) { page ->
-            if (page == 6) Students(onEditStudentClick)
-            else Schedule(page, onEditLessonClick)
+            when (page) {
+                6 -> {
+                    Students(onEditStudentClick)
+                }
+
+                else -> {
+                    val lessonViewModel: LessonViewModel = viewModel(
+                        key = "tab_$page",
+                        factory = viewModelFactory {
+                            initializer {
+                                LessonViewModel(savedStateHandle = createSavedStateHandle())
+                            }
+                        },
+                        extras = MutableCreationExtras().apply {
+                            // if manually setting CreationExtras, explicitly set VIEW_MODEL_STORE_OWNER_KEY and SAVED_STATE_REGISTRY_OWNER_KEY:
+                            set(VIEW_MODEL_STORE_OWNER_KEY, LocalViewModelStoreOwner.current as ViewModelStoreOwner)
+                            set(SAVED_STATE_REGISTRY_OWNER_KEY, LocalLifecycleOwner.current as SavedStateRegistryOwner)
+                            set(DEFAULT_ARGS_KEY, Bundle().apply { putString("weekday", weekdayFromPage(page)!!.value) })
+                        }
+                    )
+                    Schedule(lessonViewModel, onEditLessonClick)
+                }
+            }
         }
     }
 }
