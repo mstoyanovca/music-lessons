@@ -25,9 +25,9 @@ fun NavHostImpl() {
         composable<HomeRoute> {
             MainScreen(
                 onAddStudentClick = { navController.navigate(AddStudentRoute) },
-                onEditStudentClick = { navController.navigate(EditStudentRoute(studentId = it)) },
+                onEditStudentClick = { navController.navigate(EditStudentRoute(id = it)) },
                 onAddLessonClick = { navController.navigate(AddLessonRoute(page = it)) },
-                onEditLessonClick = { navController.navigate(EditLessonRoute(lessonId = it)) })
+                onEditLessonClick = { navController.navigate(EditLessonRoute(id = it)) })
         }
         composable<AddStudentRoute> {
             AddStudent(navigateBack = {
@@ -38,9 +38,9 @@ fun NavHostImpl() {
             })
         }
         composable<EditStudentRoute> { backStackEntry ->
-            val studentId: Long = backStackEntry.toRoute<EditStudentRoute>().studentId
+            val id: Long = backStackEntry.toRoute<EditStudentRoute>().id
             EditStudentProgressIndicator(
-                studentId,
+                id,
                 navigateBack = {
                     // avoid freeze after two rapid back icon clicks:
                     if (navController.currentBackStackEntry?.lifecycle?.currentState == Lifecycle.State.RESUMED) {
@@ -61,9 +61,9 @@ fun NavHostImpl() {
                 })
         }
         composable<EditLessonRoute> { backStackEntry ->
-            val lessonId: Long = backStackEntry.toRoute<EditLessonRoute>().lessonId
+            val id: Long = backStackEntry.toRoute<EditLessonRoute>().id
             EditLessonProgressIndicator(
-                lessonId,
+                id,
                 navigateBack = {
                     // avoid freeze after two rapid back icon clicks:
                     if (navController.currentBackStackEntry?.lifecycle?.currentState == Lifecycle.State.RESUMED) {

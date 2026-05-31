@@ -47,7 +47,7 @@ import com.mstoyanov.myapplication.entity.Student
 
 @Composable
 fun Students(
-    onEditStudentClick: (studentId: Long) -> Unit,
+    onEditStudentClick: (id: Long) -> Unit,
     studentViewModel: StudentViewModel = viewModel()
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
@@ -83,7 +83,7 @@ private fun CardContent(
     expandedId: Long,
     onExpandedChange: (Boolean) -> Unit,
     onExpandedIdChange: (Long) -> Unit,
-    onEditStudentClick: (studentId: Long) -> Unit
+    onEditStudentClick: (id: Long) -> Unit
 ) {
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
@@ -130,7 +130,7 @@ private fun ColumnScope.StudentContent(
     expanded: Boolean,
     expandedId: Long,
     onExpandedChange: (Boolean) -> Unit,
-    onEditStudentClick: (studentId: Long) -> Unit
+    onEditStudentClick: (id: Long) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -194,7 +194,7 @@ private fun Notes(notes: String) {
 private fun Fabs(
     student: Student,
     onExpandedChange: (Boolean) -> Unit,
-    onEditStudentClick: (studentId: Long) -> Unit
+    onEditStudentClick: (id: Long) -> Unit
 ) {
     var showDialog by rememberSaveable { mutableStateOf(false) }
 

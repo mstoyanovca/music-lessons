@@ -49,7 +49,7 @@ import com.mstoyanov.myapplication.entity.Student
 import com.mstoyanov.myapplication.function.validatePhoneNumbers
 
 @Composable
-fun EditStudentProgressIndicator(studentId: Long, navigateBack: () -> Unit) {
+fun EditStudentProgressIndicator(id: Long, navigateBack: () -> Unit) {
     val studentViewModel: StudentViewModel = viewModel(
         factory = viewModelFactory {
             initializer {
@@ -60,7 +60,7 @@ fun EditStudentProgressIndicator(studentId: Long, navigateBack: () -> Unit) {
             // if manually setting CreationExtras, explicitly set VIEW_MODEL_STORE_OWNER_KEY and SAVED_STATE_REGISTRY_OWNER_KEY:
             set(VIEW_MODEL_STORE_OWNER_KEY, LocalViewModelStoreOwner.current as ViewModelStoreOwner)
             set(SAVED_STATE_REGISTRY_OWNER_KEY, LocalLifecycleOwner.current as SavedStateRegistryOwner)
-            set(DEFAULT_ARGS_KEY, Bundle().apply { putLong("studentId", studentId) })
+            set(DEFAULT_ARGS_KEY, Bundle().apply { putLong("id", id) })
         }
     )
     val studentState by studentViewModel.student.collectAsStateWithLifecycle()
@@ -77,7 +77,7 @@ fun EditStudentProgressIndicator(studentId: Long, navigateBack: () -> Unit) {
 
         else -> {
             EditStudent(
-                studentId,
+                id,
                 student.firstName,
                 student.lastName,
                 student.phoneNumbers,
@@ -91,7 +91,7 @@ fun EditStudentProgressIndicator(studentId: Long, navigateBack: () -> Unit) {
 
 @Composable
 private fun EditStudent(
-    studentId: Long,
+    id: Long,
     firstName: String,
     lastName: String,
     phoneNumbers: List<PhoneNumber>,
@@ -102,7 +102,7 @@ private fun EditStudent(
     val phoneNumberIdsBeforeEditing = rememberSaveable { phoneNumbers.map { it.id } }
     var phoneNumbersAreValid by rememberSaveable { mutableStateOf(true) }
 
-    var studentId by rememberSaveable { mutableLongStateOf(studentId) }
+    var id by rememberSaveable { mutableLongStateOf(id) }
     var firstName by rememberSaveable { mutableStateOf(firstName) }
     var lastName by rememberSaveable { mutableStateOf(lastName) }
     var phoneNumbers = rememberSaveable { phoneNumbers.toMutableStateList() }
@@ -117,7 +117,7 @@ private fun EditStudent(
                 exit = fadeOut() + scaleOut(),
             ) {
                 FloatingActionButton(onClick = {
-                    val student = Student(studentId, firstName, lastName, notes).copy(phoneNumbers = phoneNumbers)
+                    val student = Student(id, firstName, lastName, notes).copy(phoneNumbers = phoneNumbers)
                     onUpdateStudentClick(student, phoneNumberIdsBeforeEditing)
                     navigateBack()
                 }) {

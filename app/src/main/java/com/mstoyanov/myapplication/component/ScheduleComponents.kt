@@ -47,7 +47,7 @@ import com.mstoyanov.myapplication.entity.Lesson
 @Composable
 fun Schedule(
     lessonViewModel: LessonViewModel,
-    onEditLessonClick: (lessonId: Long) -> Unit,
+    onEditLessonClick: (id: Long) -> Unit,
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
     var expandedId by rememberSaveable { mutableLongStateOf(0) }
@@ -82,7 +82,7 @@ private fun LazyItemScope.CardContent(
     expandedId: Long,
     onExpandedChange: (Boolean) -> Unit,
     onExpandedIdChange: (Long) -> Unit,
-    onEditLessonClick: (lessonId: Long) -> Unit,
+    onEditLessonClick: (id: Long) -> Unit,
 ) {
     ElevatedCard(
         modifier = Modifier.animateItem(),
@@ -130,7 +130,7 @@ private fun ColumnScope.LessonContent(
     expanded: Boolean,
     expandedId: Long,
     onExpandedChange: (Boolean) -> Unit,
-    onEditLessonClick: (lessonId: Long) -> Unit,
+    onEditLessonClick: (id: Long) -> Unit,
 ) {
     Column(
         Modifier
@@ -168,7 +168,7 @@ private fun LessonSummary(lesson: Lesson) {
 private fun Fabs(
     lesson: Lesson,
     onExpandedChange: (Boolean) -> Unit,
-    onEditLessonClick: (lessonId: Long) -> Unit
+    onEditLessonClick: (id: Long) -> Unit
 ) {
     var showDialog by rememberSaveable { mutableStateOf(false) }
 

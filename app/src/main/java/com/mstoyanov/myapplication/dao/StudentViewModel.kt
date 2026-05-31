@@ -11,9 +11,9 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class StudentViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
-    private val studentId: Long? = savedStateHandle.get<Long>("studentId")
+    private val id: Long? = savedStateHandle.get<Long>("id")
 
-    val student: StateFlow<Student?> = db.studentDao().findById(studentId ?: 0).stateIn(
+    val student: StateFlow<Student?> = db.studentDao().findById(id ?: 0).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = null

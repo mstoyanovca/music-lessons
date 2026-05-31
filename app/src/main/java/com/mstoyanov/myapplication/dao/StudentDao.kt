@@ -14,8 +14,8 @@ import kotlinx.coroutines.flow.map
 
 @Dao
 interface StudentDao {
-    fun findById(studentId: Long): Flow<Student> {
-        return findStudentById(studentId)
+    fun findById(id: Long): Flow<Student> {
+        return findStudentById(id)
             .map { map ->
                 map.entries.map { (student, phoneNumbers) ->
                     student.copy(phoneNumbers = phoneNumbers)
@@ -23,8 +23,12 @@ interface StudentDao {
             }
     }
 
-    @Query("select * from student left join phone_number on student.id = phone_number.student_id where student_id = :studentId")
-    fun findStudentById(studentId: Long): Flow<Map<Student, List<PhoneNumber>>>
+    @Query(
+        "select * from student " +
+                "left join phone_number on student.id = phone_number.student_id " +
+                "where student.id = :id"
+    )
+    fun findStudentById(id: Long): Flow<Map<Student, List<PhoneNumber>>>
 
     fun findAll(): Flow<List<Student>> {
         return findAllStudents()
@@ -36,13 +40,16 @@ interface StudentDao {
             .map { it.sorted() }
     }
 
-    @Query("select * from student left join phone_number on student.id = phone_number.student_id")
+    @Query(
+        "select * from student " +
+                "left join phone_number on student.id = phone_number.student_id"
+    )
     fun findAllStudents(): Flow<Map<Student, List<PhoneNumber>>>
 
     @Transaction
     suspend fun insert(student: Student) {
-        val studentId = insertStudent(student)
-        val phoneNumbers = student.phoneNumbers.map { it.copy(studentId = studentId) }
+        val id = insertStudent(student)
+        val phoneNumbers = student.phoneNumbers.map { it.copy(studentId = id) }
         db.phoneNumberDao().insertAll(phoneNumbers)
     }
 
@@ -52,7 +59,7 @@ interface StudentDao {
     @Transaction
     suspend fun update(student: Student, phoneNumberIdsBeforeEditing: List<Long>) {
         updateStudent(student)
-        db.phoneNumberDao().deleteByIds(phoneNumberIdsBeforeEditing - student.phoneNumbers.map { it.studentId }.toSet())
+        db.phoneNumberDao().deleteByIds(phoneNumberIdsBeforeEditing - student.phoneNumbers.map { it.id }.toSet())
         db.phoneNumberDao().upsertAll(student.phoneNumbers.map { it.copy(studentId = student.id) })
     }
 

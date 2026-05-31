@@ -9,10 +9,10 @@ object HomeRoute
 object AddStudentRoute
 
 @Serializable
-data class EditStudentRoute(val studentId: Long)
+data class EditStudentRoute(val id: Long)
 
 @Serializable
 data class AddLessonRoute(val page: Int)
 
 @Serializable
-data class EditLessonRoute(val lessonId: Long)
+data class EditLessonRoute(val id: Long)

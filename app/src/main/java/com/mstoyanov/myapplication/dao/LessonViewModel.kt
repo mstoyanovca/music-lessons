@@ -11,10 +11,10 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class LessonViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
-    private val lessonId: Long? = savedStateHandle.get<Long>("lessonId")
+    private val id: Long? = savedStateHandle.get<Long>("id")
     private val weekday: String? = savedStateHandle.get<String>("weekday")
 
-    val lesson: StateFlow<Lesson?> = db.lessonDao().findById(lessonId ?: 0).stateIn(
+    val lesson: StateFlow<Lesson?> = db.lessonDao().findById(id ?: 0).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = null

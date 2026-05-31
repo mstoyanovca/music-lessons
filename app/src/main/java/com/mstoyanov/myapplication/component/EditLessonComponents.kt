@@ -57,7 +57,7 @@ import com.mstoyanov.myapplication.dao.LessonViewModel
 import com.mstoyanov.myapplication.entity.Lesson
 
 @Composable
-fun EditLessonProgressIndicator(lessonId: Long, navigateBack: () -> Unit) {
+fun EditLessonProgressIndicator(id: Long, navigateBack: () -> Unit) {
     val lessonViewModel: LessonViewModel = viewModel(
         factory = viewModelFactory {
             initializer {
@@ -68,7 +68,7 @@ fun EditLessonProgressIndicator(lessonId: Long, navigateBack: () -> Unit) {
             // if manually setting CreationExtras, explicitly set VIEW_MODEL_STORE_OWNER_KEY and SAVED_STATE_REGISTRY_OWNER_KEY:
             set(VIEW_MODEL_STORE_OWNER_KEY, LocalViewModelStoreOwner.current as ViewModelStoreOwner)
             set(SAVED_STATE_REGISTRY_OWNER_KEY, LocalLifecycleOwner.current as SavedStateRegistryOwner)
-            set(DEFAULT_ARGS_KEY, Bundle().apply { putLong("lessonId", lessonId) })
+            set(DEFAULT_ARGS_KEY, Bundle().apply { putLong("id", id) })
         }
     )
     val lessonState by lessonViewModel.lesson.collectAsStateWithLifecycle()
