@@ -24,10 +24,10 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.DEFAULT_ARGS_KEY
@@ -105,7 +105,7 @@ private fun EditStudent(
     var id by rememberSaveable { mutableLongStateOf(id) }
     var firstName by rememberSaveable { mutableStateOf(firstName) }
     var lastName by rememberSaveable { mutableStateOf(lastName) }
-    var phoneNumbers = rememberSaveable { phoneNumbers.toMutableStateList() }
+    val phoneNumbers = rememberSaveable { mutableStateListOf(phoneNumbers) }
     var notes by rememberSaveable { mutableStateOf(notes) }
 
     Scaffold(
@@ -123,7 +123,7 @@ private fun EditStudent(
                         lastName = lastName,
                         notes = notes
                     )
-                    student.phoneNumbers = phoneNumbers
+                    student.phoneNumbers = phoneNumbers.flatten()
                     onUpdateStudentClick(student, phoneNumberIdsBeforeEditing)
                     navigateBack()
                 }) {
@@ -135,12 +135,13 @@ private fun EditStudent(
             innerPadding,
             firstName,
             lastName,
-            phoneNumbers,
+            phoneNumbers.flatten().toMutableList(),
             notes,
             onFirstNameChange = { firstName = it },
             onLastNameChange = { lastName = it },
             onPhoneNumbersChange = {
-                phoneNumbers = it.toMutableStateList()
+                phoneNumbers.clear()
+                phoneNumbers.addAll(mutableListOf(it))
                 phoneNumbersAreValid = validatePhoneNumbers(it)
             },
             onNotesChange = { notes = it }
