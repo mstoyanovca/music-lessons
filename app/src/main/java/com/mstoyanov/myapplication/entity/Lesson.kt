@@ -22,7 +22,7 @@ import java.time.LocalTime
     indices = [Index(value = ["student_id", "weekday"])]
 )
 data class Lesson(
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     val id: Long,
     @field:TypeConverters(WeekdayConverter::class)
@@ -38,23 +38,9 @@ data class Lesson(
     val timeTo: LocalTime,
     @ColumnInfo(name = "student_id")
     val studentId: Long,
-    @Ignore val student: Student
 ) : Comparable<Lesson> {
-
-    constructor(
-        id: Long = 0L,
-        weekday: Weekday = Weekday.MONDAY,
-        timeFrom: LocalTime = LocalTime.of(16, 0),
-        timeTo: LocalTime = LocalTime.of(16, 30),
-        studentId: Long = 0L
-    ) : this(
-        id = id,
-        weekday = weekday,
-        timeFrom = timeFrom,
-        timeTo = timeTo,
-        studentId = studentId,
-        student = Student()
-    )
+    @Ignore
+    lateinit var student: Student
 
     override fun compareTo(other: Lesson): Int {
         return when {

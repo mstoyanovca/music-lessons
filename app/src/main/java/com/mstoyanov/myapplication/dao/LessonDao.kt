@@ -17,7 +17,8 @@ interface LessonDao {
         return findLessonById(id)
             .map { map: Map<Lesson, Student> ->
                 map.entries.map { (lesson, student) ->
-                    lesson.copy(student = student)
+                    lesson.student = student
+                    lesson
                 }.first()
             }
     }
@@ -34,7 +35,9 @@ interface LessonDao {
             .map { map ->
                 map.entries.flatMap { (lesson, studentToPhoneNumbers) ->
                     studentToPhoneNumbers.entries.map { (student, phoneNumbers) ->
-                        lesson.copy(student = student.copy(phoneNumbers = phoneNumbers))
+                        student.phoneNumbers = phoneNumbers
+                        lesson.student = student
+                        lesson
                     }
                 }
             }

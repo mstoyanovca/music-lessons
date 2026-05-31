@@ -20,7 +20,7 @@ import kotlinx.serialization.Serializable
     indices = [(Index(value = ["student_id"]))]
 )
 data class PhoneNumber(
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     val id: Long = 0L,
     // max length 10, validated in NanpVisualTransformation:

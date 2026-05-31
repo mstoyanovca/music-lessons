@@ -22,4 +22,4 @@ This is a major version update:
 - version
 - call
 - SMS
-- DB migration
+- test DB migration

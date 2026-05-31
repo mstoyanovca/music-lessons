@@ -49,10 +49,11 @@ fun AddStudent(navigateBack: () -> Unit, studentViewModel: StudentViewModel = vi
                 FloatingActionButton(onClick = {
                     val student = Student(
                         id = 0L,
-                        firstName,
-                        lastName,
-                        notes
-                    ).copy(phoneNumbers = phoneNumbers)
+                        firstName = firstName,
+                        lastName = lastName,
+                        notes = notes
+                    )
+                    student.phoneNumbers = phoneNumbers
                     studentViewModel.insert(student)
                     navigateBack()
                 }) {

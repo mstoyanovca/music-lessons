@@ -2,17 +2,16 @@
   "formatVersion": 1,
   "database": {
     "version": 6,
-    "identityHash": "0ff77e32ca6c1fa5d3233f5fd548e3da",
+    "identityHash": "37750921b1333c30cbcfd05af40ca5ef",
     "entities": [
       {
         "tableName": "phone_number",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `number` TEXT NOT NULL, `type` TEXT NOT NULL, `student_id` INTEGER NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`student_id`) REFERENCES `student`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER, `number` TEXT NOT NULL, `type` TEXT NOT NULL, `student_id` INTEGER NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`student_id`) REFERENCES `student`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
-            "affinity": "INTEGER",
-            "notNull": true
+            "affinity": "INTEGER"
           },
           {
             "fieldPath": "number",
@@ -66,13 +65,12 @@
       },
       {
         "tableName": "student",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `first_name` TEXT NOT NULL, `last_name` TEXT NOT NULL, `notes` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER, `first_name` TEXT NOT NULL, `last_name` TEXT NOT NULL, `notes` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
-            "affinity": "INTEGER",
-            "notNull": true
+            "affinity": "INTEGER"
           },
           {
             "fieldPath": "firstName",
@@ -102,13 +100,12 @@
       },
       {
         "tableName": "lesson",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `weekday` TEXT NOT NULL, `time_from` TEXT NOT NULL, `time_to` TEXT NOT NULL, `student_id` INTEGER NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`student_id`) REFERENCES `student`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER, `weekday` TEXT NOT NULL, `time_from` TEXT NOT NULL, `time_to` TEXT NOT NULL, `student_id` INTEGER NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`student_id`) REFERENCES `student`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
-            "affinity": "INTEGER",
-            "notNull": true
+            "affinity": "INTEGER"
           },
           {
             "fieldPath": "weekday",
@@ -170,7 +167,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0ff77e32ca6c1fa5d3233f5fd548e3da')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '37750921b1333c30cbcfd05af40ca5ef')"
     ]
   }
 }

@@ -117,7 +117,13 @@ private fun EditStudent(
                 exit = fadeOut() + scaleOut(),
             ) {
                 FloatingActionButton(onClick = {
-                    val student = Student(id, firstName, lastName, notes).copy(phoneNumbers = phoneNumbers)
+                    val student = Student(
+                        id = id,
+                        firstName = firstName,
+                        lastName = lastName,
+                        notes = notes
+                    )
+                    student.phoneNumbers = phoneNumbers
                     onUpdateStudentClick(student, phoneNumberIdsBeforeEditing)
                     navigateBack()
                 }) {

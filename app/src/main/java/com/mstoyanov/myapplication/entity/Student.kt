@@ -9,28 +9,16 @@ import kotlinx.serialization.Serializable
 @Serializable
 @Entity(tableName = "student")
 data class Student(
-    @PrimaryKey @ColumnInfo(name = "id") val id: Long,
+    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") val id: Long,
     // max length 24, validated in AddStudentComponents
     @ColumnInfo(name = "first_name") val firstName: String,
     // max length 24, validated in AddStudentComponents
     @ColumnInfo(name = "last_name") val lastName: String,
     // max length 128, validated in AddStudentComponents
     @ColumnInfo(name = "notes") val notes: String,
-    @Ignore val phoneNumbers: List<PhoneNumber>
 ) : Comparable<Student> {
-
-    constructor(
-        id: Long = 0L,
-        firstName: String = "",
-        lastName: String = "",
-        notes: String = ""
-    ) : this(
-        id = id,
-        firstName = firstName,
-        lastName = lastName,
-        notes = notes,
-        phoneNumbers = listOf()
-    )
+    @Ignore
+    lateinit var phoneNumbers: List<PhoneNumber>
 
     override fun compareTo(other: Student): Int {
         return when {
