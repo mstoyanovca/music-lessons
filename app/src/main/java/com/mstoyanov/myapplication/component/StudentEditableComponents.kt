@@ -154,7 +154,7 @@ private fun PhoneNumbers(
                     leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null) },
                     trailingIcon = {
                         IconButton(onClick = {
-                            phoneNumbers.remove(phoneNumber)
+                            phoneNumbers.removeAt(index)
                             onPhoneNumbersChange(phoneNumbers)
                         }) {
                             Icon(
