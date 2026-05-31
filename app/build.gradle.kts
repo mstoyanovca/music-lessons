@@ -11,12 +11,11 @@ room {
 }
 
 android {
-    namespace = "com.mstoyanov.myapplication"
+    namespace = "com.mstoyanov.musiclessons"
     compileSdk = 36
 
     defaultConfig {
-        // TODO: applicationId "com.mstoyanov.music_lessons"
-        applicationId = "com.mstoyanov.myapplication"
+        applicationId = "com.mstoyanov.music_lessons"
         minSdk = 33
         targetSdk = 36
         versionCode = 26
