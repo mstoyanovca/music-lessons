@@ -13,8 +13,8 @@ import kotlinx.coroutines.flow.map
 
 @Dao
 interface LessonDao {
-    fun findById(lessonId: Long): Flow<Lesson> {
-        return findLessonById(lessonId)
+    fun findById(id: Long): Flow<Lesson> {
+        return findLessonById(id)
             .map { map: Map<Lesson, Student> ->
                 map.entries.map { (lesson, student) ->
                     lesson.copy(student = student)
@@ -24,10 +24,10 @@ interface LessonDao {
 
     @Query(
         "select * from lesson " +
-                "join student on lesson.student_owner_id = student.student_id " +
-                "where lesson.lesson_id == :lessonId"
+                "join student on lesson.student_id = student.id " +
+                "where lesson.id == :id"
     )
-    fun findLessonById(lessonId: Long): Flow<Map<Lesson, Student>>
+    fun findLessonById(id: Long): Flow<Map<Lesson, Student>>
 
     fun findByWeekday(weekday: String): Flow<List<Lesson>> {
         return findLessonsByWeekday(weekday)
@@ -43,8 +43,8 @@ interface LessonDao {
 
     @Query(
         "select * from lesson " +
-                "join student on lesson.student_owner_id = student.student_id " +
-                "left join phone_number on student.student_id = phone_number.student_owner_id " +
+                "join student on lesson.student_id = student.id " +
+                "left join phone_number on student.id = phone_number.student_id " +
                 "where lesson.weekday == :weekday"
     )
     fun findLessonsByWeekday(weekday: String): Flow<Map<Lesson, Map<Student, List<PhoneNumber>>>>

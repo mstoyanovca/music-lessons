@@ -99,7 +99,7 @@ private fun EditStudent(
     onUpdateStudentClick: (Student, List<Long>) -> Unit,
     navigateBack: () -> Unit
 ) {
-    val phoneNumberIdsBeforeEditing = rememberSaveable { phoneNumbers.map { it.phoneNumberId } }
+    val phoneNumberIdsBeforeEditing = rememberSaveable { phoneNumbers.map { it.id } }
     var phoneNumbersAreValid by rememberSaveable { mutableStateOf(true) }
 
     var studentId by rememberSaveable { mutableLongStateOf(studentId) }

@@ -15,16 +15,16 @@ import java.time.LocalTime
     tableName = "lesson",
     foreignKeys = [ForeignKey(
         entity = Student::class,
-        parentColumns = arrayOf("student_id"),
-        childColumns = arrayOf("student_owner_id"),
+        parentColumns = arrayOf("id"),
+        childColumns = arrayOf("student_id"),
         onDelete = ForeignKey.CASCADE
     )],
-    indices = [Index(value = ["student_owner_id", "weekday"])]
+    indices = [Index(value = ["student_id", "weekday"])]
 )
 data class Lesson(
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "lesson_id")
-    val lessonId: Long,
+    @PrimaryKey
+    @ColumnInfo(name = "id")
+    val id: Long,
     @field:TypeConverters(WeekdayConverter::class)
     @ColumnInfo(name = "weekday")
     val weekday: Weekday,
@@ -36,19 +36,19 @@ data class Lesson(
     @field:TypeConverters(LocalTimeConverter::class)
     @ColumnInfo(name = "time_to")
     val timeTo: LocalTime,
-    @ColumnInfo(name = "student_owner_id")
+    @ColumnInfo(name = "student_id")
     val studentId: Long,
     @Ignore val student: Student
 ) : Comparable<Lesson> {
 
     constructor(
-        lessonId: Long = 0L,
+        id: Long = 0L,
         weekday: Weekday = Weekday.MONDAY,
         timeFrom: LocalTime = LocalTime.of(16, 0),
         timeTo: LocalTime = LocalTime.of(16, 30),
         studentId: Long = 0L
     ) : this(
-        lessonId = lessonId,
+        id = id,
         weekday = weekday,
         timeFrom = timeFrom,
         timeTo = timeTo,

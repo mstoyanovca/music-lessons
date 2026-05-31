@@ -13,22 +13,22 @@ import kotlinx.serialization.Serializable
     tableName = "phone_number",
     foreignKeys = [(ForeignKey(
         entity = Student::class,
-        parentColumns = arrayOf("student_id"),
-        childColumns = arrayOf("student_owner_id"),
+        parentColumns = arrayOf("id"),
+        childColumns = arrayOf("student_id"),
         onDelete = ForeignKey.CASCADE
     ))],
-    indices = [(Index(value = ["student_owner_id"]))]
+    indices = [(Index(value = ["student_id"]))]
 )
 data class PhoneNumber(
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "phone_number_id")
-    val phoneNumberId: Long = 0L,
-    // max length 32
+    @PrimaryKey
+    @ColumnInfo(name = "id")
+    val id: Long = 0L,
+    // max length 10, validated in NanpVisualTransformation:
     @ColumnInfo(name = "number")
     val number: String = "",
     @field:TypeConverters(PhoneNumberTypeConverter::class)
     @ColumnInfo(name = "type")
     val type: PhoneNumberType = PhoneNumberType.CELL,
-    @ColumnInfo(name = "student_owner_id")
+    @ColumnInfo(name = "student_id")
     val studentId: Long = 0L,
 )

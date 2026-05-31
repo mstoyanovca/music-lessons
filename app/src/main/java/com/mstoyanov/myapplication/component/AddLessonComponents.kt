@@ -81,7 +81,7 @@ fun AddLesson(
                 FloatingActionButton(
                     onClick = {
                         if (student != null)
-                            lessonViewModel.insert(Lesson(lessonId = 0L, weekday!!, timeFrom, timeTo, student!!.studentId, student!!))
+                            lessonViewModel.insert(Lesson(id = 0L, weekday!!, timeFrom, timeTo, student!!.id, student!!))
                         navigateBack()
                     }
                 ) {

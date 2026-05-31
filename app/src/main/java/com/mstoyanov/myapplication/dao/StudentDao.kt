@@ -23,7 +23,7 @@ interface StudentDao {
             }
     }
 
-    @Query("select * from student left join phone_number on student.student_id = phone_number.student_owner_id where student_id = :studentId")
+    @Query("select * from student left join phone_number on student.id = phone_number.student_id where student_id = :studentId")
     fun findStudentById(studentId: Long): Flow<Map<Student, List<PhoneNumber>>>
 
     fun findAll(): Flow<List<Student>> {
@@ -36,7 +36,7 @@ interface StudentDao {
             .map { it.sorted() }
     }
 
-    @Query("select * from student left join phone_number on student.student_id = phone_number.student_owner_id")
+    @Query("select * from student left join phone_number on student.id = phone_number.student_id")
     fun findAllStudents(): Flow<Map<Student, List<PhoneNumber>>>
 
     @Transaction
@@ -53,7 +53,7 @@ interface StudentDao {
     suspend fun update(student: Student, phoneNumberIdsBeforeEditing: List<Long>) {
         updateStudent(student)
         db.phoneNumberDao().deleteByIds(phoneNumberIdsBeforeEditing - student.phoneNumbers.map { it.studentId }.toSet())
-        db.phoneNumberDao().upsertAll(student.phoneNumbers.map { it.copy(studentId = student.studentId) })
+        db.phoneNumberDao().upsertAll(student.phoneNumbers.map { it.copy(studentId = student.id) })
     }
 
     @Update

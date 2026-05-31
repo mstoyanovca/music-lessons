@@ -61,7 +61,7 @@ fun Schedule(
     ) {
         items(
             items = lessons,
-            key = { it.lessonId }
+            key = { it.id }
         ) { lesson ->
             CardContent(
                 lesson,
@@ -112,11 +112,11 @@ private fun LazyItemScope.CardContent(
                 onEditLessonClick
             )
             IconButton(onClick = {
-                if (expandedId == lesson.lessonId || !expanded) onExpandedChange(!expanded)
-                onExpandedIdChange(lesson.lessonId)
+                if (expandedId == lesson.id || !expanded) onExpandedChange(!expanded)
+                onExpandedIdChange(lesson.id)
             }) {
                 Icon(
-                    imageVector = if (expanded && expandedId == lesson.lessonId) Filled.ExpandLess else Filled.ExpandMore,
+                    imageVector = if (expanded && expandedId == lesson.id) Filled.ExpandLess else Filled.ExpandMore,
                     contentDescription = null
                 )
             }
@@ -138,7 +138,7 @@ private fun ColumnScope.LessonContent(
             .padding(8.dp),
     ) {
         LessonSummary(lesson)
-        if (expanded && expandedId == lesson.lessonId) {
+        if (expanded && expandedId == lesson.id) {
             PhoneNumbers(lesson.student.phoneNumbers)
             Fabs(lesson, onExpandedChange, onEditLessonClick)
         }
@@ -183,7 +183,7 @@ private fun Fabs(
         Spacer(modifier = Modifier.weight(1f))
         SmallFloatingActionButton(
             onClick = {
-                onEditLessonClick(lesson.lessonId)
+                onEditLessonClick(lesson.id)
             }
         ) {
             Icon(Filled.Edit, contentDescription = null)

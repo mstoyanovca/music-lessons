@@ -62,7 +62,7 @@ fun Students(
     ) {
         items(
             items = students,
-            key = { it.studentId }
+            key = { it.id }
         ) { student ->
             CardContent(
                 student,
@@ -112,11 +112,11 @@ private fun CardContent(
                 onEditStudentClick
             )
             IconButton(onClick = {
-                if (expandedId == student.studentId || !expanded) onExpandedChange(!expanded)
-                onExpandedIdChange(student.studentId)
+                if (expandedId == student.id || !expanded) onExpandedChange(!expanded)
+                onExpandedIdChange(student.id)
             }) {
                 Icon(
-                    imageVector = if (expanded && expandedId == student.studentId) Filled.ExpandLess else Filled.ExpandMore,
+                    imageVector = if (expanded && expandedId == student.id) Filled.ExpandLess else Filled.ExpandMore,
                     contentDescription = null
                 )
             }
@@ -138,7 +138,7 @@ private fun ColumnScope.StudentContent(
             .padding(8.dp)
     ) {
         StudentName(student.firstName, student.lastName)
-        if (expanded && expandedId == student.studentId) {
+        if (expanded && expandedId == student.id) {
             PhoneNumbers(student.phoneNumbers)
             Notes(student.notes)
             Fabs(student, onExpandedChange, onEditStudentClick)
@@ -208,7 +208,7 @@ private fun Fabs(
     ) {
         Spacer(modifier = Modifier.weight(1f))
         SmallFloatingActionButton(
-            onClick = { onEditStudentClick(student.studentId) }
+            onClick = { onEditStudentClick(student.id) }
         ) {
             Icon(Filled.Edit, contentDescription = null)
         }

@@ -48,7 +48,7 @@ fun AddStudent(navigateBack: () -> Unit, studentViewModel: StudentViewModel = vi
             ) {
                 FloatingActionButton(onClick = {
                     val student = Student(
-                        studentId = 0L,
+                        id = 0L,
                         firstName,
                         lastName,
                         notes

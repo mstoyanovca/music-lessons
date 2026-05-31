@@ -14,6 +14,6 @@ interface PhoneNumberDao {
     @Upsert
     suspend fun upsertAll(phoneNumbers: List<PhoneNumber>)
 
-    @Query("delete from phone_number where phone_number_id in (:phoneNumberIds)")
-    suspend fun deleteByIds(phoneNumberIds: List<Long>)
+    @Query("delete from phone_number where id in (:ids)")
+    suspend fun deleteByIds(ids: List<Long>)
 }

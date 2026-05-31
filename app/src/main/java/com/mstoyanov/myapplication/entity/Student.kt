@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 @Entity(tableName = "student")
 data class Student(
-    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "student_id") val studentId: Long,
+    @PrimaryKey @ColumnInfo(name = "id") val id: Long,
     // max length 24, validated in AddStudentComponents
     @ColumnInfo(name = "first_name") val firstName: String,
     // max length 24, validated in AddStudentComponents
@@ -20,12 +20,12 @@ data class Student(
 ) : Comparable<Student> {
 
     constructor(
-        studentId: Long = 0L,
+        id: Long = 0L,
         firstName: String = "",
         lastName: String = "",
         notes: String = ""
     ) : this(
-        studentId = studentId,
+        id = id,
         firstName = firstName,
         lastName = lastName,
         notes = notes,
