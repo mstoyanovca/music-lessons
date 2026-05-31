@@ -122,8 +122,7 @@ private fun EditStudent(
                         firstName = firstName,
                         lastName = lastName,
                         notes = notes
-                    )
-                    student.phoneNumbers = phoneNumbers
+                    ).copy(phoneNumbers = phoneNumbers)
                     onUpdateStudentClick(student, phoneNumberIdsBeforeEditing)
                     navigateBack()
                 }) {

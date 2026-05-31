@@ -35,8 +35,7 @@ interface LessonDao {
             .map { map ->
                 map.entries.flatMap { (lesson, studentToPhoneNumbers) ->
                     studentToPhoneNumbers.entries.map { (student, phoneNumbers) ->
-                        student.phoneNumbers = phoneNumbers
-                        lesson.student = student
+                        lesson.student = student.copy(phoneNumbers = phoneNumbers)
                         lesson
                     }
                 }

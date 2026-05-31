@@ -52,8 +52,7 @@ fun AddStudent(navigateBack: () -> Unit, studentViewModel: StudentViewModel = vi
                         firstName = firstName,
                         lastName = lastName,
                         notes = notes
-                    )
-                    student.phoneNumbers = phoneNumbers
+                    ).copy(phoneNumbers = phoneNumbers)
                     studentViewModel.insert(student)
                     navigateBack()
                 }) {

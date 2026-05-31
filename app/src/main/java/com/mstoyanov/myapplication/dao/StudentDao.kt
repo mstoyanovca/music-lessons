@@ -18,8 +18,7 @@ interface StudentDao {
         return findStudentById(id)
             .map { map ->
                 map.entries.map { (student, phoneNumbers) ->
-                    student.phoneNumbers = phoneNumbers
-                    student
+                    student.copy(phoneNumbers = phoneNumbers)
                 }.first()
             }
     }
@@ -35,8 +34,7 @@ interface StudentDao {
         return findAllStudents()
             .map { map ->
                 map.entries.map { (student, phoneNumbers) ->
-                    student.phoneNumbers = phoneNumbers
-                    student
+                    student.copy(phoneNumbers = phoneNumbers)
                 }
             }
             .map { it.sorted() }

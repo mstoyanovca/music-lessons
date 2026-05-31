@@ -16,9 +16,22 @@ data class Student(
     @ColumnInfo(name = "last_name") val lastName: String,
     // max length 128, validated in AddStudentComponents
     @ColumnInfo(name = "notes") val notes: String,
-) : Comparable<Student> {
     @Ignore
-    lateinit var phoneNumbers: List<PhoneNumber>
+    val phoneNumbers: List<PhoneNumber>
+) : Comparable<Student> {
+
+    constructor(
+        id: Long,
+        firstName: String,
+        lastName: String,
+        notes: String
+    ) : this(
+        id = id,
+        firstName = firstName,
+        lastName = lastName,
+        notes = notes,
+        phoneNumbers = listOf()
+    )
 
     override fun compareTo(other: Student): Int {
         return when {
