@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Sms
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -81,11 +82,18 @@ fun PhoneNumbers(phoneNumbers: List<PhoneNumber>) {
             )
             Spacer(Modifier.width(24.dp))
             if (phoneNumber.type == PhoneNumberType.CELL) {
-                Icon(
-                    imageVector = Icons.Default.Sms,
-                    contentDescription = null,
-                    tint = Color.Blue
-                )
+                IconButton(onClick = {
+                    val intent = Intent(Intent.ACTION_SENDTO).apply {
+                        data = "smsto:${phoneNumber.number}".toUri()
+                    }
+                    context.startActivity(intent)
+                }) {
+                    Icon(
+                        imageVector = Icons.Default.Sms,
+                        contentDescription = null,
+                        tint = Color.Blue
+                    )
+                }
             }
         }
     }
