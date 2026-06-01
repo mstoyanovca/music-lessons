@@ -8,6 +8,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.AutoMigrationSpec
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.mstoyanov.musiclessons.entity.Lesson
 import com.mstoyanov.musiclessons.entity.LocalTimeConverter
 import com.mstoyanov.musiclessons.entity.PhoneNumber
@@ -30,7 +31,20 @@ abstract class MusicLessonsDatabase : RoomDatabase() {
         RenameColumn(tableName = "lesson", fromColumnName = "lesson_id", toColumnName = "id"),
         RenameColumn(tableName = "lesson", fromColumnName = "student_owner_id", toColumnName = "student_id")
     )
-    class FiveToSixMigration : AutoMigrationSpec
+    class FiveToSixMigration : AutoMigrationSpec {
+        override fun onPostMigrate(db: SupportSQLiteDatabase) {
+            db.beginTransaction()
+            try {
+                db.execSQL("update phone_number set number = replace(number, '-', '')")
+                db.execSQL("update phone_number set number = replace(number, '(', '')")
+                db.execSQL("update phone_number set number = replace(number, ')', '')")
+                db.execSQL("update phone_number set number = replace(number, ' ', '')")
+                db.setTransactionSuccessful()
+            } finally {
+                db.endTransaction()
+            }
+        }
+    }
 
     abstract fun studentDao(): StudentDao
     abstract fun phoneNumberDao(): PhoneNumberDao
