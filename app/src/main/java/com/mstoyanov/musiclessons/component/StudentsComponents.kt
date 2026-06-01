@@ -223,7 +223,6 @@ private fun Fabs(
         DeleteStudentAlertDialog(
             student,
             onExpandedChange,
-            showDialog,
             onShowDialogChange = { showDialog = it })
     }
 }

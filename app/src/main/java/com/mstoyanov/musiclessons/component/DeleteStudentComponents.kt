@@ -14,39 +14,36 @@ import com.mstoyanov.musiclessons.entity.Student
 fun DeleteStudentAlertDialog(
     student: Student,
     onExpandedChange: (Boolean) -> Unit,
-    showDialog: Boolean,
     onShowDialogChange: (Boolean) -> Unit,
     studentViewModel: StudentViewModel = viewModel()
 ) {
-    if (showDialog) {
-        AlertDialog(
-            onDismissRequest = { onShowDialogChange(false) },
-            text = {
-                Text(
-                    text = "Are you sure you want to delete student ${student.firstName} ${student.lastName}?",
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        onShowDialogChange(false)
-                        onExpandedChange(false)
-                        studentViewModel.delete(student)
-                    }
-                ) {
-                    Text("Delete")
+    AlertDialog(
+        onDismissRequest = { onShowDialogChange(false) },
+        text = {
+            Text(
+                text = "Are you sure you want to delete student ${student.firstName} ${student.lastName}?",
+                style = MaterialTheme.typography.bodyLarge
+            )
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    onShowDialogChange(false)
+                    onExpandedChange(false)
+                    studentViewModel.delete(student)
                 }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = { onShowDialogChange(false) }
-                ) {
-                    Text(
-                        text = "Cancel"
-                    )
-                }
+            ) {
+                Text("Delete")
             }
-        )
-    }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = { onShowDialogChange(false) }
+            ) {
+                Text(
+                    text = "Cancel"
+                )
+            }
+        }
+    )
 }

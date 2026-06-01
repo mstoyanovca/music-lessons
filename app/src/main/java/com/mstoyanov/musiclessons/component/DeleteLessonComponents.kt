@@ -14,39 +14,36 @@ import com.mstoyanov.musiclessons.entity.Lesson
 fun DeleteLessonAlertDialog(
     lesson: Lesson,
     onExpandedChange: (Boolean) -> Unit,
-    showDialog: Boolean,
     onShowDialogChange: (Boolean) -> Unit,
     lessonViewModel: LessonViewModel = viewModel()
 ) {
-    if (showDialog) {
-        AlertDialog(
-            onDismissRequest = { onShowDialogChange(false) },
-            text = {
-                Text(
-                    text = "Are you sure you want to delete the lesson with ${lesson.student.firstName} ${lesson.student.lastName}?",
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        onShowDialogChange(false)
-                        onExpandedChange(false)
-                        lessonViewModel.delete(lesson)
-                    }
-                ) {
-                    Text("Delete")
+    AlertDialog(
+        onDismissRequest = { onShowDialogChange(false) },
+        text = {
+            Text(
+                text = "Are you sure you want to delete the lesson with ${lesson.student.firstName} ${lesson.student.lastName}?",
+                style = MaterialTheme.typography.bodyLarge
+            )
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    onShowDialogChange(false)
+                    onExpandedChange(false)
+                    lessonViewModel.delete(lesson)
                 }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = { onShowDialogChange(false) }
-                ) {
-                    Text(
-                        text = "Cancel"
-                    )
-                }
+            ) {
+                Text("Delete")
             }
-        )
-    }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = { onShowDialogChange(false) }
+            ) {
+                Text(
+                    text = "Cancel"
+                )
+            }
+        }
+    )
 }
