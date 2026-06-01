@@ -38,9 +38,24 @@ data class Lesson(
     val timeTo: LocalTime,
     @ColumnInfo(name = "student_id")
     val studentId: Long,
-) : Comparable<Lesson> {
     @Ignore
-    lateinit var student: Student
+    val student: Student
+) : Comparable<Lesson> {
+
+    constructor(
+        id: Long,
+        weekday: Weekday,
+        timeFrom: LocalTime,
+        timeTo: LocalTime,
+        studentId: Long
+    ) : this(
+        id = id,
+        weekday = weekday,
+        timeFrom = timeFrom,
+        timeTo = timeTo,
+        studentId = studentId,
+        student = Student(id = 0L, firstName = "", lastName = "", notes = "")
+    )
 
     override fun compareTo(other: Lesson): Int {
         return when {

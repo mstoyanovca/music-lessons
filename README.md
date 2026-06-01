@@ -20,5 +20,3 @@ This is a major version update:
 
 - student export
 - version
-- call
-- SMS
