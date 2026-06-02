@@ -140,6 +140,7 @@ private fun ColumnScope.LessonContent(
         LessonSummary(lesson)
         if (expanded && expandedId == lesson.id) {
             PhoneNumbers(lesson.student.phoneNumbers)
+            Notes(lesson.student.notes)
             Fabs(lesson, onExpandedChange, onEditLessonClick)
         }
     }

@@ -17,7 +17,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.Icons.Filled
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.EditNote
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Person
@@ -161,32 +160,6 @@ private fun StudentName(firstName: String, lastName: String) {
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
-    }
-}
-
-@Composable
-private fun Notes(notes: String) {
-    if (notes.isNotEmpty()) {
-        HorizontalDivider(
-            modifier = Modifier.padding(vertical = 8.dp),
-            thickness = 1.dp,
-            color = MaterialTheme.colorScheme.outlineVariant
-        )
-
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(
-                imageVector = Icons.Default.EditNote,
-                contentDescription = null,
-                tint = Color.Blue
-            )
-            Spacer(Modifier.width(4.dp))
-            Text(
-                text = notes,
-                style = MaterialTheme.typography.bodyLarge,
-                maxLines = 5,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
     }
 }
 
