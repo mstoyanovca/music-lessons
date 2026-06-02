@@ -1,5 +1,6 @@
 package com.mstoyanov.musiclessons.component
 
+import android.content.Context
 import android.os.Bundle
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.scaleIn
@@ -54,10 +55,15 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.savedstate.SavedStateRegistryOwner
+import com.mstoyanov.musiclessons.MusicLessonsApplication.Companion.db
 import com.mstoyanov.musiclessons.R
 import com.mstoyanov.musiclessons.dao.LessonViewModel
 import com.mstoyanov.musiclessons.function.weekdayFromPage
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import java.io.File
+import java.time.LocalDateTime
 
 @Composable
 fun MainScreen(
@@ -171,7 +177,10 @@ private fun TopAppBarImpl() {
             ) {
                 DropdownMenuItem(
                     text = { Text("Export Students") },
-                    onClick = { menuExpanded = false }
+                    onClick = {
+                        exportStudents(context)
+                        menuExpanded = false
+                    }
                 )
                 DropdownMenuItem(
                     text = { Text("Version: $versionName") },
@@ -180,6 +189,24 @@ private fun TopAppBarImpl() {
             }
         },
     )
+}
+
+private fun exportStudents(context: Context) {
+    val now = LocalDateTime.now()
+    val fileName = "students_export_${now.dayOfMonth}_${now.month}_${now.year}_${now.hour}_${now.minute}"
+    val file = File(context.filesDir, fileName)
+    val students = runBlocking {
+        db.studentDao().findAll().first()
+    }
+    val sb = StringBuilder()
+    students.forEach { s ->
+        sb.append("${s.firstName} ${s.lastName}\n")
+        s.phoneNumbers.forEach {
+            sb.append("${it.number} ${it.type.displayValue()}\n")
+        }
+        sb.append("${s.notes}\n\n")
+    }
+    file.writeText(sb.toString())
 }
 
 @Composable
