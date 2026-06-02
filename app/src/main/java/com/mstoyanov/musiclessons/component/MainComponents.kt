@@ -1,10 +1,9 @@
 package com.mstoyanov.musiclessons.component
 
-import android.content.ContentValues
-import android.content.Context
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
@@ -32,6 +31,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -62,8 +62,6 @@ import com.mstoyanov.musiclessons.MusicLessonsApplication.Companion.db
 import com.mstoyanov.musiclessons.R
 import com.mstoyanov.musiclessons.dao.LessonViewModel
 import com.mstoyanov.musiclessons.function.weekdayFromPage
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
@@ -152,6 +150,20 @@ private fun TopAppBarImpl() {
     val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
     val versionName = packageInfo.versionName ?: "Unknown"
 
+    var content by rememberSaveable { mutableStateOf("") }
+    LaunchedEffect(Unit) {
+        content = createContent()
+    }
+    val saveFileLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument("text/plain")
+    ) { uri: Uri? ->
+        uri?.let {
+            context.contentResolver.openOutputStream(it)?.use { outputStream ->
+                outputStream.write(content.toByteArray())
+            }
+        }
+    }
+
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -181,24 +193,20 @@ private fun TopAppBarImpl() {
                 DropdownMenuItem(
                     text = { Text("Export Students") },
                     onClick = {
-                        CoroutineScope(Dispatchers.Main).launch {
-                            exportStudents(context)
-                        }
+                        saveFileLauncher.launch(createFileName())
                         menuExpanded = false
                     }
                 )
                 DropdownMenuItem(
                     text = { Text("Version: $versionName") },
-                    onClick = { menuExpanded = false }
+                    onClick = { }
                 )
             }
         },
     )
 }
 
-private suspend fun exportStudents(context: Context): Boolean {
-    val now = LocalDateTime.now()
-    val fileName = "students_export_${now.dayOfMonth}_${now.monthValue}_${now.year}_${now.hour}_${now.minute}"
+private suspend fun createContent(): String {
     val students = db.studentDao().findAll().first()
     val builder = StringBuilder()
     students.forEach { s ->
@@ -208,30 +216,12 @@ private suspend fun exportStudents(context: Context): Boolean {
         }
         builder.append("${s.notes}\n\n")
     }
+    return builder.toString()
+}
 
-    val contentResolver = context.contentResolver
-    val collectionUri = MediaStore.Downloads.EXTERNAL_CONTENT_URI
-    val contentValues = ContentValues().apply {
-        put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
-        put(MediaStore.MediaColumns.MIME_TYPE, "text/plain")
-    }
-    var fileUri: Uri? = null
-    try {
-        fileUri = contentResolver.insert(collectionUri, contentValues)
-        if (fileUri != null) {
-            contentResolver.openOutputStream(fileUri)?.use { outputStream ->
-                outputStream.write(builder.toString().toByteArray(Charsets.UTF_8))
-            }
-            contentValues.clear()
-            contentValues.put(MediaStore.MediaColumns.IS_PENDING, 0)
-            contentResolver.update(fileUri, contentValues, null, null)
-            return true
-        }
-    } catch (e: Exception) {
-        e.printStackTrace()
-        fileUri?.let { contentResolver.delete(it, null, null) }
-    }
-    return false
+private fun createFileName(): String {
+    val now = LocalDateTime.now()
+    return "students_export_${now.dayOfMonth}_${now.monthValue}_${now.year}_${now.hour}_${now.minute}"
 }
 
 @Composable

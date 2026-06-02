@@ -15,8 +15,3 @@ This is a major version update:
 - in PROD (master) 25/3.14
 - on 26.1 (next update) 26/3.15
 - on 26.2 (switched to Jetpack Compose) 26/4.1
-
-### TODO
-
-- student export
-- version
