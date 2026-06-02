@@ -1,7 +1,10 @@
 package com.mstoyanov.musiclessons.component
 
+import android.content.ContentValues
 import android.content.Context
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
@@ -59,10 +62,10 @@ import com.mstoyanov.musiclessons.MusicLessonsApplication.Companion.db
 import com.mstoyanov.musiclessons.R
 import com.mstoyanov.musiclessons.dao.LessonViewModel
 import com.mstoyanov.musiclessons.function.weekdayFromPage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import java.io.File
 import java.time.LocalDateTime
 
 @Composable
@@ -178,7 +181,9 @@ private fun TopAppBarImpl() {
                 DropdownMenuItem(
                     text = { Text("Export Students") },
                     onClick = {
-                        exportStudents(context)
+                        CoroutineScope(Dispatchers.Main).launch {
+                            exportStudents(context)
+                        }
                         menuExpanded = false
                     }
                 )
@@ -191,22 +196,42 @@ private fun TopAppBarImpl() {
     )
 }
 
-private fun exportStudents(context: Context) {
+private suspend fun exportStudents(context: Context): Boolean {
     val now = LocalDateTime.now()
-    val fileName = "students_export_${now.dayOfMonth}_${now.month}_${now.year}_${now.hour}_${now.minute}"
-    val file = File(context.filesDir, fileName)
-    val students = runBlocking {
-        db.studentDao().findAll().first()
-    }
-    val sb = StringBuilder()
+    val fileName = "students_export_${now.dayOfMonth}_${now.monthValue}_${now.year}_${now.hour}_${now.minute}"
+    val students = db.studentDao().findAll().first()
+    val builder = StringBuilder()
     students.forEach { s ->
-        sb.append("${s.firstName} ${s.lastName}\n")
+        builder.append("${s.firstName} ${s.lastName}\n")
         s.phoneNumbers.forEach {
-            sb.append("${it.number} ${it.type.displayValue()}\n")
+            builder.append("${it.number} ${it.type.displayValue()}\n")
         }
-        sb.append("${s.notes}\n\n")
+        builder.append("${s.notes}\n\n")
     }
-    file.writeText(sb.toString())
+
+    val contentResolver = context.contentResolver
+    val collectionUri = MediaStore.Downloads.EXTERNAL_CONTENT_URI
+    val contentValues = ContentValues().apply {
+        put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
+        put(MediaStore.MediaColumns.MIME_TYPE, "text/plain")
+    }
+    var fileUri: Uri? = null
+    try {
+        fileUri = contentResolver.insert(collectionUri, contentValues)
+        if (fileUri != null) {
+            contentResolver.openOutputStream(fileUri)?.use { outputStream ->
+                outputStream.write(builder.toString().toByteArray(Charsets.UTF_8))
+            }
+            contentValues.clear()
+            contentValues.put(MediaStore.MediaColumns.IS_PENDING, 0)
+            contentResolver.update(fileUri, contentValues, null, null)
+            return true
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        fileUri?.let { contentResolver.delete(it, null, null) }
+    }
+    return false
 }
 
 @Composable
