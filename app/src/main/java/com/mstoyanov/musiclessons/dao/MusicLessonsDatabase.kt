@@ -35,10 +35,12 @@ abstract class MusicLessonsDatabase : RoomDatabase() {
         override fun onPostMigrate(db: SupportSQLiteDatabase) {
             db.beginTransaction()
             try {
-                db.execSQL("update phone_number set number = replace(number, '-', '')")
+                db.execSQL("update phone_number set number = replace(number, '+', '')")
+                db.execSQL("update phone_number set number = substr(number, 2) where number like '1%'")
                 db.execSQL("update phone_number set number = replace(number, '(', '')")
                 db.execSQL("update phone_number set number = replace(number, ')', '')")
                 db.execSQL("update phone_number set number = replace(number, ' ', '')")
+                db.execSQL("update phone_number set number = replace(number, '-', '')")
                 db.setTransactionSuccessful()
             } finally {
                 db.endTransaction()
