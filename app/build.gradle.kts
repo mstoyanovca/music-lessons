@@ -18,7 +18,7 @@ android {
         applicationId = "com.mstoyanov.music_lessons"
         minSdk = 33
         targetSdk = 36
-        versionCode = 26
+        versionCode = 27
         versionName = "4.1"
     }
     buildTypes {
