@@ -36,11 +36,11 @@ abstract class MusicLessonsDatabase : RoomDatabase() {
             db.beginTransaction()
             try {
                 db.execSQL("update phone_number set number = replace(number, '+', '')")
-                db.execSQL("update phone_number set number = substr(number, 2) where number like '1%'")
                 db.execSQL("update phone_number set number = replace(number, '(', '')")
                 db.execSQL("update phone_number set number = replace(number, ')', '')")
                 db.execSQL("update phone_number set number = replace(number, ' ', '')")
                 db.execSQL("update phone_number set number = replace(number, '-', '')")
+                db.execSQL("update phone_number set number = substr(number, 2) where number like '1%'")
                 db.setTransactionSuccessful()
             } finally {
                 db.endTransaction()
