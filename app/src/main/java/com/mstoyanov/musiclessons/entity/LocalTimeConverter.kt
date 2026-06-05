@@ -2,11 +2,13 @@ package com.mstoyanov.musiclessons.entity
 
 import androidx.room.TypeConverter
 import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 class LocalTimeConverter {
     @TypeConverter
     fun fromString(value: String?): LocalTime? {
-        return value?.let { LocalTime.parse(it) }
+        // this is needed to parse properly "9:30":
+        return value?.let { LocalTime.parse(it, DateTimeFormatter.ofPattern("H:mm")) }
     }
 
     @TypeConverter
