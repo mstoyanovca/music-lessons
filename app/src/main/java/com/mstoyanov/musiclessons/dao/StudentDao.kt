@@ -1,0 +1,71 @@
+package com.mstoyanov.musiclessons.dao
+
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.Query
+import androidx.room.Transaction
+import androidx.room.Update
+import com.mstoyanov.musiclessons.MusicLessonsApplication.Companion.db
+import com.mstoyanov.musiclessons.entity.PhoneNumber
+import com.mstoyanov.musiclessons.entity.Student
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+
+@Dao
+interface StudentDao {
+    fun findById(id: Long): Flow<Student> {
+        return findStudentById(id)
+            .map { map ->
+                map.entries.map { (student, phoneNumbers) ->
+                    student.copy(phoneNumbers = phoneNumbers)
+                }.first()
+            }
+    }
+
+    @Query(
+        "select * from student " +
+                "left join phone_number on student.id = phone_number.student_id " +
+                "where student.id = :id"
+    )
+    fun findStudentById(id: Long): Flow<Map<Student, List<PhoneNumber>>>
+
+    fun findAll(): Flow<List<Student>> {
+        return findAllStudents()
+            .map { map ->
+                map.entries.map { (student, phoneNumbers) ->
+                    student.copy(phoneNumbers = phoneNumbers)
+                }
+            }
+            .map { it.sorted() }
+    }
+
+    @Query(
+        "select * from student " +
+                "left join phone_number on student.id = phone_number.student_id"
+    )
+    fun findAllStudents(): Flow<Map<Student, List<PhoneNumber>>>
+
+    @Transaction
+    suspend fun insert(student: Student) {
+        val id = insertStudent(student)
+        val phoneNumbers = student.phoneNumbers.map { it.copy(studentId = id) }
+        db.phoneNumberDao().insertAll(phoneNumbers)
+    }
+
+    @Insert
+    suspend fun insertStudent(student: Student): Long
+
+    @Transaction
+    suspend fun update(student: Student, phoneNumberIdsBeforeEditing: List<Long>) {
+        updateStudent(student)
+        db.phoneNumberDao().deleteByIds(phoneNumberIdsBeforeEditing - student.phoneNumbers.map { it.id }.toSet())
+        db.phoneNumberDao().upsertAll(student.phoneNumbers.map { it.copy(studentId = student.id) })
+    }
+
+    @Update
+    suspend fun updateStudent(student: Student)
+
+    @Delete
+    suspend fun delete(student: Student)
+}

@@ -1,0 +1,19 @@
+package com.mstoyanov.musiclessons.dao
+
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.Query
+import androidx.room.Upsert
+import com.mstoyanov.musiclessons.entity.PhoneNumber
+
+@Dao
+interface PhoneNumberDao {
+    @Insert
+    suspend fun insertAll(phoneNumbers: List<PhoneNumber>)
+
+    @Upsert
+    suspend fun upsertAll(phoneNumbers: List<PhoneNumber>)
+
+    @Query("delete from phone_number where id in (:ids)")
+    suspend fun deleteByIds(ids: List<Long>)
+}

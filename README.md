@@ -4,7 +4,8 @@ An Android app for scheduling music lessons, released on Google Play in January 
 
 Removed from Google Play in April 2026, to be distributed via APK.
 
-The latest updates include:
+This is a major version update:
 
-- updated dependency versions
-  
+- switched to Jetpack Compose
+- switched Room DB to reactive Flow
+- removed the details screens, by implementing expandable cards
